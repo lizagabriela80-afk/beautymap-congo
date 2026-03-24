@@ -1,0 +1,241 @@
+{% extends "base/base.html" %}
+{% block title %}Connexion{% endblock %}
+
+{% block content %}
+<div class="auth-wrap" style="margin-top: 70px;">
+  <div class="auth-box">
+
+    <div class="auth-logo">
+      <div style="font-size:2.5rem;margin-bottom:8px">💄</div>
+      <div class="auth-title">Bon retour !</div>
+      <div class="auth-sub">Connectez-vous à votre espace BeautyMap Congo</div>
+    </div>
+
+    <!-- Messages Django (erreurs, succès) -->
+    {% if messages %}
+    <div style="margin-bottom:16px">
+      {% for message in messages %}
+      <div class="dmsg dmsg-{{ message.tags }}">
+        <span>{{ message }}</span>
+        <button onclick="this.parentElement.remove()" class="dmsg-close">✕</button>
+      </div>
+      {% endfor %}
+    </div>
+    {% endif %}
+
+    <!-- Onglets -->
+    <div class="tabs">
+      <button class="tab on" onclick="switchLoginTab('email')">📧 Email</button>
+      <button class="tab" onclick="switchLoginTab('otp')">📲 Téléphone</button>
+    </div>
+
+    <!-- ══ TAB EMAIL ══ -->
+    <div id="tab-email">
+      <form method="post" action="{% url 'login' %}">
+        {% csrf_token %}
+        <input type="hidden" name="login_method" value="email">
+
+        <div class="fg">
+          <label class="lbl">Adresse email</label>
+          <input class="inp" type="email" name="email" placeholder="votre@email.com" required autocomplete="email"
+            value="{{ request.POST.email|default:'' }}">
+        </div>
+
+        <div class="fg">
+          <label class="lbl">Mot de passe</label>
+          <div style="position:relative">
+            <input class="inp" type="password" name="password" id="pwd-field" placeholder="••••••••" required
+              autocomplete="current-password" style="padding-right:44px">
+            <button type="button" onclick="togglePwd('pwd-field')"
+              style="position:absolute;right:12px;top:50%;transform:translateY(-50%);background:none;border:none;color:var(--mut);cursor:pointer;font-size:1rem"
+              title="Afficher / masquer">👁️</button>
+          </div>
+        </div>
+
+        <div style="text-align:right;margin:-8px 0 18px">
+          <a href="#" class="auth-link text-sm">Mot de passe oublié ?</a>
+        </div>
+
+        <button type="submit" class="btn btn-gold btn-w btn-lg">
+          🔑 Se connecter
+        </button>
+      </form>
+    </div>
+
+    <!-- ══ TAB OTP SMS ══ -->
+    <div id="tab-otp" style="display:none">
+
+      <!-- Étape 1 : saisir le numéro -->
+      <div id="otp-step-1">
+        <div class="fg">
+          <label class="lbl">Votre numéro de téléphone</label>
+          <input class="inp" type="tel" id="otp-phone" placeholder="+242 06 XXX XX XX" autocomplete="tel">
+          <div class="form-help">Le numéro associé à votre compte BeautyMap</div>
+        </div>
+
+        <button class="btn btn-outline btn-w" id="send-otp-btn" onclick="sendOtpSMS()">
+          📲 Recevoir le code par SMS
+        </button>
+
+        <!-- Encadré code visible uniquement en mode DEBUG -->
+        <div id="dev-code-box" style="display:none;margin-top:14px;padding:14px;
+          background:rgba(201,151,58,.1);border:1px dashed var(--gold);
+          border-radius:var(--rsm);text-align:center">
+          <div
+            style="font-size:.72rem;color:var(--mut);margin-bottom:6px;text-transform:uppercase;letter-spacing:.08em">
+            🧪 Mode développement — Code OTP
+          </div>
+          <div id="dev-code" style="font-size:2rem;font-weight:700;color:var(--gold);letter-spacing:.4em"></div>
+          <div style="font-size:.72rem;color:var(--mut);margin-top:6px">
+            En production, ce code sera envoyé par SMS
+          </div>
+        </div>
+      </div>
+
+      <!-- Étape 2 : saisir le code reçu -->
+      <div id="otp-step-2" style="display:none">
+        <div style="background:rgba(46,148,88,.1);border:1px solid rgba(46,148,88,.3);
+          border-radius:var(--rsm);padding:12px 16px;margin-bottom:16px;text-align:center">
+          <div style="color:#5EC98A;font-weight:600;font-size:.88rem">✅ Code envoyé !</div>
+          <div style="color:var(--mut);font-size:.78rem;margin-top:3px">Valable 5 minutes</div>
+        </div>
+
+        <div class="fg">
+          <label class="lbl">Code à 6 chiffres</label>
+          <input class="inp" type="text" id="otp-code" placeholder="• • • • • •" maxlength="6"
+            style="letter-spacing:.5em;font-size:1.4rem;text-align:center;font-weight:700"
+            oninput="this.value=this.value.replace(/\D/g,'')">
+        </div>
+
+        <button class="btn btn-gold btn-w btn-lg" id="verify-otp-btn" onclick="verifyOtpSMS()">
+          ✅ Vérifier et se connecter
+        </button>
+
+        <button class="btn btn-ghost btn-w" style="margin-top:8px" onclick="resetOtpForm()">
+          ← Changer de numéro
+        </button>
+      </div>
+    </div>
+
+    <div class="auth-divider"><span>ou</span></div>
+    <div class="text-center text-sm text-mut">
+      Pas encore de compte ?
+      <a href="{% url 'register' %}" class="auth-link">Créer un compte gratuitement</a>
+    </div>
+
+  </div>
+</div>
+{% endblock %}
+
+{% block extra_scripts %}
+<script>
+  const CSRF_TOKEN = '{{ csrf_token }}';
+
+  /* ── Basculer onglets ── */
+  function switchLoginTab(tab) {
+    document.getElementById('tab-btn-email').classList.toggle('on', tab === 'email');
+    document.getElementById('tab-btn-otp').classList.toggle('on', tab === 'otp');
+    document.getElementById('tab-email').style.display = tab === 'email' ? 'block' : 'none';
+    document.getElementById('tab-otp').style.display = tab === 'otp' ? 'block' : 'none';
+  }
+
+  /* ── Afficher / masquer mot de passe ── */
+  function togglePwd(id) {
+    const f = document.getElementById(id);
+    f.type = f.type === 'password' ? 'text' : 'password';
+  }
+
+  /* ── Envoyer le code OTP par SMS ── */
+  async function sendOtpSMS() {
+    const phone = document.getElementById('otp-phone').value.trim();
+    if (!phone) {
+      toast('⚠️ Saisissez votre numéro de téléphone', 'warning');
+      return;
+    }
+
+    const btn = document.getElementById('send-otp-btn');
+    btn.disabled = true;
+    btn.textContent = '⏳ Envoi en cours…';
+
+    try {
+      const res = await fetch('/auth/otp/send/', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json', 'X-CSRFToken': CSRF_TOKEN },
+        body: JSON.stringify({ phone }),
+      });
+      const data = await res.json();
+
+      if (data.success) {
+        /* Mode DEBUG : afficher le code dans la page */
+        if (data.code) {
+          document.getElementById('dev-code').textContent = data.code;
+          document.getElementById('dev-code-box').style.display = 'block';
+        }
+        /* Passer à l'étape 2 */
+        document.getElementById('otp-step-1').style.display = 'none';
+        document.getElementById('otp-step-2').style.display = 'block';
+        toast('📲 Code envoyé !', 'success');
+      } else {
+        toast('❌ ' + (data.message || "Erreur d'envoi"), 'error');
+        btn.disabled = false;
+        btn.textContent = '📲 Recevoir le code par SMS';
+      }
+    } catch (e) {
+      toast('❌ Erreur réseau', 'error');
+      btn.disabled = false;
+      btn.textContent = '📲 Recevoir le code par SMS';
+    }
+  }
+
+  /* ── Vérifier le code OTP ── */
+  async function verifyOtpSMS() {
+    const phone = document.getElementById('otp-phone').value.trim();
+    const code = document.getElementById('otp-code').value.trim();
+
+    if (code.length !== 6) {
+      toast('⚠️ Le code doit contenir 6 chiffres', 'warning');
+      return;
+    }
+
+    const btn = document.getElementById('verify-otp-btn');
+    btn.disabled = true;
+    btn.textContent = '⏳ Vérification…';
+
+    try {
+      const res = await fetch('/auth/otp/verify/', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json', 'X-CSRFToken': CSRF_TOKEN },
+        body: JSON.stringify({ phone, code }),
+      });
+      const data = await res.json();
+
+      if (data.success) {
+        toast('✅ ' + data.message, 'success');
+        setTimeout(() => { window.location.href = data.redirect || '/dashboard/'; }, 800);
+      } else {
+        toast('❌ ' + (data.message || 'Code invalide'), 'error');
+        if (data.action === 'register') {
+          setTimeout(() => { window.location.href = '/auth/register/'; }, 2500);
+        }
+        btn.disabled = false;
+        btn.textContent = '✅ Vérifier et se connecter';
+      }
+    } catch (e) {
+      toast('❌ Erreur réseau', 'error');
+      btn.disabled = false;
+      btn.textContent = '✅ Vérifier et se connecter';
+    }
+  }
+
+  /* ── Réinitialiser le formulaire OTP ── */
+  function resetOtpForm() {
+    document.getElementById('otp-step-1').style.display = 'block';
+    document.getElementById('otp-step-2').style.display = 'none';
+    document.getElementById('otp-code').value = '';
+    document.getElementById('dev-code-box').style.display = 'none';
+    const btn = document.getElementById('send-otp-btn');
+    btn.disabled = false;
+    btn.textContent = '📲 Recevoir le code par SMS';
+  }
+</script>
+{% endblock %}

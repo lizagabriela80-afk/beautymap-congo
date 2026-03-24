@@ -1,0 +1,165 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="description" content="{% block meta_desc %}BeautyMap Congo — Trouvez les meilleurs prestataires beauté à Brazzaville{% endblock %}">
+<title>{% block title %}BeautyMap Congo{% endblock %} — Beauté & Mode à Brazzaville</title>
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;0,700;1,400&family=Outfit:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"/>
+<link rel="stylesheet" href="{% load static %}{% static 'css/main.css' %}">
+
+{% block extra_head %}{% endblock %}
+</head>
+<body class="{% block body_class %}{% endblock %}">
+
+{% load static %}
+
+<!-- GRAIN -->
+<div class="grain" aria-hidden="true"></div>
+
+<!-- NAV -->
+<nav id="nav" role="navigation" aria-label="Navigation principale">
+  <a class="logo" href="{% url 'shops:home' %}">
+    <div class="logo-icon" aria-hidden="true">💄</div>
+    Beauty<em>Map</em>&nbsp;<span class="logo-congo">Congo</span>
+  </a>
+
+  <div class="nav-links" id="nav-links">
+    <a href="{% url 'shops:home' %}" {% if request.resolver_match.url_name == 'home' %}class="on"{% endif %}>Accueil</a>
+    <a href="{% url 'shops:explore' %}" {% if 'explore' in request.path %}class="on"{% endif %}>Explorer</a>
+    <a href="{% url 'shops:map' %}" {% if 'carte' in request.path %}class="on"{% endif %}>Carte</a>
+    <a href="/pros/" {% if 'pros' in request.path %}class="on"{% endif %}>Pour les pros</a>
+  </div>
+
+  <div class="nav-right">
+    {% if user.is_authenticated %}
+      <div class="nav-user-menu" id="nav-user-menu">
+        <div class="nav-user-btn" onclick="toggleUserMenu()">
+          <div class="nav-avatar" aria-label="Menu utilisateur">{{ user.get_initials }}</div>
+          <span class="nav-uname">{{ user.first_name }}</span>
+          <span class="nav-caret">▾</span>
+        </div>
+        <div class="nav-dropdown" id="nav-dropdown">
+          <div class="dropdown-header">
+            <div class="dh-name">{{ user.get_full_name }}</div>
+            <div class="dh-email">{{ user.email }}</div>
+          </div>
+          <a class="dropdown-item" href="{% url 'dashboard' %}">📊 Mon espace</a>
+          {% if user.is_pro %}
+          <a class="dropdown-item" href="{% url 'pro_dashboard' %}">🏪 Mes boutiques</a>
+          {% endif %}
+          <a class="dropdown-item" href="{% url 'inbox' %}">💬 Messages
+            {% if unread_messages_count %}<span class="di-badge">{{ unread_messages_count }}</span>{% endif %}
+          </a>
+          <a class="dropdown-item" href="{% url 'notifications' %}">🔔 Notifications
+            {% if unread_notifs_count %}<span class="di-badge">{{ unread_notifs_count }}</span>{% endif %}
+          </a>
+          <div class="dropdown-divider"></div>
+          <a class="dropdown-item" href="{% url 'profile_edit' %}">⚙️ Paramètres</a>
+          <a class="dropdown-item dropdown-danger" href="{% url 'logout' %}">🚪 Déconnexion</a>
+        </div>
+      </div>
+    {% else %}
+      <a class="btn btn-ghost btn-sm" href="{% url 'login' %}">Connexion</a>
+      <a class="btn btn-gold btn-sm" href="{% url 'register' %}">S'inscrire</a>
+    {% endif %}
+
+    <button class="nav-burger" onclick="toggleMobileNav()" aria-label="Menu mobile">
+      <span></span><span></span><span></span>
+    </button>
+  </div>
+</nav>
+
+<!-- MESSAGES -->
+{% if messages %}
+<div class="django-messages" id="django-messages">
+  {% for message in messages %}
+  <div class="dmsg dmsg-{{ message.tags }}" role="alert">
+    <span>{{ message }}</span>
+    <button onclick="this.parentElement.remove()" class="dmsg-close" aria-label="Fermer">✕</button>
+  </div>
+  {% endfor %}
+</div>
+{% endif %}
+
+<!-- MAIN CONTENT -->
+<main id="main-content">
+  {% block content %}{% endblock %}
+</main>
+
+<!-- FOOTER (hidden on dashboard) -->
+{% block footer %}
+<footer role="contentinfo">
+  <div class="foot-inner">
+    <div class="foot-grid">
+      <div class="foot-brand">
+        <a class="logo" href="{% url 'shops:home' %}" style="margin-bottom:14px;display:inline-flex">
+          <div class="logo-icon">💄</div>Beauty<em>Map</em>&nbsp;<span class="logo-congo">Congo</span>
+        </a>
+        <p class="foot-desc">La première plateforme congolaise dédiée aux professionnels de la beauté et de la mode. Trouvez, comparez, réservez.</p>
+        <div class="foot-social">
+          <a href="#" class="social-btn" aria-label="Facebook">📘</a>
+          <a href="#" class="social-btn" aria-label="Instagram">📸</a>
+          <a href="#" class="social-btn" aria-label="WhatsApp">💬</a>
+          <a href="#" class="social-btn" aria-label="YouTube">▶️</a>
+        </div>
+      </div>
+      <div>
+        <div class="foot-title">Explorer</div>
+        <nav class="foot-links">
+          <a href="{% url 'shops:explore' %}?category=coiffure">✂️ Coiffure</a>
+          <a href="{% url 'shops:explore' %}?category=esthetique">💆 Esthétique</a>
+          <a href="{% url 'shops:explore' %}?category=onglerie">💅 Onglerie</a>
+          <a href="{% url 'shops:explore' %}?category=vetements">👗 Vêtements</a>
+          <a href="{% url 'shops:map' %}">🗺️ Carte interactive</a>
+        </nav>
+      </div>
+      <div>
+        <div class="foot-title">Pour les pros</div>
+        <nav class="foot-links">
+          <a href="{% url 'shops:create_shop' %}">Créer ma boutique</a>
+          <a href="/pros/#tarifs">Tarifs</a>
+          <a href="/pros/#fonctionnalites">Fonctionnalités</a>
+          <a href="/contact/">Support</a>
+        </nav>
+      </div>
+      <div>
+        <div class="foot-title">À propos</div>
+        <nav class="foot-links">
+          <a href="/a-propos/">Notre mission</a>
+          <a href="/cgu/">Conditions d'utilisation</a>
+          <a href="/confidentialite/">Confidentialité</a>
+          <a href="/contact/">Contact</a>
+        </nav>
+      </div>
+    </div>
+    <div class="foot-bottom">
+      <div class="foot-copy">© {% now "Y" %} BeautyMap Congo · Tous droits réservés · 🇨🇬 Made in Brazzaville</div>
+      <div class="foot-copy">v1.0.0 · Django {{ django_version }}</div>
+    </div>
+  </div>
+</footer>
+{% endblock %}
+
+<!-- TOAST CONTAINER -->
+<div class="toasts" id="toasts" aria-live="polite"></div>
+
+<!-- SCRIPTS -->
+<script src="{% static 'js/main.js' %}"></script>
+{% if 'carte' in request.path or 'map' in request.path %}
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+{% endif %}
+{% block extra_scripts %}{% endblock %}
+
+<script>
+// Auto-dismiss django messages
+setTimeout(() => {
+  document.querySelectorAll('.dmsg').forEach(el => el.style.opacity = '0');
+  setTimeout(() => document.getElementById('django-messages')?.remove(), 500);
+}, 4000);
+</script>
+</body>
+</html>

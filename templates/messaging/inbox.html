@@ -1,0 +1,93 @@
+{% extends "base/base.html" %}
+{% block title %}Messagerie{% endblock %}
+{% block footer %}{% endblock %}
+
+{% block content %}
+{% if active_conv %}<input type="hidden" id="conv-id" value="{{ active_conv.id }}">{% endif %}
+<input type="hidden" id="current-user-id" value="{{ request.user.id }}">
+
+<div style="height:calc(100vh - 68px);display:grid;grid-template-columns:280px 1fr; margin-top: 60px;">
+  <!-- Conversation list -->
+  <div style="background:var(--ink2);border-right:1px solid rgba(255,255,255,.06);display:flex;flex-direction:column">
+    <div style="padding:20px 16px;border-bottom:1px solid rgba(255,255,255,.06)">
+      <h2 style="font-family:'Cormorant Garamond',serif;font-size:1.2rem;color:var(--parch);margin-bottom:12px">💬 Messages</h2>
+      <input class="inp" placeholder="Rechercher…" style="padding:9px 12px">
+    </div>
+    <div style="flex:1;overflow-y:auto">
+      {% for conv in conversations %}
+      {% with last=conv.get_last_message unread=conv.get_unread_count %}
+      <a href="?conv={{ conv.id }}"
+        style="display:flex;align-items:center;gap:12px;padding:14px 16px;border-bottom:1px solid rgba(255,255,255,.04);cursor:pointer;transition:background .2s;text-decoration:none;{% if active_conv.id == conv.id %}background:rgba(201,151,58,.07);{% endif %}"
+        onmouseover="this.style.background='rgba(255,255,255,.03)'" onmouseout="this.style.background='{% if active_conv.id == conv.id %}rgba(201,151,58,.07){% endif %}'">
+        <div class="rev-av" style="width:38px;height:38px;border-radius:50%;flex-shrink:0">
+          {% if request.user.is_pro %}{{ conv.client.get_initials }}{% else %}{{ conv.pro.get_initials }}{% endif %}
+        </div>
+        <div style="flex:1;min-width:0">
+          <div style="display:flex;justify-content:space-between;margin-bottom:3px">
+            <span style="font-weight:600;font-size:.88rem;color:var(--parch)">
+              {% if request.user.is_pro %}{{ conv.client.get_full_name }}{% else %}{{ conv.pro.get_full_name }}{% endif %}
+            </span>
+            {% if last %}<span class="text-xs text-mut">{{ last.created_at|timesince }}</span>{% endif %}
+          </div>
+          <div style="font-size:.78rem;color:var(--mut);white-space:nowrap;overflow:hidden;text-overflow:ellipsis">
+            {{ last.content|default:"Démarrer la conversation"|truncatechars:40 }}
+          </div>
+        </div>
+        {% if unread %}<span class="sb-bdg">{{ unread }}</span>{% endif %}
+      </a>
+      {% endwith %}
+      {% empty %}
+      <div class="text-center text-mut" style="padding:40px 20px;font-size:.88rem">
+        Aucune conversation.<br>Visitez une boutique pour démarrer.
+      </div>
+      {% endfor %}
+    </div>
+  </div>
+
+  <!-- Chat area -->
+  <div style="display:flex;flex-direction:column;background:var(--ink)">
+    {% if active_conv %}
+    <!-- Header -->
+    <div style="padding:16px 24px;border-bottom:1px solid rgba(255,255,255,.06);background:var(--ink2);display:flex;align-items:center;gap:14px">
+      <div class="rev-av" style="width:40px;height:40px;border-radius:50%">
+        {% if request.user.is_pro %}{{ active_conv.client.get_initials }}{% else %}{{ active_conv.pro.get_initials }}{% endif %}
+      </div>
+      <div>
+        <div style="font-weight:600;color:var(--parch);font-size:.92rem">
+          {% if request.user.is_pro %}{{ active_conv.client.get_full_name }}{% else %}{{ active_conv.pro.get_full_name }}{% endif %}
+        </div>
+        {% if active_conv.shop %}
+        <div class="text-xs text-mut">{{ active_conv.shop.name }}</div>
+        {% endif %}
+      </div>
+    </div>
+
+    <!-- Messages -->
+    <div class="chat-box" id="chat-box" style="flex:1;max-height:none;padding:24px">
+      {% for msg in active_conv.messages.all %}
+      <div class="cm {% if msg.sender == request.user %}me{% else %}them{% endif %}">
+        {{ msg.content }}
+        <div class="cm-time">{{ msg.created_at|time:"H:i" }}</div>
+      </div>
+      {% empty %}
+      <div class="text-center text-mut" style="padding:40px">Envoyez le premier message !</div>
+      {% endfor %}
+    </div>
+
+    <!-- Input -->
+    <div style="padding:16px 24px;border-top:1px solid rgba(255,255,255,.06);background:var(--ink2)">
+      <div class="chat-bar">
+        <input class="chat-inp" id="chat-input" placeholder="Écrire un message…" autocomplete="off">
+        <button class="btn btn-gold" onclick="sendWsMessage('{{ active_conv.id }}')">Envoyer</button>
+      </div>
+    </div>
+
+    {% else %}
+    <div class="flex-center" style="flex:1;flex-direction:column;color:var(--mut)">
+      <div style="font-size:4rem;margin-bottom:16px">💬</div>
+      <p style="font-size:.92rem">Sélectionnez une conversation</p>
+    </div>
+    {% endif %}
+  </div>
+</div>
+{% endblock %}

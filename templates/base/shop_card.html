@@ -1,0 +1,62 @@
+{% load static %}
+{% with avg=shop.avg_rating|default:shop.average_rating count=shop.reviews_count|default:0 %}
+<article class="shop-card" onclick="window.location.href='{% url 'shops:detail' shop.slug %}'">
+  <div class="shop-thumb">
+    {% if shop.cover_image %}
+      <img class="shop-cover-img" src="{{ shop.cover_image.url }}" alt="{{ shop.name }}" loading="lazy">
+      <div class="shop-cover-overlay"></div>
+    {% else %}
+      <div class="shop-thumb-bg"></div>
+      <div class="shop-thumb-pat"></div>
+      <div class="shop-emoji">{{ shop.category_emoji }}</div>
+    {% endif %}
+
+    <div class="shop-badge-wrap">
+      <span class="b b-{{ shop.category }}">{{ shop.get_category_display }}</span>
+      {% if shop.is_verified %}
+        <span class="b b-verified" style="margin-left:4px">✓ Vérifié</span>
+      {% endif %}
+    </div>
+
+    {% if user.is_authenticated %}
+    <button class="shop-fav {% if is_favorite %}on{% endif %}"
+      onclick="event.stopPropagation(); toggleFavAjax(this, '{{ shop.id }}')"
+      aria-label="{% if is_favorite %}Retirer des favoris{% else %}Ajouter aux favoris{% endif %}"
+      title="Favoris">
+      {% if is_favorite %}❤️{% else %}🤍{% endif %}
+    </button>
+    {% endif %}
+  </div>
+
+  <div class="shop-body">
+    <div class="shop-name">{{ shop.name }}</div>
+    <div class="shop-loc">📍 {{ shop.get_quartier_display }}, Brazzaville</div>
+    <div class="shop-rating">
+      <span class="stars">
+        {% if avg %}
+          {% with full=avg|floatformat:"0" %}
+            {% for i in "12345" %}
+              {% if forloop.counter <= avg|add:"0" %}★{% else %}☆{% endif %}
+            {% endfor %}
+          {% endwith %}
+        {% else %}
+          ☆☆☆☆☆
+        {% endif %}
+      </span>
+      <span class="rn">{{ avg|default:"—"|floatformat:1 }}</span>
+      <span class="rc">({{ count }} avis)</span>
+    </div>
+    <div class="shop-foot">
+      <div class="shop-price">
+        {% with min_svc=shop.services.all.first %}
+          {% if min_svc %}À partir de {{ min_svc.price|floatformat:"0" }} FCFA{% else %}Contactez-nous{% endif %}
+        {% endwith %}
+      </div>
+      <div class="open-status">
+        <span class="odot {% if shop.is_open %}odot-on{% else %}odot-off{% endif %}"></span>
+        {% if shop.is_open %}Ouvert{% else %}Fermé{% endif %}
+      </div>
+    </div>
+  </div>
+</article>
+{% endwith %}

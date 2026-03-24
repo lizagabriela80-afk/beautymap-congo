@@ -1,0 +1,269 @@
+{% extends "base/base.html" %}
+{% load static %}
+{% block title %}{{ shop.name }}{% endblock %}
+{% block meta_desc %}{{ shop.description|truncatechars:160 }}{% endblock %}
+
+{% block content %}
+<!-- Hero -->
+<div class="shop-hero">
+  {% if shop.cover_image %}
+    <img class="shop-hero-img" src="{{ shop.cover_image.url }}" alt="{{ shop.name }}">
+    <div class="shop-hero-overlay"></div>
+  {% else %}
+    <div class="shop-hero-bg">{{ shop.category_emoji }}</div>
+  {% endif %}
+
+  <div class="shop-hero-content">
+    <div class="flex gap-8" style="margin-bottom:12px;flex-wrap:wrap">
+      <span class="b b-{{ shop.category }}">{{ shop.get_category_display }}</span>
+      {% if shop.is_verified %}<span class="b b-verified">✓ Vérifié</span>{% endif %}
+      {% if shop.is_featured %}<span class="b" style="background:rgba(201,151,58,.2);color:var(--gold);border:1px solid rgba(201,151,58,.4)">⭐ Recommandé</span>{% endif %}
+    </div>
+    <h1 style="font-family:'Cormorant Garamond',serif;font-size:clamp(1.8rem,4vw,2.8rem);color:var(--parch);font-weight:700;margin-bottom:10px">{{ shop.name }}</h1>
+    <div class="flex gap-16 flex-wrap" style="color:var(--parch2);font-size:.88rem">
+      <span>📍 {{ shop.get_quartier_display }}, Brazzaville</span>
+      <span>
+        <span style="color:var(--gold)">★</span>
+        <strong>{{ shop.average_rating }}</strong>
+        <span style="color:var(--mut)">({{ shop.review_count }} avis)</span>
+      </span>
+      <span class="flex gap-8 align-center">
+        <span class="odot {% if shop.is_open %}odot-on{% else %}odot-off{% endif %}"></span>
+        {% if shop.is_open %}Ouvert maintenant{% else %}Fermé actuellement{% endif %}
+      </span>
+    </div>
+  </div>
+</div>
+
+<!-- Content -->
+<div class="sec-sm">
+  <div class="shop-detail-grid">
+
+    <!-- Left: main info -->
+    <div>
+      <!-- Description -->
+      <div class="dbox">
+        <div class="dbox-h"><div class="dbox-t">À propos</div></div>
+        <div class="dbox-b">
+          <p style="color:var(--mut);line-height:1.75;font-size:.93rem">{{ shop.description }}</p>
+          <div class="flex gap-16 flex-wrap mt-16" style="font-size:.85rem;color:var(--txt)">
+            {% if shop.phone %}<span>📞 <a href="tel:{{ shop.phone }}" style="color:var(--gold-lt)">{{ shop.phone }}</a></span>{% endif %}
+            {% if shop.whatsapp %}<span>💬 <a href="https://wa.me/{{ shop.whatsapp }}" target="_blank" style="color:var(--green)">WhatsApp</a></span>{% endif %}
+            {% if shop.email %}<span>✉️ <a href="mailto:{{ shop.email }}" style="color:var(--gold-lt)">{{ shop.email }}</a></span>{% endif %}
+          </div>
+        </div>
+      </div>
+
+      <!-- Photos -->
+      {% if photos %}
+      <div class="dbox">
+        <div class="dbox-h"><div class="dbox-t">📸 Photos</div></div>
+        <div class="dbox-b">
+          <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(160px,1fr));gap:10px">
+            {% for photo in photos %}
+            <img src="{{ photo.image.url }}" alt="{{ photo.caption|default:shop.name }}"
+              style="width:100%;height:140px;object-fit:cover;border-radius:var(--rsm);cursor:pointer"
+              onclick="window.open('{{ photo.image.url }}','_blank')">
+            {% endfor %}
+          </div>
+        </div>
+      </div>
+      {% endif %}
+
+      <!-- Services -->
+      <div class="dbox">
+        <div class="dbox-h">
+          <div class="dbox-t">✂️ Services & Tarifs</div>
+          {% if user.is_authenticated %}
+          <a href="{% url 'book_service' shop.slug %}" class="btn btn-gold btn-sm">📅 Réserver</a>
+          {% endif %}
+        </div>
+        <div class="dbox-b">
+          {% if services %}
+          {% for service in services %}
+          <div class="srv-item">
+            <div>
+              <div class="srv-nm">{{ service.name }}</div>
+              <div class="srv-dur">⏱ {{ service.duration_minutes }} min{% if service.description %} · {{ service.description|truncatechars:60 }}{% endif %}</div>
+            </div>
+            <div class="flex gap-12 align-center">
+              <span class="srv-pr">{{ service.price|floatformat:"0" }} FCFA</span>
+              {% if user.is_authenticated %}
+              <a href="{% url 'book_service_with_service' shop.slug service.id %}" class="btn btn-gold btn-sm">Réserver</a>
+              {% endif %}
+            </div>
+          </div>
+          {% endfor %}
+          {% else %}
+          <p class="text-mut text-sm">Contactez la boutique pour connaître les services disponibles.</p>
+          {% endif %}
+        </div>
+      </div>
+
+      <!-- Reviews -->
+      <div class="dbox">
+        <div class="dbox-h">
+          <div class="dbox-t">⭐ Avis clients ({{ shop.review_count }})</div>
+          {% if user.is_authenticated %}
+          <button class="btn btn-outline btn-sm" onclick="openOv('ov-review')">Laisser un avis</button>
+          {% endif %}
+        </div>
+        <div class="dbox-b">
+          {% if reviews %}
+          {% for review in reviews %}
+          <div class="rev-card">
+            <div class="rev-h">
+              <div class="rev-av">{{ review.client.get_initials }}</div>
+              <div>
+                <div class="rev-nm">{{ review.client.get_full_name }}</div>
+                <div class="rev-dt" style="color:var(--gold)">
+                  {% for i in "12345" %}{% if forloop.counter <= review.rating %}★{% else %}☆{% endif %}{% endfor %}
+                  · {{ review.created_at|timesince }} ago
+                </div>
+              </div>
+              {% if review.title %}
+              <div style="margin-left:auto;font-size:.8rem;font-weight:600;color:var(--parch)">{{ review.title }}</div>
+              {% endif %}
+            </div>
+            <div class="rev-txt">{{ review.comment }}</div>
+            {% if review.owner_reply %}
+            <div class="rev-reply">
+              <strong style="color:var(--gold-lt)">Réponse du propriétaire :</strong> {{ review.owner_reply }}
+            </div>
+            {% endif %}
+          </div>
+          {% endfor %}
+          {% else %}
+          <div style="text-align:center;padding:30px;color:var(--mut)">
+            <div style="font-size:2.5rem;margin-bottom:12px">⭐</div>
+            <p>Aucun avis pour le moment. {% if user.is_authenticated %}Soyez le premier !{% endif %}</p>
+          </div>
+          {% endif %}
+        </div>
+      </div>
+    </div>
+
+    <!-- Right: sticky info -->
+    <aside class="shop-info-sticky">
+      <!-- Actions -->
+      <div class="dbox" style="margin-bottom:20px">
+        <div class="dbox-b" style="display:flex;flex-direction:column;gap:10px">
+          {% if user.is_authenticated %}
+          <a href="{% url 'book_service' shop.slug %}" class="btn btn-gold btn-w btn-lg">📅 Prendre rendez-vous</a>
+          {% if shop.whatsapp %}
+          <a href="https://wa.me/{{ shop.whatsapp }}" target="_blank" class="btn btn-w" style="background:#25D366;color:#fff">💬 Contacter sur WhatsApp</a>
+          {% elif shop.phone %}
+          <a href="tel:{{ shop.phone }}" class="btn btn-ghost btn-w">📞 Appeler {{ shop.phone }}</a>
+          {% endif %}
+          <a href="{% url 'start_conversation' shop.slug %}" class="btn btn-ghost btn-w">✉️ Envoyer un message</a>
+          <button class="btn {% if is_favorite %}btn-red{% else %}btn-ghost{% endif %} btn-w"
+            onclick="toggleFavAjax(this, '{{ shop.id }}')"
+            id="fav-btn">
+            {% if is_favorite %}❤️ Retirer des favoris{% else %}🤍 Ajouter aux favoris{% endif %}
+          </button>
+          {% else %}
+          <a href="{% url 'login' %}?next={{ request.path }}" class="btn btn-gold btn-w btn-lg">📅 Réserver (connexion requise)</a>
+          {% endif %}
+        </div>
+      </div>
+
+      <!-- Horaires -->
+      <div class="dbox" style="margin-bottom:20px">
+        <div class="dbox-h"><div class="dbox-t">🕐 Horaires</div></div>
+        <div class="dbox-b">
+          {% if schedules %}
+          {% for sched in schedules %}
+          <div class="sched-row">
+            <span class="sched-day">{{ sched.get_day_display }}</span>
+            {% if sched.is_closed %}
+            <span class="sched-closed">Fermé</span>
+            {% else %}
+            <span class="sched-time">{{ sched.open_time|time:"H:i" }}–{{ sched.close_time|time:"H:i" }}</span>
+            {% endif %}
+          </div>
+          {% endfor %}
+          {% else %}
+          <p class="text-mut text-sm">Contactez la boutique pour connaître les horaires.</p>
+          {% endif %}
+        </div>
+      </div>
+
+      <!-- Localisation -->
+      <div class="dbox">
+        <div class="dbox-h"><div class="dbox-t">📍 Localisation</div></div>
+        <div class="dbox-b">
+          <p class="text-sm text-mut" style="margin-bottom:12px">{{ shop.address }}</p>
+          {% if shop.latitude and shop.longitude %}
+          <div id="mini-map" style="height:180px;border-radius:var(--rsm);overflow:hidden"></div>
+          {% else %}
+          <p class="text-sm text-mut">{{ shop.get_quartier_display }}, Brazzaville</p>
+          {% endif %}
+        </div>
+      </div>
+    </aside>
+  </div>
+
+  <!-- Related shops -->
+  {% if related_shops %}
+  <div style="margin-top:48px">
+    <div class="sec-header">
+      <div class="tag">✦ Similaires</div>
+      <h2 class="sec-title">Boutiques similaires</h2>
+    </div>
+    <div class="shop-grid" style="grid-template-columns:repeat(auto-fill,minmax(260px,1fr))">
+      {% for rshop in related_shops %}
+      {% include "base/shop_card.html" with shop=rshop %}
+      {% endfor %}
+    </div>
+  </div>
+  {% endif %}
+</div>
+
+<!-- Review Modal -->
+{% if user.is_authenticated %}
+<div class="ov" id="ov-review">
+  <div class="modal">
+    <div class="mh"><div class="mt">⭐ Laisser un avis</div><button class="mc" onclick="closeOv('ov-review')">✕</button></div>
+    <div class="mb">
+      <div class="fg">
+        <label class="lbl">Votre note</label>
+        <div id="star-container" style="display:flex;gap:6px;font-size:2.2rem;cursor:pointer;margin-top:4px;color:var(--mut)">
+          <span>☆</span><span>☆</span><span>☆</span><span>☆</span><span>☆</span>
+        </div>
+        <input type="hidden" id="review-rating" value="0">
+      </div>
+      <div class="fg">
+        <label class="lbl">Titre (optionnel)</label>
+        <input class="inp" id="review-title" placeholder="Ex: Excellent service, je recommande !">
+      </div>
+      <div class="fg">
+        <label class="lbl">Votre commentaire *</label>
+        <textarea class="ta" id="review-comment" placeholder="Décrivez votre expérience : qualité du service, accueil, propreté, rapport qualité-prix…"></textarea>
+      </div>
+    </div>
+    <div class="mf">
+      <button class="btn btn-ghost" onclick="closeOv('ov-review')">Annuler</button>
+      <button class="btn btn-gold" id="submit-review-btn" onclick="submitReview('{{ shop.slug }}')">Publier l'avis</button>
+    </div>
+  </div>
+</div>
+{% endif %}
+{% endblock %}
+
+{% block extra_scripts %}
+{% if shop.latitude and shop.longitude %}
+<script>
+document.addEventListener('DOMContentLoaded', () => {
+  if (!window.L) return;
+  const m = L.map('mini-map', { zoomControl: false, scrollWheelZoom: false })
+    .setView([{{ shop.latitude }}, {{ shop.longitude }}], 15);
+  L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png').addTo(m);
+  const icon = L.divIcon({
+    html: '<div style="width:36px;height:36px;border-radius:50%;background:#111;border:2.5px solid #C9973A;display:flex;align-items:center;justify-content:center;font-size:1.1rem">{{ shop.category_emoji }}</div>',
+    className: '', iconSize:[36,36], iconAnchor:[18,18]
+  });
+  L.marker([{{ shop.latitude }}, {{ shop.longitude }}], {icon}).addTo(m);
+});
+</script>
+{% endif %}
+{% endblock %}

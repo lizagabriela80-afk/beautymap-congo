@@ -1,0 +1,155 @@
+{% extends "base/base.html" %}
+{% block title %}Créer ma boutique{% endblock %}
+{% block footer %}{% endblock %}
+
+{% block content %}
+<div style="min-height:calc(100vh - 68px);display:flex;align-items:center;justify-content:center;padding:40px 20px">
+  <div style="width:100%;max-width:600px">
+
+    <!-- En-tête -->
+    <div style="text-align:center;margin-bottom:40px">
+      <div style="font-size:3.5rem;margin-bottom:16px">🏪</div>
+      <h1 style="font-family:'Cormorant Garamond',serif;font-size:2.2rem;color:var(--parch);margin-bottom:12px">
+        Créez votre boutique
+      </h1>
+      <p style="color:var(--mut);line-height:1.7;max-width:440px;margin:0 auto">
+        Bienvenue {{ request.user.first_name }} ! Configurez votre boutique en quelques minutes
+        pour apparaître sur la carte et recevoir des réservations.
+      </p>
+    </div>
+
+    <!-- Messages -->
+    {% if messages %}
+    <div style="margin-bottom:20px">
+      {% for message in messages %}
+      <div class="dmsg dmsg-{{ message.tags }}">
+        <span>{{ message }}</span>
+        <button onclick="this.parentElement.remove()" class="dmsg-close">✕</button>
+      </div>
+      {% endfor %}
+    </div>
+    {% endif %}
+
+    <!-- Formulaire de création de boutique -->
+    <div style="background:var(--ink2);border:1px solid rgba(201,151,58,.18);border-radius:var(--rxl);padding:36px">
+
+      <form method="post" action="{% url 'shops:create_shop' %}">
+        {% csrf_token %}
+
+        <!-- Infos boutique -->
+        <div style="margin-bottom:24px">
+          <div style="font-family:'Cormorant Garamond',serif;font-size:1.2rem;color:var(--parch);font-weight:600;margin-bottom:16px;padding-bottom:10px;border-bottom:1px solid rgba(255,255,255,.07)">
+            📋 Informations de la boutique
+          </div>
+
+          <div class="fg">
+            <label class="lbl">Nom de la boutique *</label>
+            <input class="inp" name="name" placeholder="Ex : Salon Élégance" required
+              value="{{ request.POST.name|default:'' }}">
+          </div>
+
+          <div class="fg-row">
+            <div class="fg">
+              <label class="lbl">Catégorie *</label>
+              <select class="sel" name="category" required>
+                <option value="">-- Choisir --</option>
+                <option value="coiffure"   {% if request.POST.category == 'coiffure'   %}selected{% endif %}>✂️ Coiffure</option>
+                <option value="esthetique" {% if request.POST.category == 'esthetique' %}selected{% endif %}>💆 Esthétique</option>
+                <option value="onglerie"   {% if request.POST.category == 'onglerie'   %}selected{% endif %}>💅 Onglerie</option>
+                <option value="vetements"  {% if request.POST.category == 'vetements'  %}selected{% endif %}>👗 Vêtements</option>
+                <option value="barbier"    {% if request.POST.category == 'barbier'    %}selected{% endif %}>🪒 Barbier</option>
+                <option value="maquillage" {% if request.POST.category == 'maquillage' %}selected{% endif %}>💄 Maquillage</option>
+                <option value="spa"        {% if request.POST.category == 'spa'        %}selected{% endif %}>🛁 Spa & Bien-être</option>
+                <option value="autre"      {% if request.POST.category == 'autre'      %}selected{% endif %}>🏪 Autre</option>
+              </select>
+            </div>
+            <div class="fg">
+              <label class="lbl">Quartier *</label>
+              <select class="sel" name="quartier" required>
+                <option value="">-- Choisir --</option>
+                <option value="bacongo"    {% if request.POST.quartier == 'bacongo'    %}selected{% endif %}>Bacongo</option>
+                <option value="poto_poto"  {% if request.POST.quartier == 'poto_poto'  %}selected{% endif %}>Poto-Poto</option>
+                <option value="moungali"   {% if request.POST.quartier == 'moungali'   %}selected{% endif %}>Moungali</option>
+                <option value="ouenze"     {% if request.POST.quartier == 'ouenze'     %}selected{% endif %}>Ouenzé</option>
+                <option value="talangai"   {% if request.POST.quartier == 'talangai'   %}selected{% endif %}>Talangaï</option>
+                <option value="makelekele" {% if request.POST.quartier == 'makelekele' %}selected{% endif %}>Makélékélé</option>
+                <option value="mfilou"     {% if request.POST.quartier == 'mfilou'     %}selected{% endif %}>Mfilou</option>
+                <option value="djiri"      {% if request.POST.quartier == 'djiri'      %}selected{% endif %}>Djiri</option>
+                <option value="autre"      {% if request.POST.quartier == 'autre'      %}selected{% endif %}>Autre</option>
+              </select>
+            </div>
+          </div>
+
+          <div class="fg">
+            <label class="lbl">Adresse complète</label>
+            <input class="inp" name="address"
+              placeholder="Ex : Avenue des Palmiers, face au marché, Bacongo"
+              value="{{ request.POST.address|default:'' }}">
+          </div>
+
+          <div class="fg">
+            <label class="lbl">Description</label>
+            <textarea class="ta" name="description"
+              placeholder="Décrivez votre boutique, vos spécialités, votre expérience…"
+              style="min-height:90px">{{ request.POST.description|default:'' }}</textarea>
+          </div>
+        </div>
+
+        <!-- Contact -->
+        <div style="margin-bottom:24px">
+          <div style="font-family:'Cormorant Garamond',serif;font-size:1.2rem;color:var(--parch);font-weight:600;margin-bottom:16px;padding-bottom:10px;border-bottom:1px solid rgba(255,255,255,.07)">
+            📞 Contact
+          </div>
+
+          <div class="fg-row">
+            <div class="fg">
+              <label class="lbl">Téléphone *</label>
+              <input class="inp" name="phone" type="tel"
+                placeholder="+242 06 XXX XX XX" required
+                value="{{ request.POST.phone|default:request.user.phone }}">
+            </div>
+            <div class="fg">
+              <label class="lbl">WhatsApp</label>
+              <input class="inp" name="whatsapp" type="tel"
+                placeholder="+242 06 XXX XX XX"
+                value="{{ request.POST.whatsapp|default:'' }}">
+            </div>
+          </div>
+
+          <div class="fg">
+            <label class="lbl">Email de la boutique</label>
+            <input class="inp" name="email" type="email"
+              placeholder="boutique@email.com"
+              value="{{ request.POST.email|default:'' }}">
+          </div>
+        </div>
+
+        <!-- Bouton soumettre -->
+        <button type="submit" class="btn btn-gold btn-w btn-lg" id="submit-btn">
+          🚀 Créer ma boutique
+        </button>
+
+        <p style="text-align:center;font-size:.78rem;color:var(--mut);margin-top:12px">
+          Vous pourrez ajouter vos services, horaires et photos depuis votre tableau de bord.
+        </p>
+      </form>
+    </div>
+
+    <div style="text-align:center;margin-top:20px">
+      <a href="{% url 'logout' %}" style="font-size:.84rem;color:var(--mut)">
+        Se déconnecter
+      </a>
+    </div>
+  </div>
+</div>
+{% endblock %}
+
+{% block extra_scripts %}
+<script>
+document.querySelector('form').addEventListener('submit', function() {
+  const btn = document.getElementById('submit-btn');
+  btn.disabled    = true;
+  btn.textContent = '⏳ Création en cours…';
+});
+</script>
+{% endblock %}

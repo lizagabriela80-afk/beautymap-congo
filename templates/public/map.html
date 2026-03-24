@@ -1,0 +1,22 @@
+{% extends "base/base.html" %}
+{% block title %}Carte{% endblock %}
+{% block content %}
+<div class="sec-sm">
+  <div style="max-width:1400px;margin:0 auto">
+    <div class="flex-between flex-wrap gap-16" style="margin-bottom:16px">
+      <div>
+        <h1 class="sec-title" style="margin-bottom:4px">🗺️ Carte des boutiques</h1>
+        <p class="text-mut text-sm">Toutes les boutiques de Brazzaville et environs</p>
+      </div>
+      <div class="pills map-pills">
+        <button class="pill on" onclick="filterMap('',this)">Tous</button>
+        {% for val, label in categories %}
+        <button class="pill" onclick="filterMap('{{ val }}',this)">{{ label }}</button>
+        {% endfor %}
+      </div>
+    </div>
+    <div id="leaflet-map"></div>
+  </div>
+</div>
+<script id="shops-json-data" type="application/json">{{ shops_json|safe }}</script>
+{% endblock %}

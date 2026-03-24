@@ -1,0 +1,226 @@
+{% extends "base/base.html" %}
+{% block title %}Créer un compte{% endblock %}
+
+{% block content %}
+<div class="auth-wrap" style="padding:40px 20px">
+  <div class="auth-box" style="max-width:540px">
+
+    <div class="auth-logo">
+      <div style="font-size:2.5rem;margin-bottom:8px">🎉</div>
+      <div class="auth-title">Rejoignez-nous !</div>
+      <div class="auth-sub">Créez votre compte BeautyMap Congo gratuitement</div>
+    </div>
+
+    <!-- Messages Django -->
+    {% if messages %}
+    <div style="margin-bottom:16px">
+      {% for message in messages %}
+      <div class="dmsg dmsg-{{ message.tags }}">
+        <span>{{ message }}</span>
+        <button onclick="this.parentElement.remove()" class="dmsg-close">✕</button>
+      </div>
+      {% endfor %}
+    </div>
+    {% endif %}
+
+    <!-- Onglets -->
+    <div class="tabs">
+      <button class="tab on" id="tab-btn-client" onclick="switchRegTab('client')">👤 Client</button>
+      <button class="tab"    id="tab-btn-pro"    onclick="switchRegTab('pro')">🏪 Professionnel</button>
+    </div>
+
+    <!-- ══════════════════════════════════════
+         FORMULAIRE CLIENT
+    ══════════════════════════════════════ -->
+    <form id="form-client"
+          method="post"
+          action="{% url 'register' %}"
+          style="display:block">
+      {% csrf_token %}
+      <input type="hidden" name="user_type" value="client">
+
+      <div class="fg-row">
+        <div class="fg">
+          <label class="lbl">Prénom *</label>
+          <input class="inp" name="first_name" placeholder="Amélie"
+            required value="{{ request.POST.first_name|default:'' }}">
+        </div>
+        <div class="fg">
+          <label class="lbl">Nom</label>
+          <input class="inp" name="last_name" placeholder="Koumba"
+            value="{{ request.POST.last_name|default:'' }}">
+        </div>
+      </div>
+
+      <div class="fg">
+        <label class="lbl">Email *</label>
+        <input class="inp" type="email" name="email"
+          placeholder="votre@email.com" required autocomplete="email"
+          value="{{ request.POST.email|default:'' }}">
+      </div>
+
+      <div class="fg">
+        <label class="lbl">Téléphone / WhatsApp</label>
+        <input class="inp" type="tel" name="phone"
+          placeholder="+242 06 XXX XX XX"
+          value="{{ request.POST.phone|default:'' }}">
+        <div class="form-help">Utilisé pour les notifications et la connexion OTP</div>
+      </div>
+
+      <div class="fg">
+        <label class="lbl">Mot de passe *</label>
+        <div style="position:relative">
+          <input class="inp" type="password" name="password"
+            id="pwd-client" placeholder="Minimum 8 caractères"
+            required minlength="8" style="padding-right:44px">
+          <button type="button" onclick="togglePwdField('pwd-client')"
+            style="position:absolute;right:12px;top:50%;transform:translateY(-50%);
+                   background:none;border:none;color:var(--mut);cursor:pointer;font-size:1rem"
+            title="Afficher">👁️</button>
+        </div>
+      </div>
+
+      <button type="submit" id="btn-client" class="btn btn-gold btn-w btn-lg">
+        ✅ Créer mon compte client
+      </button>
+    </form>
+
+    <!-- ══════════════════════════════════════
+         FORMULAIRE PROFESSIONNEL
+    ══════════════════════════════════════ -->
+    <form id="form-pro"
+          method="post"
+          action="{% url 'register' %}"
+          style="display:none">
+      {% csrf_token %}
+      <input type="hidden" name="user_type" value="pro">
+
+      <div style="background:rgba(201,151,58,.08);border:1px solid rgba(201,151,58,.2);
+        border-radius:var(--rsm);padding:11px 15px;margin-bottom:18px;font-size:.83rem;color:var(--mut)">
+        🎁 <strong style="color:var(--gold-lt)">14 jours d'essai Premium offerts</strong>
+        · Aucune carte bancaire requise
+      </div>
+
+      <div class="fg">
+        <label class="lbl">Nom du salon / boutique *</label>
+        <input class="inp" name="shop_name"
+          placeholder="Ex : Salon Élégance" required
+          value="{{ request.POST.shop_name|default:'' }}">
+      </div>
+
+      <div class="fg-row">
+        <div class="fg">
+          <label class="lbl">Catégorie *</label>
+          <select class="sel" name="category" required>
+            {% for val, label in categories %}
+            <option value="{{ val }}"
+              {% if request.POST.category == val %}selected{% endif %}>
+              {{ label }}
+            </option>
+            {% endfor %}
+          </select>
+        </div>
+        <div class="fg">
+          <label class="lbl">Quartier *</label>
+          <select class="sel" name="quartier" required>
+            {% for val, label in quartiers %}
+            <option value="{{ val }}"
+              {% if request.POST.quartier == val %}selected{% endif %}>
+              {{ label }}
+            </option>
+            {% endfor %}
+          </select>
+        </div>
+      </div>
+
+      <div class="fg-row">
+        <div class="fg">
+          <label class="lbl">Prénom *</label>
+          <input class="inp" name="first_name" placeholder="Marie" required>
+        </div>
+        <div class="fg">
+          <label class="lbl">Nom</label>
+          <input class="inp" name="last_name" placeholder="Kouba">
+        </div>
+      </div>
+
+      <div class="fg">
+        <label class="lbl">Email professionnel *</label>
+        <input class="inp" type="email" name="email"
+          placeholder="pro@email.com" required autocomplete="email">
+      </div>
+
+      <div class="fg">
+        <label class="lbl">Téléphone / WhatsApp *</label>
+        <input class="inp" type="tel" name="phone"
+          placeholder="+242 06 XXX XX XX" required>
+      </div>
+
+      <div class="fg">
+        <label class="lbl">Mot de passe *</label>
+        <div style="position:relative">
+          <input class="inp" type="password" name="password"
+            id="pwd-pro" placeholder="Minimum 8 caractères"
+            required minlength="8" style="padding-right:44px">
+          <button type="button" onclick="togglePwdField('pwd-pro')"
+            style="position:absolute;right:12px;top:50%;transform:translateY(-50%);
+                   background:none;border:none;color:var(--mut);cursor:pointer;font-size:1rem"
+            title="Afficher">👁️</button>
+        </div>
+      </div>
+
+      <button type="submit" id="btn-pro" class="btn btn-gold btn-w btn-lg">
+        🚀 Créer ma boutique gratuitement
+      </button>
+    </form>
+
+    <div class="auth-divider"><span>ou</span></div>
+    <div class="text-center text-sm text-mut">
+      Déjà inscrit ? <a href="{% url 'login' %}" class="auth-link">Se connecter</a>
+    </div>
+    <p class="text-center text-xs text-mut" style="margin-top:14px">
+      En créant un compte, vous acceptez nos
+      <a href="/cgu/" class="auth-link">CGU</a> et notre
+      <a href="/confidentialite/" class="auth-link">politique de confidentialité</a>.
+    </p>
+
+  </div>
+</div>
+{% endblock %}
+
+{% block extra_scripts %}
+<script>
+/* ── Basculer entre les deux formulaires ── */
+function switchRegTab(type) {
+  const isClient = type === 'client';
+  document.getElementById('tab-btn-client').classList.toggle('on',  isClient);
+  document.getElementById('tab-btn-pro').classList.toggle('on',    !isClient);
+  document.getElementById('form-client').style.display = isClient ? 'block' : 'none';
+  document.getElementById('form-pro').style.display    = isClient ? 'none'  : 'block';
+}
+
+/* ── Afficher / masquer mot de passe ── */
+function togglePwdField(id) {
+  const f = document.getElementById(id);
+  f.type = f.type === 'password' ? 'text' : 'password';
+}
+
+/* ── Feedback bouton lors de la soumission ── */
+document.getElementById('form-client').addEventListener('submit', function() {
+  const btn = document.getElementById('btn-client');
+  btn.disabled    = true;
+  btn.textContent = '⏳ Création en cours…';
+});
+
+document.getElementById('form-pro').addEventListener('submit', function() {
+  const btn = document.getElementById('btn-pro');
+  btn.disabled    = true;
+  btn.textContent = '⏳ Création en cours…';
+});
+
+/* ── Restaurer l'onglet Pro si erreur côté serveur ── */
+{% if request.POST.user_type == 'pro' %}
+switchRegTab('pro');
+{% endif %}
+</script>
+{% endblock %}

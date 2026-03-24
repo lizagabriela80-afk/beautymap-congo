@@ -1,0 +1,316 @@
+{% extends "base/base.html" %}
+{% block title %}Administration — BeautyMap Congo{% endblock %}
+{% block footer %}{% endblock %}
+
+{% block content %}
+<div class="dash-wrap">
+
+  <!-- ═══ SIDEBAR ═══ -->
+  <aside class="sidebar">
+    <div class="sb-user">
+      <div class="sb-av">{{ request.user.get_initials }}</div>
+      <div>
+        <div class="sb-nm">{{ request.user.get_full_name }}</div>
+        <div class="sb-rl">🛡️ Administrateur</div>
+      </div>
+    </div>
+
+    <div class="sb-sec">
+      <div class="sb-lbl">Administration</div>
+      <a class="sb-item {% if active_tab == 'overview' %}on{% endif %}" href="?tab=overview">
+        <span class="sb-ico">📊</span> Vue d'ensemble
+      </a>
+      <a class="sb-item {% if active_tab == 'users' %}on{% endif %}" href="?tab=users">
+        <span class="sb-ico">👥</span> Utilisateurs
+        <span class="sb-bdg">{{ stats.users }}</span>
+      </a>
+      <a class="sb-item {% if active_tab == 'shops' %}on{% endif %}" href="?tab=shops">
+        <span class="sb-ico">🏪</span> Boutiques
+        <span class="sb-bdg">{{ stats.shops }}</span>
+      </a>
+      <a class="sb-item {% if active_tab == 'bookings' %}on{% endif %}" href="?tab=bookings">
+        <span class="sb-ico">📅</span> Réservations
+      </a>
+      <a class="sb-item {% if active_tab == 'reviews' %}on{% endif %}" href="?tab=reviews">
+        <span class="sb-ico">⭐</span> Avis à modérer
+        {% if stats.reviews_pending %}<span class="sb-bdg">{{ stats.reviews_pending }}</span>{% endif %}
+      </a>
+    </div>
+
+    <div class="sb-sec">
+      <div class="sb-lbl">Accès rapide</div>
+      <a class="sb-item" href="/admin/" target="_blank">
+        <span class="sb-ico">⚙️</span> Django Admin
+      </a>
+      <a class="sb-item" href="{% url 'shops:home' %}">
+        <span class="sb-ico">🌐</span> Voir le site
+      </a>
+      <a class="sb-item" href="{% url 'logout' %}">
+        <span class="sb-ico">🚪</span> Déconnexion
+      </a>
+    </div>
+  </aside>
+
+  <!-- ═══ CONTENU PRINCIPAL ═══ -->
+  <main class="dash-main">
+
+    <!-- Messages Django -->
+    {% if messages %}
+    <div style="margin-bottom:20px">
+      {% for message in messages %}
+      <div class="dmsg dmsg-{{ message.tags }}">
+        <span>{{ message }}</span>
+        <button onclick="this.parentElement.remove()" class="dmsg-close">✕</button>
+      </div>
+      {% endfor %}
+    </div>
+    {% endif %}
+
+    <!-- ══════════════ VUE D'ENSEMBLE ══════════════ -->
+    {% if active_tab == 'overview' or not active_tab %}
+
+    <h1 style="font-family:'Cormorant Garamond',serif;font-size:1.8rem;color:var(--parch);margin-bottom:24px">
+      📊 Tableau de bord
+    </h1>
+
+    <!-- Statistiques globales -->
+    <div class="stat-row">
+      <div class="stat-box">
+        <div class="sl">Total utilisateurs</div>
+        <div class="sv">{{ stats.users }}</div>
+        <div class="sd">
+          <span style="color:var(--gold-lt)">{{ stats.clients }} clients</span> ·
+          <span style="color:var(--green)">{{ stats.pros }} pros</span>
+        </div>
+      </div>
+      <div class="stat-box">
+        <div class="sl">Boutiques actives</div>
+        <div class="sv">{{ stats.shops_active }}</div>
+        <div class="sd sd-up">sur {{ stats.shops }} au total</div>
+      </div>
+      <div class="stat-box">
+        <div class="sl">Réservations</div>
+        <div class="sv">{{ stats.bookings }}</div>
+        <div class="sd">{{ stats.bookings_today }} aujourd'hui</div>
+      </div>
+      <div class="stat-box">
+        <div class="sl">Revenus estimés</div>
+        <div class="sv" style="font-size:1.4rem">
+          {% if stats.revenue %}{{ stats.revenue|floatformat:"0" }}{% else %}0{% endif %}
+        </div>
+        <div class="sd" style="color:var(--mut)">FCFA</div>
+      </div>
+    </div>
+
+    <!-- Avis en attente -->
+    {% if stats.reviews_pending %}
+    <div class="dbox" style="border-color:rgba(201,151,58,.3)">
+      <div class="dbox-h">
+        <div class="dbox-t">⚠️ Avis en attente de modération</div>
+        <a href="?tab=reviews" class="btn btn-gold btn-sm">Modérer ({{ stats.reviews_pending }})</a>
+      </div>
+    </div>
+    {% endif %}
+
+    <!-- Derniers utilisateurs -->
+    <div class="dbox">
+      <div class="dbox-h">
+        <div class="dbox-t">👥 Derniers inscrits</div>
+        <a href="?tab=users" class="btn btn-ghost btn-sm">Voir tout</a>
+      </div>
+      <div class="tbl-wrap">
+        <table class="tbl">
+          <thead>
+            <tr><th>Nom</th><th>Email</th><th>Type</th><th>Inscrit le</th><th>Statut</th></tr>
+          </thead>
+          <tbody>
+            {% for u in recent_users %}
+            <tr>
+              <td><strong>{{ u.get_full_name }}</strong></td>
+              <td style="color:var(--mut);font-size:.82rem">{{ u.email }}</td>
+              <td>
+                {% if u.user_type == 'admin' %}<span class="st" style="background:rgba(130,80,200,.15);color:#C090F0">🛡️ Admin</span>
+                {% elif u.user_type == 'pro' %}<span class="st st-ok">🏪 Pro</span>
+                {% else %}<span class="st st-wait">👤 Client</span>{% endif %}
+              </td>
+              <td style="font-size:.82rem;color:var(--mut)">{{ u.date_joined|date:"d/m/Y H:i" }}</td>
+              <td>
+                {% if u.is_active %}<span class="st st-ok">✓ Actif</span>
+                {% else %}<span class="st st-no">✗ Inactif</span>{% endif %}
+              </td>
+            </tr>
+            {% endfor %}
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- Dernières boutiques -->
+    <div class="dbox">
+      <div class="dbox-h">
+        <div class="dbox-t">🏪 Dernières boutiques créées</div>
+        <a href="?tab=shops" class="btn btn-ghost btn-sm">Voir tout</a>
+      </div>
+      <div class="tbl-wrap">
+        <table class="tbl">
+          <thead>
+            <tr><th>Boutique</th><th>Catégorie</th><th>Propriétaire</th><th>Quartier</th><th>Statut</th></tr>
+          </thead>
+          <tbody>
+            {% for shop in recent_shops %}
+            <tr>
+              <td>
+                <a href="{% url 'shops:detail' shop.slug %}"
+                   style="color:var(--parch);font-weight:600;text-decoration:none"
+                   target="_blank">
+                  {{ shop.category_emoji }} {{ shop.name }}
+                </a>
+              </td>
+              <td style="font-size:.82rem">{{ shop.get_category_display }}</td>
+              <td style="font-size:.82rem;color:var(--mut)">{{ shop.owner.get_full_name }}</td>
+              <td style="font-size:.82rem;color:var(--mut)">{{ shop.get_quartier_display }}</td>
+              <td>
+                {% if shop.is_active %}<span class="st st-ok">✓ Actif</span>
+                {% else %}<span class="st st-no">✗ Inactif</span>{% endif %}
+                {% if shop.is_verified %}<span class="st st-done" style="margin-left:4px">✓ Vérifié</span>{% endif %}
+              </td>
+            </tr>
+            {% endfor %}
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- ══════════════ UTILISATEURS ══════════════ -->
+    {% elif active_tab == 'users' %}
+    <h2 style="font-family:'Cormorant Garamond',serif;font-size:1.4rem;color:var(--parch);margin-bottom:20px">
+      👥 Gestion des utilisateurs ({{ stats.users }})
+    </h2>
+    <div class="dbox">
+      <div class="tbl-wrap">
+        <table class="tbl">
+          <thead>
+            <tr><th>Nom</th><th>Email</th><th>Téléphone</th><th>Type</th><th>Inscrit le</th><th>Statut</th></tr>
+          </thead>
+          <tbody>
+            {% for u in recent_users %}
+            <tr>
+              <td><strong>{{ u.get_full_name }}</strong></td>
+              <td style="font-size:.82rem;color:var(--mut)">{{ u.email }}</td>
+              <td style="font-size:.82rem;color:var(--mut)">{{ u.phone|default:"—" }}</td>
+              <td>
+                {% if u.user_type == 'admin' %}<span class="st" style="background:rgba(130,80,200,.15);color:#C090F0">🛡️ Admin</span>
+                {% elif u.user_type == 'pro' %}<span class="st st-ok">🏪 Pro</span>
+                {% else %}<span class="st st-wait">👤 Client</span>{% endif %}
+              </td>
+              <td style="font-size:.82rem;color:var(--mut)">{{ u.date_joined|date:"d/m/Y" }}</td>
+              <td>
+                {% if u.is_active %}<span class="st st-ok">✓ Actif</span>
+                {% else %}<span class="st st-no">✗ Inactif</span>{% endif %}
+              </td>
+            </tr>
+            {% endfor %}
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- ══════════════ BOUTIQUES ══════════════ -->
+    {% elif active_tab == 'shops' %}
+    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:20px;flex-wrap:wrap;gap:12px">
+      <h2 style="font-family:'Cormorant Garamond',serif;font-size:1.4rem;color:var(--parch)">
+        🏪 Gestion des boutiques ({{ stats.shops }})
+      </h2>
+    </div>
+    <div class="dbox">
+      <div class="tbl-wrap">
+        <table class="tbl">
+          <thead>
+            <tr><th>Boutique</th><th>Catégorie</th><th>Propriétaire</th><th>Vues</th><th>Note</th><th>Statut</th><th>Actions</th></tr>
+          </thead>
+          <tbody>
+            {% for shop in recent_shops %}
+            <tr>
+              <td>
+                <a href="{% url 'shops:detail' shop.slug %}"
+                   style="color:var(--parch);font-weight:600;text-decoration:none" target="_blank">
+                  {{ shop.category_emoji }} {{ shop.name }}
+                </a><br>
+                <span style="font-size:.73rem;color:var(--mut)">{{ shop.get_quartier_display }}</span>
+              </td>
+              <td style="font-size:.82rem">{{ shop.get_category_display }}</td>
+              <td style="font-size:.82rem;color:var(--mut)">{{ shop.owner.get_full_name }}</td>
+              <td style="font-size:.82rem">{{ shop.views_count }}</td>
+              <td style="color:var(--gold)">
+                {% if shop.average_rating %}{{ shop.average_rating }} ★{% else %}—{% endif %}
+              </td>
+              <td>
+                {% if shop.is_active %}<span class="st st-ok">Actif</span>
+                {% else %}<span class="st st-no">Inactif</span>{% endif %}
+                {% if shop.is_verified %}<br><span class="st st-done" style="margin-top:4px">✓ Vérifié</span>{% endif %}
+              </td>
+              <td>
+                <a href="/admin/shops/shop/{{ shop.id }}/change/"
+                   class="btn btn-ghost btn-sm" target="_blank">✏️</a>
+              </td>
+            </tr>
+            {% endfor %}
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- ══════════════ AVIS ══════════════ -->
+    {% elif active_tab == 'reviews' %}
+    <h2 style="font-family:'Cormorant Garamond',serif;font-size:1.4rem;color:var(--parch);margin-bottom:20px">
+      ⭐ Avis en attente de modération ({{ stats.reviews_pending }})
+    </h2>
+    {% if pending_reviews %}
+    {% for review in pending_reviews %}
+    <div class="rev-card">
+      <div class="rev-h">
+        <div class="rev-av">{{ review.client.get_initials }}</div>
+        <div>
+          <div class="rev-nm">{{ review.client.get_full_name }}</div>
+          <div class="rev-dt" style="color:var(--gold)">
+            {% for i in "12345" %}{% if forloop.counter <= review.rating %}★{% else %}☆{% endif %}{% endfor %}
+            · {{ review.shop.name }} · {{ review.created_at|date:"d/m/Y" }}
+          </div>
+        </div>
+        <div style="margin-left:auto;display:flex;gap:8px">
+          <a href="/admin/reviews/review/{{ review.id }}/change/?is_approved=1"
+             class="btn btn-green btn-sm" target="_blank">✅ Approuver</a>
+          <a href="/admin/reviews/review/{{ review.id }}/delete/"
+             class="btn btn-red btn-sm" target="_blank">🗑️ Supprimer</a>
+        </div>
+      </div>
+      {% if review.title %}
+      <div style="font-weight:600;color:var(--parch);font-size:.88rem;margin-bottom:6px">{{ review.title }}</div>
+      {% endif %}
+      <div class="rev-txt">{{ review.comment }}</div>
+    </div>
+    {% endfor %}
+    {% else %}
+    <div style="text-align:center;padding:60px">
+      <div style="font-size:3rem;margin-bottom:16px">✅</div>
+      <p style="color:var(--mut)">Aucun avis en attente de modération.</p>
+    </div>
+    {% endif %}
+
+    <!-- ══════════════ RÉSERVATIONS ══════════════ -->
+    {% elif active_tab == 'bookings' %}
+    <h2 style="font-family:'Cormorant Garamond',serif;font-size:1.4rem;color:var(--parch);margin-bottom:20px">
+      📅 Réservations ({{ stats.bookings }} au total · {{ stats.bookings_today }} aujourd'hui)
+    </h2>
+    <div style="text-align:center;padding:40px;color:var(--mut)">
+      <div style="font-size:2.5rem;margin-bottom:16px">📅</div>
+      <p style="margin-bottom:16px">Gérez toutes les réservations depuis l'interface Django Admin.</p>
+      <a href="/admin/bookings/booking/" class="btn btn-gold" target="_blank">
+        Ouvrir Django Admin → Réservations
+      </a>
+    </div>
+
+    {% endif %}
+  </main>
+</div>
+{% endblock %}

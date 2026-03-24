@@ -1,0 +1,111 @@
+{% extends "base/base.html" %}
+{% block title %}Réservation — {{ shop.name }}{% endblock %}
+{% block content %}
+<div class="sec-sm">
+  <div style="max-width:960px;margin:0 auto">
+    <div style="margin-bottom:28px">
+      <a href="{% url 'shops:detail' shop.slug %}" class="btn btn-ghost btn-sm">← Retour à la boutique</a>
+    </div>
+    <h1 class="sec-title" style="margin-bottom:6px">📅 Prendre rendez-vous</h1>
+    <p class="text-mut" style="margin-bottom:32px">{{ shop.name }} · {{ shop.get_quartier_display }}, Brazzaville</p>
+
+    <div class="booking-wrap">
+      <!-- Form -->
+      <form method="post">
+        {% csrf_token %}
+        <input type="hidden" id="booking-shop-id" value="{{ shop.id }}">
+
+        <div class="dbox">
+          <div class="dbox-h"><div class="dbox-t">1. Choisir le service</div></div>
+          <div class="dbox-b">
+            <select class="sel" name="service" id="booking-service" required onchange="updateSummary()">
+              {% if selected_service %}
+              <option value="{{ selected_service.id }}" selected>{{ selected_service.name }} — {{ selected_service.price|floatformat:"0" }} FCFA ({{ selected_service.duration_minutes }} min)</option>
+              {% endif %}
+              {% for svc in services %}
+              {% if svc != selected_service %}
+              <option value="{{ svc.id }}">{{ svc.name }} — {{ svc.price|floatformat:"0" }} FCFA ({{ svc.duration_minutes }} min)</option>
+              {% endif %}
+              {% endfor %}
+            </select>
+          </div>
+        </div>
+
+        <div class="dbox">
+          <div class="dbox-h"><div class="dbox-t">2. Choisir la date</div></div>
+          <div class="dbox-b">
+            <input class="inp" type="date" name="date" id="booking-date" min="{{ today }}" required onchange="loadSlotsFromForm()">
+          </div>
+        </div>
+
+        <div class="dbox">
+          <div class="dbox-h"><div class="dbox-t">3. Choisir l'heure</div></div>
+          <div class="dbox-b">
+            <input type="hidden" name="time" id="selected-time" required>
+            <div class="slots-grid" id="slots-container">
+              <div class="text-mut text-sm" style="grid-column:1/-1;padding:10px">Sélectionnez d'abord une date.</div>
+            </div>
+          </div>
+        </div>
+
+        <div class="dbox">
+          <div class="dbox-h"><div class="dbox-t">4. Notes (optionnel)</div></div>
+          <div class="dbox-b">
+            <textarea class="ta" name="notes" placeholder="Longueur des cheveux, couleur souhaitée, demande spéciale…" style="min-height:80px"></textarea>
+          </div>
+        </div>
+
+        <button type="submit" class="btn btn-gold btn-w btn-xl">✅ Confirmer le rendez-vous</button>
+      </form>
+
+      <!-- Summary -->
+      <div class="booking-summary">
+        <div style="font-size:.72rem;font-weight:700;color:var(--mut);text-transform:uppercase;letter-spacing:.09em;margin-bottom:14px">Récapitulatif</div>
+        <div style="font-size:1.8rem;margin-bottom:10px">{{ shop.category_emoji }}</div>
+        <div class="bs-shop-name">{{ shop.name }}</div>
+        <div class="bs-service text-mut">{{ selected_service.name|default:"Sélectionnez un service" }}</div>
+        <div class="divider" style="margin:14px 0"></div>
+        <div class="bs-row"><span>Service</span><span id="sum-service">{{ selected_service.name|default:"—" }}</span></div>
+        <div class="bs-row"><span>Durée</span><span id="sum-duration">{% if selected_service %}{{ selected_service.duration_minutes }} min{% else %}—{% endif %}</span></div>
+        <div class="bs-row"><span>Date</span><span id="sum-date">—</span></div>
+        <div class="bs-row"><span>Heure</span><span id="sum-time">—</span></div>
+        <div class="bs-row bs-total"><span>Total</span><span class="bs-price" id="sum-price">{% if selected_service %}{{ selected_service.price|floatformat:"0" }} FCFA{% else %}—{% endif %}</span></div>
+        <div style="font-size:.72rem;color:var(--mut);margin-top:12px;line-height:1.6">
+          📞 Confirmation par SMS<br>
+          ❌ Annulation gratuite jusqu'à 2h avant
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}
+
+{% block extra_scripts %}
+<script>
+function loadSlotsFromForm() {
+  const shopId = document.getElementById('booking-shop-id').value;
+  const serviceId = document.getElementById('booking-service').value;
+  const date = document.getElementById('booking-date').value;
+  const sumDate = document.getElementById('sum-date');
+  if (sumDate && date) sumDate.textContent = new Date(date).toLocaleDateString('fr-FR');
+  if (shopId && serviceId && date) loadSlots(shopId, serviceId, date);
+}
+
+function updateSummary() {
+  const sel = document.getElementById('booking-service');
+  const opt = sel.options[sel.selectedIndex];
+  // parse service name from option text
+  const text = opt.text;
+  const sumService = document.getElementById('sum-service');
+  if (sumService) sumService.textContent = text.split('—')[0].trim();
+}
+
+// Update time summary on slot pick
+const origPickSlot = window.pickSlot;
+window.pickSlot = function(el) {
+  origPickSlot(el);
+  const sumTime = document.getElementById('sum-time');
+  if (sumTime) sumTime.textContent = el.textContent.trim();
+};
+</script>
+{% endblock %}

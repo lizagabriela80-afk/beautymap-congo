@@ -1,0 +1,5 @@
+DROP DATABASE beautymap_db;
+CREATE DATABASE beautymap_db CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
+use beautymap_db;
+DROP TABLE reviews_review;
+SHOW TABLES;

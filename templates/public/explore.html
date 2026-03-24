@@ -1,0 +1,85 @@
+{% extends "base/base.html" %}
+{% block title %}Explorer{% endblock %}
+
+{% block content %}
+<div class="sec">
+  <div style="max-width:1200px;margin:0 auto">
+    <!-- En-tête -->
+    <div style="margin-bottom:28px">
+      <h1 class="sec-title" style="margin-bottom:6px">Explorer les boutiques</h1>
+      <p class="text-mut">{{ total_count }} boutique{{ total_count|pluralize }} trouvée{{ total_count|pluralize }} à Brazzaville</p>
+    </div>
+
+    <!-- Barre de recherche + filtres -->
+    <form method="get" id="explore-form">
+      <div style="display:grid;grid-template-columns:1fr auto auto;gap:12px;margin-bottom:20px;flex-wrap:wrap" class="flex-wrap">
+        <div class="search-wrap">
+          <input class="s-inp" type="text" name="q" id="search-input" value="{{ current_q }}" placeholder="Rechercher un salon, un service, un quartier…">
+          <button class="s-btn" type="submit">🔍</button>
+        </div>
+        <select class="sel" name="quartier" onchange="this.form.submit()" style="width:auto;min-width:160px">
+          <option value="">Tous les quartiers</option>
+          {% for val, label in quartiers %}
+          <option value="{{ val }}" {% if current_quartier == val %}selected{% endif %}>{{ label }}</option>
+          {% endfor %}
+        </select>
+        <select class="sel" name="sort" onchange="this.form.submit()" style="width:auto;min-width:160px">
+          <option value="rating" {% if current_sort == 'rating' %}selected{% endif %}>Mieux notés</option>
+          <option value="newest" {% if current_sort == 'newest' %}selected{% endif %}>Plus récents</option>
+          <option value="name"   {% if current_sort == 'name'   %}selected{% endif %}>Alphabétique</option>
+        </select>
+      </div>
+
+      <!-- Filtres catégorie -->
+      <div class="pills explore-pills" style="margin-bottom:28px">
+        <button type="submit" name="category" value="" class="pill {% if not current_category %}on{% endif %}">Tous</button>
+        {% for val, label in categories %}
+        <button type="submit" name="category" value="{{ val }}" class="pill {% if current_category == val %}on{% endif %}">{{ label }}</button>
+        {% endfor %}
+      </div>
+    </form>
+
+    <!-- Grille boutiques -->
+    {% if shops %}
+    <div class="shop-grid">
+      {% for shop in shops %}
+      {% include "base/shop_card.html" with shop=shop %}
+      {% endfor %}
+    </div>
+
+    <!-- Pagination -->
+    {% if shops.has_other_pages %}
+    <div class="pagination" role="navigation" aria-label="Pagination">
+      {% if shops.has_previous %}
+      <a href="?{% if current_q %}q={{ current_q }}&{% endif %}{% if current_category %}category={{ current_category }}&{% endif %}page={{ shops.previous_page_number }}" class="page-btn">←</a>
+      {% else %}
+      <span class="page-btn disabled">←</span>
+      {% endif %}
+
+      {% for num in shops.paginator.page_range %}
+        {% if shops.number == num %}
+        <span class="page-btn current">{{ num }}</span>
+        {% elif num > shops.number|add:"-3" and num < shops.number|add:"3" %}
+        <a href="?{% if current_q %}q={{ current_q }}&{% endif %}{% if current_category %}category={{ current_category }}&{% endif %}page={{ num }}" class="page-btn">{{ num }}</a>
+        {% endif %}
+      {% endfor %}
+
+      {% if shops.has_next %}
+      <a href="?{% if current_q %}q={{ current_q }}&{% endif %}{% if current_category %}category={{ current_category }}&{% endif %}page={{ shops.next_page_number }}" class="page-btn">→</a>
+      {% else %}
+      <span class="page-btn disabled">→</span>
+      {% endif %}
+    </div>
+    {% endif %}
+
+    {% else %}
+    <div style="text-align:center;padding:80px 20px;color:var(--mut)">
+      <div style="font-size:4rem;margin-bottom:20px">🔍</div>
+      <h3 style="color:var(--parch);margin-bottom:12px;font-family:'Cormorant Garamond',serif">Aucune boutique trouvée</h3>
+      <p>Essayez d'autres mots-clés ou supprimez certains filtres.</p>
+      <a href="{% url 'shops:explore' %}" class="btn btn-outline" style="margin-top:20px">Voir toutes les boutiques</a>
+    </div>
+    {% endif %}
+  </div>
+</div>
+{% endblock %}

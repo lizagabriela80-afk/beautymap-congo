@@ -1,0 +1,27 @@
+{% extends "base/base.html" %}
+{% block title %}Réservation confirmée{% endblock %}
+{% block content %}
+<div class="sec flex-center" style="min-height:80vh;flex-direction:column;text-align:center">
+  <div style="font-size:5rem;margin-bottom:24px;animation:heroIn .6s ease">✅</div>
+  <h1 class="sec-title" style="margin-bottom:12px">Réservation confirmée !</h1>
+  <p class="text-mut" style="margin-bottom:32px;max-width:440px">
+    Votre rendez-vous chez <strong style="color:var(--parch)">{{ booking.shop.name }}</strong>
+    le <strong style="color:var(--parch)">{{ booking.date|date:"d/m/Y" }}</strong>
+    à <strong style="color:var(--parch)">{{ booking.start_time|time:"H:i" }}</strong> a bien été enregistré.
+  </p>
+  <div style="background:var(--ink2);border:1px solid rgba(201,151,58,.2);border-radius:var(--r);padding:28px;max-width:380px;width:100%;margin-bottom:32px">
+    <div style="font-size:.72rem;font-weight:700;color:var(--mut);text-transform:uppercase;letter-spacing:.09em;margin-bottom:14px">Référence</div>
+    <div style="font-family:'Cormorant Garamond',serif;font-size:1.8rem;color:var(--gold);font-weight:700;margin-bottom:16px">{{ booking.get_booking_ref }}</div>
+    <div class="sched-row"><span class="sched-day">Service</span><span style="color:var(--parch)">{{ booking.service.name|default:"—" }}</span></div>
+    <div class="sched-row"><span class="sched-day">Date</span><span style="color:var(--parch)">{{ booking.date|date:"l d F Y" }}</span></div>
+    <div class="sched-row"><span class="sched-day">Heure</span><span style="color:var(--parch)">{{ booking.start_time|time:"H:i" }}</span></div>
+    <div class="sched-row"><span class="sched-day">Montant</span><span style="color:var(--gold-lt);font-weight:700">{{ booking.total_price|floatformat:"0" }} FCFA</span></div>
+    <div class="sched-row" style="border:none"><span class="sched-day">Statut</span><span class="st st-wait">⏳ En attente</span></div>
+  </div>
+  <p class="text-xs text-mut" style="margin-bottom:24px">Un SMS de confirmation vous sera envoyé sur {{ booking.client.phone|default:"votre numéro" }}</p>
+  <div class="flex gap-12">
+    <a href="{% url 'shops:home' %}" class="btn btn-ghost">🏠 Accueil</a>
+    <a href="{% url 'client_dashboard' %}" class="btn btn-gold">📅 Mes rendez-vous</a>
+  </div>
+</div>
+{% endblock %}

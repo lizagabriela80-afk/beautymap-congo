@@ -1,0 +1,176 @@
+{% extends "base/base.html" %}
+{% load static %}
+
+{% block title %}Accueil{% endblock %}
+
+{% block content %}
+<!-- ========== HERO ========== -->
+<section class="hero">
+  <div class="hero-bg"></div>
+  <div class="hero-left">
+    <div class="hero-eyebrow">
+      <span class="pulse"></span> Brazzaville, Congo · {{ stats.shops_count }}+ boutiques actives
+    </div>
+    <h1 class="hero-h1">
+      La beauté <em>congolaise</em><br>à portée de main
+    </h1>
+    <p class="hero-p">
+      Coiffure, esthétique, onglerie, mode — trouvez les meilleurs prestataires,
+      consultez leurs avis et réservez directement en ligne.
+    </p>
+    <form class="hero-search" action="{% url 'shops:explore' %}" method="get">
+      <input type="text" name="q" id="search-input" placeholder="Chercher un salon, un service, un quartier…" autocomplete="off">
+      <button type="submit">Rechercher</button>
+    </form>
+    <div class="hero-tags">
+      {% for val, label in categories %}
+      <a class="htag" href="{% url 'shops:explore' %}?category={{ val }}">{{ label }}</a>
+      {% endfor %}
+    </div>
+  </div>
+
+  <div class="hero-right" aria-hidden="true">
+    <div class="cards-float">
+      <div class="fc fc-1">
+        <div class="fc-h">
+          <div class="fc-av" style="background:linear-gradient(135deg,#C9973A,#7A5518)">✂️</div>
+          <div><div class="fc-nm">Salon Élégance</div><div class="fc-cat">Coiffure · Bacongo</div></div>
+        </div>
+        <div class="fc-stars">★★★★★</div>
+        <div class="fc-price">Tresses à partir de 3 000 FCFA</div>
+      </div>
+      <div class="fc fc-2">
+        <div class="fc-h">
+          <div class="fc-av" style="background:linear-gradient(135deg,#2E9458,#1a5c36)">💅</div>
+          <div><div class="fc-nm">Nails Paradise</div><div class="fc-cat">Onglerie · Poto-Poto</div></div>
+        </div>
+        <div class="fc-stars">★★★★☆</div>
+        <div class="fc-price">Pose gel dès 5 000 FCFA</div>
+      </div>
+      <div class="fc fc-3">
+        <div class="fc-h">
+          <div class="fc-av" style="background:linear-gradient(135deg,#6449c0,#3a2a80)">👗</div>
+          <div><div class="fc-nm">Mode Africa</div><div class="fc-cat">Vêtements · Moungali</div></div>
+        </div>
+        <div style="font-size:.78rem;color:var(--mut);margin:4px 0">🕐 Ouvert jusqu'à 18h30</div>
+        <div class="fc-price">Pagnes wax dès 8 000 FCFA</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ========== STATS ========== -->
+<div class="stats-bar">
+  <div class="stat-item">
+    <div class="stat-n" data-count="{{ stats.shops_count }}" data-suffix="+">0</div>
+    <div class="stat-l">Boutiques actives</div>
+  </div>
+  <div class="stat-item">
+    <div class="stat-n" data-count="1800" data-suffix="+">0</div>
+    <div class="stat-l">Clients inscrits</div>
+  </div>
+  <div class="stat-item">
+    <div class="stat-n" data-count="5400" data-suffix="+">0</div>
+    <div class="stat-l">Réservations</div>
+  </div>
+  <div class="stat-item">
+    <div class="stat-n">4.8 ★</div>
+    <div class="stat-l">Note moyenne</div>
+  </div>
+</div>
+
+<!-- ========== CATÉGORIES ========== -->
+<section class="sec sec-dark">
+  <div class="sec-header sec-center">
+    <div class="tag">✦ Catégories</div>
+    <h2 class="sec-title">Tous les services disponibles</h2>
+    <p class="sec-sub">Découvrez les professionnels de la beauté et de la mode à Brazzaville et dans toute la République du Congo.</p>
+  </div>
+  <div class="cat-grid">
+    {% for val, label in categories %}
+    <a href="{% url 'shops:explore' %}?category={{ val }}" class="cat-card">
+      <div class="cat-icon">{{ label|slice:":2" }}</div>
+      <div class="cat-name">{{ label|slice:"3:" }}</div>
+      <div class="cat-count">Voir les boutiques</div>
+    </a>
+    {% endfor %}
+  </div>
+</section>
+
+<!-- ========== BOUTIQUES TENDANCE ========== -->
+<section class="sec">
+  <div class="sec-header flex-between flex-wrap gap-16">
+    <div>
+      <div class="tag">⭐ Tendance</div>
+      <h2 class="sec-title mb-0">Boutiques les mieux notées</h2>
+    </div>
+    <a href="{% url 'shops:explore' %}" class="btn btn-outline btn-sm">Voir tout →</a>
+  </div>
+
+  {% if user.is_authenticated %}
+  <div class="promo">
+    <div>
+      <div style="font-weight:700;color:var(--parch);margin-bottom:4px">🎉 Offre de bienvenue</div>
+      <div style="font-size:.85rem;color:var(--mut)">Obtenez <strong style="color:var(--gold-lt)">−20%</strong> sur votre première réservation avec le code</div>
+    </div>
+    <div class="promo-code" onclick="copyPromo(this)" title="Cliquer pour copier">BEAUTY20</div>
+  </div>
+  {% endif %}
+
+  {% if top_shops %}
+  <div class="shop-grid">
+    {% for shop in top_shops %}
+    {% include "base/shop_card.html" with shop=shop %}
+    {% endfor %}
+  </div>
+  {% else %}
+  <div style="text-align:center;padding:60px;color:var(--mut)">
+    <div style="font-size:3rem;margin-bottom:16px">🏪</div>
+    <p>Aucune boutique disponible pour le moment. <a href="{% url 'register' %}?type=pro" class="auth-link">Soyez le premier !</a></p>
+  </div>
+  {% endif %}
+</section>
+
+<!-- ========== COMMENT ÇA MARCHE ========== -->
+<section class="sec sec-dark sec-center">
+  <div class="sec-header">
+    <div class="tag">✦ Comment ça marche</div>
+    <h2 class="sec-title">Simple, rapide, efficace</h2>
+    <p class="sec-sub">En 4 étapes, trouvez le prestataire parfait et réservez en quelques secondes.</p>
+  </div>
+  <div class="how-grid">
+    <div><div class="how-icon">🔍</div><div class="how-n">1. Cherchez</div><div class="how-d">Recherchez par nom, catégorie ou quartier à Brazzaville</div></div>
+    <div><div class="how-icon">📍</div><div class="how-n">2. Localisez</div><div class="how-d">Visualisez les boutiques sur la carte interactive</div></div>
+    <div><div class="how-icon">📅</div><div class="how-n">3. Réservez</div><div class="how-d">Choisissez un créneau et confirmez en ligne en 30 secondes</div></div>
+    <div><div class="how-icon">⭐</div><div class="how-n">4. Évaluez</div><div class="how-d">Notez votre expérience et aidez la communauté</div></div>
+  </div>
+</section>
+
+<!-- ========== POUR LES PROS ========== -->
+<section class="sec sec-center">
+  <div class="sec-header">
+    <div class="tag">🚀 Professionnels</div>
+    <h2 class="sec-title">Vous êtes professionnel ?</h2>
+    <p class="sec-sub">Rejoignez BeautyMap Congo et développez votre activité en ligne. Créez votre vitrine en moins de 10 minutes.</p>
+  </div>
+  <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:20px;max-width:880px;margin:0 auto 40px">
+    <div style="background:var(--ink2);border:1px solid rgba(255,255,255,.06);border-radius:var(--r);padding:24px">
+      <div style="font-size:1.8rem;margin-bottom:12px">🏪</div>
+      <div style="font-weight:700;color:var(--parch);margin-bottom:8px">Vitrine digitale</div>
+      <div style="color:var(--mut);font-size:.85rem;line-height:1.6">Photos, services, prix, horaires — tout en un profil professionnel visible par des milliers de clients.</div>
+    </div>
+    <div style="background:var(--ink2);border:1px solid rgba(255,255,255,.06);border-radius:var(--r);padding:24px">
+      <div style="font-size:1.8rem;margin-bottom:12px">📅</div>
+      <div style="font-weight:700;color:var(--parch);margin-bottom:8px">Gestion des RDV</div>
+      <div style="color:var(--mut);font-size:.85rem;line-height:1.6">Recevez des demandes, confirmez ou refusez en un clic. Calendrier intégré.</div>
+    </div>
+    <div style="background:var(--ink2);border:1px solid rgba(255,255,255,.06);border-radius:var(--r);padding:24px">
+      <div style="font-size:1.8rem;margin-bottom:12px">📊</div>
+      <div style="font-weight:700;color:var(--parch);margin-bottom:8px">Tableau de bord</div>
+      <div style="color:var(--mut);font-size:.85rem;line-height:1.6">Statistiques, avis clients, messagerie et revenus — tout en un seul endroit.</div>
+    </div>
+  </div>
+  <a href="{% url 'register' %}?type=pro" class="btn btn-gold btn-xl">🚀 Créer ma boutique gratuitement</a>
+  <p style="font-size:.78rem;color:var(--mut);margin-top:12px">14 jours d'essai Premium · Aucune carte bancaire requise</p>
+</section>
+{% endblock %}

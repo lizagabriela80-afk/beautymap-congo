@@ -1,0 +1,317 @@
+{% extends "base/base.html" %}
+{% block title %}Mon espace client{% endblock %}
+{% block footer %}{% endblock %}
+
+{% block content %}
+<div class="dash-wrap">
+
+  <!-- ═══ SIDEBAR ═══ -->
+  <aside class="sidebar">
+    <div class="sb-user">
+      <div class="sb-av">{{ request.user.get_initials }}</div>
+      <div>
+        <div class="sb-nm">{{ request.user.get_full_name }}</div>
+        <div class="sb-rl">✨ Client BeautyMap</div>
+      </div>
+    </div>
+
+    <div class="sb-sec">
+      <div class="sb-lbl">Menu</div>
+      <a class="sb-item {% if active_tab == 'overview' %}on{% endif %}"
+         href="?tab=overview">
+        <span class="sb-ico">🏠</span> Accueil
+      </a>
+      <a class="sb-item {% if active_tab == 'bookings' %}on{% endif %}"
+         href="?tab=bookings">
+        <span class="sb-ico">📅</span> Mes réservations
+        {% if bookings %}<span class="sb-bdg">{{ bookings.count }}</span>{% endif %}
+      </a>
+      <a class="sb-item {% if active_tab == 'favorites' %}on{% endif %}"
+         href="?tab=favorites">
+        <span class="sb-ico">❤️</span> Mes favoris
+        {% if favorites %}<span class="sb-bdg">{{ favorites.count }}</span>{% endif %}
+      </a>
+      <a class="sb-item {% if active_tab == 'notifs' %}on{% endif %}"
+         href="?tab=notifs">
+        <span class="sb-ico">🔔</span> Notifications
+        {% if notifications %}<span class="sb-bdg">{{ notifications.count }}</span>{% endif %}
+      </a>
+    </div>
+
+    <div class="sb-sec">
+      <div class="sb-lbl">Compte</div>
+      <a class="sb-item" href="{% url 'profile_edit' %}">
+        <span class="sb-ico">⚙️</span> Mon profil
+      </a>
+      <a class="sb-item" href="{% url 'shops:explore' %}">
+        <span class="sb-ico">🔍</span> Explorer les boutiques
+      </a>
+      <a class="sb-item" href="{% url 'logout' %}">
+        <span class="sb-ico">🚪</span> Déconnexion
+      </a>
+    </div>
+  </aside>
+
+  <!-- ═══ CONTENU PRINCIPAL ═══ -->
+  <main class="dash-main" style="margin-top: 100px;">
+
+    <!-- Messages Django -->
+    {% if messages %}
+    <div style="margin-bottom:20px">
+      {% for message in messages %}
+      <div class="dmsg dmsg-{{ message.tags }}">
+        <span>{{ message }}</span>
+        <button onclick="this.parentElement.remove()" class="dmsg-close">✕</button>
+      </div>
+      {% endfor %}
+    </div>
+    {% endif %}
+
+    <!-- ── VUE D'ENSEMBLE ── -->
+    {% if active_tab == 'overview' or not active_tab %}
+
+    <div style="margin-bottom:28px">
+      <h1 style="font-family:'Cormorant Garamond',serif;font-size:1.8rem;color:var(--parch);margin-bottom:6px">
+        Bonjour {{ request.user.first_name }} 👋
+      </h1>
+      <p style="color:var(--mut);font-size:.9rem">
+        Bienvenue sur votre espace BeautyMap Congo
+      </p>
+    </div>
+
+    <!-- Raccourcis rapides -->
+    <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:16px;margin-bottom:32px">
+      <a href="{% url 'shops:explore' %}" style="text-decoration:none">
+        <div class="stat-box" style="cursor:pointer;transition:all .3s" onmouseover="this.style.borderColor='rgba(201,151,58,.4)'" onmouseout="this.style.borderColor='rgba(255,255,255,.07)'">
+          <div style="font-size:2rem;margin-bottom:8px">🔍</div>
+          <div class="sl">Explorer</div>
+          <div style="font-size:.88rem;color:var(--parch);font-weight:600">Trouver une boutique</div>
+        </div>
+      </a>
+      <a href="{% url 'shops:map' %}" style="text-decoration:none">
+        <div class="stat-box" style="cursor:pointer;transition:all .3s" onmouseover="this.style.borderColor='rgba(201,151,58,.4)'" onmouseout="this.style.borderColor='rgba(255,255,255,.07)'">
+          <div style="font-size:2rem;margin-bottom:8px">🗺️</div>
+          <div class="sl">Carte</div>
+          <div style="font-size:.88rem;color:var(--parch);font-weight:600">Boutiques à proximité</div>
+        </div>
+      </a>
+      <div class="stat-box">
+        <div style="font-size:2rem;margin-bottom:8px">📅</div>
+        <div class="sl">Réservations</div>
+        <div class="sv">{{ bookings|length }}</div>
+      </div>
+      <div class="stat-box">
+        <div style="font-size:2rem;margin-bottom:8px">❤️</div>
+        <div class="sl">Favoris</div>
+        <div class="sv">{{ favorites|length }}</div>
+      </div>
+    </div>
+
+    <!-- Dernières réservations -->
+    <div class="dbox">
+      <div class="dbox-h">
+        <div class="dbox-t">📅 Mes dernières réservations</div>
+        <a href="?tab=bookings" class="btn btn-ghost btn-sm">Voir tout</a>
+      </div>
+      {% if bookings %}
+      <div class="tbl-wrap">
+        <table class="tbl">
+          <thead>
+            <tr>
+              <th>Boutique</th>
+              <th>Service</th>
+              <th>Date</th>
+              <th>Heure</th>
+              <th>Statut</th>
+            </tr>
+          </thead>
+          <tbody>
+            {% for b in bookings|slice:":5" %}
+            <tr>
+              <td>
+                <a href="{% url 'shops:detail' b.shop.slug %}"
+                   style="color:var(--parch);font-weight:600;text-decoration:none">
+                  {{ b.shop.name }}
+                </a>
+              </td>
+              <td>{{ b.service.name|default:"—" }}</td>
+              <td>{{ b.date|date:"d/m/Y" }}</td>
+              <td>{{ b.start_time|time:"H:i" }}</td>
+              <td>
+                {% if b.status == 'confirmed' %}
+                  <span class="st st-ok">✓ Confirmé</span>
+                {% elif b.status == 'pending' %}
+                  <span class="st st-wait">⏳ En attente</span>
+                {% elif b.status == 'cancelled' %}
+                  <span class="st st-no">✗ Annulé</span>
+                {% elif b.status == 'completed' %}
+                  <span class="st st-done">✔ Terminé</span>
+                {% else %}
+                  <span class="st">{{ b.get_status_display }}</span>
+                {% endif %}
+              </td>
+            </tr>
+            {% endfor %}
+          </tbody>
+        </table>
+      </div>
+      {% else %}
+      <div class="dbox-b" style="text-align:center;padding:40px">
+        <div style="font-size:3rem;margin-bottom:16px">📅</div>
+        <p style="color:var(--mut);margin-bottom:16px">Aucune réservation pour l'instant.</p>
+        <a href="{% url 'shops:explore' %}" class="btn btn-gold">
+          🔍 Trouver une boutique
+        </a>
+      </div>
+      {% endif %}
+    </div>
+
+    <!-- Favoris -->
+    {% if favorites %}
+    <div class="dbox">
+      <div class="dbox-h">
+        <div class="dbox-t">❤️ Mes boutiques favorites</div>
+        <a href="?tab=favorites" class="btn btn-ghost btn-sm">Voir tout</a>
+      </div>
+      <div class="dbox-b">
+        <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(220px,1fr));gap:14px">
+          {% for shop in favorites|slice:":4" %}
+          <a href="{% url 'shops:detail' shop.slug %}"
+             style="display:flex;align-items:center;gap:12px;padding:12px;
+                    background:var(--ink3);border-radius:var(--rsm);text-decoration:none;
+                    border:1px solid rgba(255,255,255,.05);transition:all .2s"
+             onmouseover="this.style.borderColor='rgba(201,151,58,.3)'"
+             onmouseout="this.style.borderColor='rgba(255,255,255,.05)'">
+            <div style="font-size:1.6rem;flex-shrink:0">{{ shop.category_emoji }}</div>
+            <div>
+              <div style="font-weight:600;font-size:.88rem;color:var(--parch)">{{ shop.name }}</div>
+              <div style="font-size:.75rem;color:var(--mut)">{{ shop.get_quartier_display }}</div>
+            </div>
+          </a>
+          {% endfor %}
+        </div>
+      </div>
+    </div>
+    {% endif %}
+
+    <!-- ── RÉSERVATIONS ── -->
+    {% elif active_tab == 'bookings' %}
+    <h2 style="font-family:'Cormorant Garamond',serif;font-size:1.4rem;color:var(--parch);margin-bottom:20px">
+      📅 Mes réservations
+    </h2>
+    {% if bookings %}
+    <div class="dbox">
+      <div class="tbl-wrap">
+        <table class="tbl">
+          <thead>
+            <tr>
+              <th>Réf.</th><th>Boutique</th><th>Service</th>
+              <th>Date</th><th>Heure</th><th>Montant</th><th>Statut</th>
+            </tr>
+          </thead>
+          <tbody>
+            {% for b in bookings %}
+            <tr>
+              <td style="font-size:.72rem;color:var(--mut)">{{ b.get_booking_ref }}</td>
+              <td>
+                <a href="{% url 'shops:detail' b.shop.slug %}"
+                   style="color:var(--parch);font-weight:600;text-decoration:none">
+                  {{ b.shop.name }}
+                </a>
+              </td>
+              <td>{{ b.service.name|default:"—" }}</td>
+              <td>{{ b.date|date:"d/m/Y" }}</td>
+              <td>{{ b.start_time|time:"H:i" }}</td>
+              <td style="color:var(--gold-lt);font-weight:600">
+                {% if b.total_price %}{{ b.total_price|floatformat:"0" }} FCFA{% else %}—{% endif %}
+              </td>
+              <td>
+                {% if b.status == 'confirmed' %}<span class="st st-ok">✓ Confirmé</span>
+                {% elif b.status == 'pending' %}<span class="st st-wait">⏳ En attente</span>
+                {% elif b.status == 'cancelled' %}<span class="st st-no">✗ Annulé</span>
+                {% elif b.status == 'completed' %}<span class="st st-done">✔ Terminé</span>
+                {% else %}<span class="st">{{ b.get_status_display }}</span>{% endif %}
+              </td>
+            </tr>
+            {% endfor %}
+          </tbody>
+        </table>
+      </div>
+    </div>
+    {% else %}
+    <div style="text-align:center;padding:80px 20px">
+      <div style="font-size:4rem;margin-bottom:20px">📅</div>
+      <h3 style="font-family:'Cormorant Garamond',serif;color:var(--parch);margin-bottom:12px">
+        Aucune réservation
+      </h3>
+      <p style="color:var(--mut);margin-bottom:24px">
+        Vous n'avez pas encore réservé de service.
+      </p>
+      <a href="{% url 'shops:explore' %}" class="btn btn-gold">
+        🔍 Trouver une boutique
+      </a>
+    </div>
+    {% endif %}
+
+    <!-- ── FAVORIS ── -->
+    {% elif active_tab == 'favorites' %}
+    <h2 style="font-family:'Cormorant Garamond',serif;font-size:1.4rem;color:var(--parch);margin-bottom:20px">
+      ❤️ Mes boutiques favorites
+    </h2>
+    {% if favorites %}
+    <div class="shop-grid">
+      {% for shop in favorites %}
+      {% include "base/shop_card.html" with shop=shop %}
+      {% endfor %}
+    </div>
+    {% else %}
+    <div style="text-align:center;padding:80px 20px">
+      <div style="font-size:4rem;margin-bottom:20px">❤️</div>
+      <h3 style="font-family:'Cormorant Garamond',serif;color:var(--parch);margin-bottom:12px">
+        Aucun favori
+      </h3>
+      <p style="color:var(--mut);margin-bottom:24px">
+        Explorez les boutiques et cliquez sur ❤️ pour les sauvegarder ici.
+      </p>
+      <a href="{% url 'shops:explore' %}" class="btn btn-gold">
+        🔍 Explorer les boutiques
+      </a>
+    </div>
+    {% endif %}
+
+    <!-- ── NOTIFICATIONS ── -->
+    {% elif active_tab == 'notifs' %}
+    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:20px;flex-wrap:wrap;gap:12px">
+      <h2 style="font-family:'Cormorant Garamond',serif;font-size:1.4rem;color:var(--parch)">
+        🔔 Notifications
+      </h2>
+      {% if notifications %}
+      <button class="btn btn-ghost btn-sm"
+        onclick="fetch('/notifications/tout-lire/',{method:'POST',headers:{'X-CSRFToken':'{{ csrf_token }}'}}).then(()=>{location.reload()})">
+        Tout marquer comme lu
+      </button>
+      {% endif %}
+    </div>
+    {% if notifications %}
+    <div class="dbox">
+      {% for n in notifications %}
+      <div class="notif-item new">
+        <div class="notif-dot"></div>
+        <div>
+          <div class="notif-msg"><strong>{{ n.title }}</strong> — {{ n.message }}</div>
+          <div class="notif-time">{{ n.created_at|timesince }}</div>
+        </div>
+      </div>
+      {% endfor %}
+    </div>
+    {% else %}
+    <div style="text-align:center;padding:60px">
+      <div style="font-size:3rem;margin-bottom:16px">🔔</div>
+      <p style="color:var(--mut)">Aucune notification pour l'instant.</p>
+    </div>
+    {% endif %}
+
+    {% endif %}
+  </main>
+</div>
+{% endblock %}

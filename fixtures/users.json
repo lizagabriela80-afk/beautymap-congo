@@ -1,0 +1,87 @@
+[
+  {
+    "model": "accounts.user",
+    "pk": 1,
+    "fields": {
+      "email": "admin@beautymap.cg",
+      "first_name": "Admin",
+      "last_name": "BeautyMap",
+      "user_type": "admin",
+      "phone": "+242 06 000 00 00",
+      "is_active": true,
+      "is_staff": true,
+      "is_superuser": true,
+      "is_verified": true,
+      "password": "pbkdf2_sha256$600000$salt$admin123hashed",
+      "date_joined": "2024-01-01T00:00:00Z"
+    }
+  },
+  {
+    "model": "accounts.user",
+    "pk": 2,
+    "fields": {
+      "email": "marie.kouba@gmail.com",
+      "first_name": "Marie",
+      "last_name": "Kouba",
+      "user_type": "pro",
+      "phone": "+242 06 123 45 67",
+      "is_active": true,
+      "is_staff": false,
+      "is_superuser": false,
+      "is_verified": true,
+      "password": "pbkdf2_sha256$600000$salt$hashedpwd",
+      "date_joined": "2024-02-15T08:00:00Z"
+    }
+  },
+  {
+    "model": "accounts.user",
+    "pk": 3,
+    "fields": {
+      "email": "pascal.mboungou@gmail.com",
+      "first_name": "Pascal",
+      "last_name": "Mboungou",
+      "user_type": "pro",
+      "phone": "+242 06 234 56 78",
+      "is_active": true,
+      "is_staff": false,
+      "is_superuser": false,
+      "is_verified": true,
+      "password": "pbkdf2_sha256$600000$salt$hashedpwd",
+      "date_joined": "2024-03-01T08:00:00Z"
+    }
+  },
+  {
+    "model": "accounts.user",
+    "pk": 4,
+    "fields": {
+      "email": "amelie.koumba@gmail.com",
+      "first_name": "Amélie",
+      "last_name": "Koumba",
+      "user_type": "client",
+      "phone": "+242 05 345 67 89",
+      "is_active": true,
+      "is_staff": false,
+      "is_superuser": false,
+      "is_verified": true,
+      "password": "pbkdf2_sha256$600000$salt$hashedpwd",
+      "date_joined": "2024-04-10T08:00:00Z"
+    }
+  },
+  {
+    "model": "accounts.user",
+    "pk": 5,
+    "fields": {
+      "email": "sandra.mpanu@gmail.com",
+      "first_name": "Sandra",
+      "last_name": "Mpanu",
+      "user_type": "client",
+      "phone": "+242 06 456 78 90",
+      "is_active": true,
+      "is_staff": false,
+      "is_superuser": false,
+      "is_verified": false,
+      "password": "pbkdf2_sha256$600000$salt$hashedpwd",
+      "date_joined": "2024-05-20T08:00:00Z"
+    }
+  }
+]

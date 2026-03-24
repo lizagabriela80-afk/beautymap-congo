@@ -1,0 +1,331 @@
+{% extends "base/base.html" %}
+{% block title %}Dashboard — {{ shop.name }}{% endblock %}
+{% block footer %}{% endblock %}
+
+{% block content %}
+<div class="dash-wrap" style="margin-top: 50px;">
+  <!-- SIDEBAR -->
+  <aside class="sidebar" role="navigation" aria-label="Menu dashboard">
+    <div class="sb-user">
+      <div class="sb-av">
+        {% if request.user.avatar %}
+          <img src="{{ request.user.avatar.url }}" style="width:100%;height:100%;object-fit:cover;border-radius:50%">
+        {% else %}
+          {{ request.user.get_initials }}
+        {% endif %}
+      </div>
+      <div>
+        <div class="sb-nm">{{ request.user.get_full_name }}</div>
+        <div class="sb-rl">⭐ Professionnel{% if request.user.pro_profile.is_premium %} Premium{% endif %}</div>
+      </div>
+    </div>
+
+    <div class="sb-sec">
+      <div class="sb-lbl">Menu principal</div>
+      <button class="sb-item {% if active_tab == 'overview' %}on{% endif %}" onclick="window.location.href='?tab=overview'"><span class="sb-ico">📊</span>Vue d'ensemble</button>
+      <button class="sb-item {% if active_tab == 'rdv' %}on{% endif %}" onclick="window.location.href='?tab=rdv'"><span class="sb-ico">📅</span>Rendez-vous
+        {% if bookings_pending.count %}<span class="sb-bdg">{{ bookings_pending.count }}</span>{% endif %}
+      </button>
+      <button class="sb-item {% if active_tab == 'boutique' %}on{% endif %}" onclick="window.location.href='?tab=boutique'"><span class="sb-ico">🏪</span>Ma boutique</button>
+      <button class="sb-item {% if active_tab == 'services' %}on{% endif %}" onclick="window.location.href='?tab=services'"><span class="sb-ico">✂️</span>Mes services</button>
+      <button class="sb-item {% if active_tab == 'avis' %}on{% endif %}" onclick="window.location.href='?tab=avis'"><span class="sb-ico">⭐</span>Avis clients</button>
+      <button class="sb-item {% if active_tab == 'messages' %}on{% endif %}" onclick="window.location.href='{% url 'inbox' %}'"><span class="sb-ico">💬</span>Messages
+        {% if stats.unread_messages %}<span class="sb-bdg">{{ stats.unread_messages }}</span>{% endif %}
+      </button>
+      <button class="sb-item {% if active_tab == 'notifs' %}on{% endif %}" onclick="window.location.href='?tab=notifs'"><span class="sb-ico">🔔</span>Notifications
+        {% if stats.unread_notifs %}<span class="sb-bdg">{{ stats.unread_notifs }}</span>{% endif %}
+      </button>
+      <button class="sb-item {% if active_tab == 'commandes' %}on{% endif %}" onclick="window.location.href='?tab=commandes'"><span class="sb-ico">🛒</span>Commandes</button>
+    </div>
+
+    <div class="sb-sec">
+      <div class="sb-lbl">Compte</div>
+      <button class="sb-item {% if active_tab == 'profile' %}on{% endif %}" onclick="window.location.href='?tab=profile'"><span class="sb-ico">👤</span>Mon profil</button>
+      <button class="sb-item {% if active_tab == 'abonnement' %}on{% endif %}" onclick="window.location.href='?tab=abonnement'"><span class="sb-ico">💎</span>Abonnement</button>
+      <a class="sb-item" href="{% url 'logout' %}"><span class="sb-ico">🚪</span>Déconnexion</a>
+    </div>
+  </aside>
+
+  <!-- MAIN CONTENT -->
+  <main class="dash-main" id="dash-content">
+
+    {% if active_tab == 'overview' %}
+    <!-- ===== VUE D'ENSEMBLE ===== -->
+    <div class="dash-title">📊 Vue d'ensemble — {{ shop.name }}</div>
+
+    <div class="stat-row">
+      <div class="stat-box"><div class="sl">RDV ce mois</div><div class="sv">{{ stats.bookings_month }}</div><div class="sd sd-up">↑ Confirmés: {{ stats.bookings_confirmed }}</div></div>
+      <div class="stat-box"><div class="sl">Note moyenne</div><div class="sv">{{ stats.avg_rating|default:"—" }} ★</div><div class="sd sd-up">{{ stats.review_count }} avis</div></div>
+      <div class="stat-box"><div class="sl">Revenus estimés</div><div class="sv">{{ stats.revenue_month|floatformat:"0" }}</div><div class="sd sd-up">FCFA ce mois</div></div>
+      <div class="stat-box"><div class="sl">Vues du profil</div><div class="sv">{{ stats.views_month }}</div><div class="sd sd-up">↑ Ce mois</div></div>
+    </div>
+
+    <!-- Rendez-vous du jour -->
+    <div class="dbox">
+      <div class="dbox-h">
+        <div class="dbox-t">📅 Rendez-vous aujourd'hui ({{ bookings_today.count }})</div>
+        <a href="?tab=rdv" class="btn btn-outline btn-sm">Voir tout</a>
+      </div>
+      {% if bookings_today %}
+      <div class="tbl-wrap">
+        <table class="tbl">
+          <thead><tr><th>Client</th><th>Service</th><th>Heure</th><th>Statut</th><th>Actions</th></tr></thead>
+          <tbody>
+          {% for b in bookings_today %}
+          <tr>
+            <td><strong>{{ b.client.get_full_name }}</strong><br><span class="text-xs text-mut">{{ b.client.phone }}</span></td>
+            <td>{{ b.service.name|default:"—" }}</td>
+            <td>{{ b.start_time|time:"H:i" }}{% if b.end_time %} – {{ b.end_time|time:"H:i" }}{% endif %}</td>
+            <td>
+              {% if b.status == 'confirmed' %}<span class="st st-ok">✓ Confirmé</span>
+              {% elif b.status == 'pending' %}<span class="st st-wait">⏳ En attente</span>
+              {% elif b.status == 'cancelled' %}<span class="st st-no">✗ Annulé</span>
+              {% else %}<span class="st st-done">{{ b.get_status_display }}</span>{% endif %}
+            </td>
+            <td style="display:flex;gap:6px;flex-wrap:wrap">
+              {% if b.status == 'pending' %}
+              <button class="btn btn-green btn-sm" onclick="confirmBooking('{{ b.id }}',this)">✓</button>
+              {% endif %}
+              {% if b.status in 'pending,confirmed' %}
+              <button class="btn btn-red btn-sm" onclick="cancelBooking('{{ b.id }}',this)">✗</button>
+              {% endif %}
+            </td>
+          </tr>
+          {% endfor %}
+          </tbody>
+        </table>
+      </div>
+      {% else %}
+      <div class="dbox-b text-center text-mut">Aucun rendez-vous aujourd'hui. 🎉</div>
+      {% endif %}
+    </div>
+
+    <!-- En attente -->
+    {% if bookings_pending %}
+    <div class="dbox">
+      <div class="dbox-h"><div class="dbox-t">⏳ En attente de confirmation ({{ bookings_pending.count }})</div></div>
+      <div class="tbl-wrap">
+        <table class="tbl">
+          <thead><tr><th>Client</th><th>Service</th><th>Date</th><th>Actions</th></tr></thead>
+          <tbody>
+          {% for b in bookings_pending %}
+          <tr>
+            <td><strong>{{ b.client.get_full_name }}</strong></td>
+            <td>{{ b.service.name|default:"—" }}</td>
+            <td>{{ b.date|date:"d/m/Y" }} à {{ b.start_time|time:"H:i" }}</td>
+            <td style="display:flex;gap:6px">
+              <button class="btn btn-green btn-sm" onclick="confirmBooking('{{ b.id }}',this)">✓ Confirmer</button>
+              <button class="btn btn-red btn-sm" onclick="cancelBooking('{{ b.id }}',this)">✗ Refuser</button>
+            </td>
+          </tr>
+          {% endfor %}
+          </tbody>
+        </table>
+      </div>
+    </div>
+    {% endif %}
+
+    <!-- Derniers avis -->
+    <div class="dbox">
+      <div class="dbox-h"><div class="dbox-t">⭐ Derniers avis</div><a href="?tab=avis" class="btn btn-ghost btn-sm">Voir tout</a></div>
+      <div class="dbox-b">
+        {% for review in recent_reviews %}
+        <div class="rev-card">
+          <div class="rev-h">
+            <div class="rev-av">{{ review.client.get_initials }}</div>
+            <div>
+              <div class="rev-nm">{{ review.client.get_full_name }}</div>
+              <div class="rev-dt" style="color:var(--gold)">
+                {% for i in "12345" %}{% if forloop.counter <= review.rating %}★{% else %}☆{% endif %}{% endfor %}
+                · {{ review.created_at|timesince }}
+              </div>
+            </div>
+          </div>
+          <div class="rev-txt">{{ review.comment|truncatechars:120 }}</div>
+        </div>
+        {% empty %}
+        <p class="text-mut text-sm text-center">Aucun avis pour le moment.</p>
+        {% endfor %}
+      </div>
+    </div>
+
+    {% elif active_tab == 'rdv' %}
+    <!-- ===== RENDEZ-VOUS ===== -->
+    <div class="flex-between flex-wrap gap-12" style="margin-bottom:24px">
+      <div class="dash-title" style="margin-bottom:0">📅 Tous les rendez-vous</div>
+      <div class="flex gap-10">
+        <select class="sel" style="width:auto" onchange="window.location.href='?tab=rdv&status='+this.value">
+          <option value="">Tous statuts</option>
+          <option value="pending">En attente</option>
+          <option value="confirmed">Confirmés</option>
+          <option value="cancelled">Annulés</option>
+          <option value="completed">Terminés</option>
+        </select>
+      </div>
+    </div>
+    <div class="dbox">
+      <div class="tbl-wrap">
+        <table class="tbl">
+          <thead><tr><th>Réf.</th><th>Client</th><th>Service</th><th>Date & Heure</th><th>Montant</th><th>Statut</th><th>Actions</th></tr></thead>
+          <tbody>
+          {% for b in shop.bookings.all|slice:":50" %}
+          <tr>
+            <td class="text-xs text-mut">{{ b.get_booking_ref }}</td>
+            <td>
+              <strong>{{ b.client.get_full_name }}</strong><br>
+              <span class="text-xs text-mut">{{ b.client.phone }}</span>
+            </td>
+            <td>{{ b.service.name|default:"—" }}</td>
+            <td>{{ b.date|date:"d/m/Y" }}<br><span class="text-xs text-mut">{{ b.start_time|time:"H:i" }}</span></td>
+            <td class="text-gold">{% if b.total_price %}{{ b.total_price|floatformat:"0" }} FCFA{% else %}—{% endif %}</td>
+            <td>
+              {% if b.status == 'confirmed' %}<span class="st st-ok">✓ Confirmé</span>
+              {% elif b.status == 'pending' %}<span class="st st-wait">⏳ En attente</span>
+              {% elif b.status == 'cancelled' %}<span class="st st-no">✗ Annulé</span>
+              {% elif b.status == 'completed' %}<span class="st st-done">✔ Terminé</span>
+              {% else %}<span class="st">{{ b.get_status_display }}</span>{% endif %}
+            </td>
+            <td style="display:flex;gap:6px;flex-wrap:wrap">
+              {% if b.status == 'pending' %}
+              <button class="btn btn-green btn-sm" onclick="confirmBooking('{{ b.id }}',this)">✓</button>
+              {% endif %}
+              {% if b.status in 'pending,confirmed' %}
+              <button class="btn btn-red btn-sm" onclick="cancelBooking('{{ b.id }}',this)">✗</button>
+              {% endif %}
+            </td>
+          </tr>
+          {% empty %}
+          <tr><td colspan="7" class="text-center text-mut" style="padding:30px">Aucun rendez-vous pour l'instant.</td></tr>
+          {% endfor %}
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    {% elif active_tab == 'services' %}
+    <!-- ===== SERVICES ===== -->
+    <div class="flex-between" style="margin-bottom:24px;">
+      <div class="dash-title" style="margin-bottom:0">✂️ Mes services</div>
+      <button class="btn btn-gold btn-sm" onclick="openOv('ov-add-service')">+ Ajouter</button>
+    </div>
+    <div>
+      {% for svc in shop.services.all %}
+      <div class="srv-item">
+        <div>
+          <div class="srv-nm">{{ svc.name }}</div>
+          <div class="srv-dur">⏱ {{ svc.duration_minutes }} min{% if svc.description %} · {{ svc.description|truncatechars:50 }}{% endif %}</div>
+        </div>
+        <div class="flex gap-10 align-center flex-wrap">
+          <span class="srv-pr">{{ svc.price|floatformat:"0" }} FCFA</span>
+          <button class="btn btn-ghost btn-sm">✏️ Modifier</button>
+          <span class="b {% if svc.is_active %}b-esth{% else %}b-ongl{% endif %}">{% if svc.is_active %}Actif{% else %}Inactif{% endif %}</span>
+        </div>
+      </div>
+      {% empty %}
+      <div class="text-center text-mut" style="padding:40px">
+        <div style="font-size:3rem;margin-bottom:12px">✂️</div>
+        <p>Aucun service ajouté. <button class="btn btn-outline btn-sm" onclick="openOv('ov-add-service')">Ajouter le premier</button></p>
+      </div>
+      {% endfor %}
+    </div>
+
+    {% elif active_tab == 'avis' %}
+    <!-- ===== AVIS ===== -->
+    <div class="flex-between" style="margin-bottom:24px">
+      <div class="dash-title" style="margin-bottom:0">⭐ Avis clients</div>
+      <div class="flex gap-12 align-center">
+        <span style="font-family:'Cormorant Garamond',serif;font-size:2rem;color:var(--gold);font-weight:700">{{ stats.avg_rating }}</span>
+        <div><div style="color:var(--gold)">★★★★★</div><div class="text-xs text-mut">{{ stats.review_count }} avis</div></div>
+      </div>
+    </div>
+    {% for review in shop.reviews.filter.all %}
+    <div class="rev-card">
+      <div class="rev-h">
+        <div class="rev-av">{{ review.client.get_initials }}</div>
+        <div>
+          <div class="rev-nm">{{ review.client.get_full_name }}</div>
+          <div class="rev-dt" style="color:var(--gold)">{{ review.stars_display }} · {{ review.created_at|date:"d/m/Y" }}</div>
+        </div>
+        <button class="btn btn-ghost btn-sm" style="margin-left:auto">Répondre</button>
+      </div>
+      {% if review.title %}<div style="font-weight:600;color:var(--parch);font-size:.88rem;margin-bottom:6px">{{ review.title }}</div>{% endif %}
+      <div class="rev-txt">{{ review.comment }}</div>
+    </div>
+    {% empty %}
+    <div class="text-center text-mut" style="padding:60px"><div style="font-size:3rem;margin-bottom:16px">⭐</div><p>Aucun avis approuvé pour le moment.</p></div>
+    {% endfor %}
+
+    {% elif active_tab == 'profile' %}
+    <!-- ===== PROFIL ===== -->
+    <div class="dash-title">👤 Mon profil</div>
+    <div class="ph">
+      <div class="ph-av">{{ request.user.get_initials }}</div>
+      <div>
+        <div class="ph-nm">{{ request.user.get_full_name }}</div>
+        <div class="ph-rl">⭐ Professionnel · {{ shop.name }}</div>
+        <div class="ph-mt">📍 {{ shop.get_quartier_display }} · ✉️ {{ request.user.email }} · 📞 {{ request.user.phone }}</div>
+      </div>
+    </div>
+    <form method="post" action="{% url 'profile_edit' %}" enctype="multipart/form-data">
+      {% csrf_token %}
+      <div class="dbox">
+        <div class="dbox-h"><div class="dbox-t">Informations personnelles</div></div>
+        <div class="dbox-b">
+          <div class="fg-row">
+            <div class="fg"><label class="lbl">Prénom</label><input class="inp" name="first_name" value="{{ request.user.first_name }}"></div>
+            <div class="fg"><label class="lbl">Nom</label><input class="inp" name="last_name" value="{{ request.user.last_name }}"></div>
+          </div>
+          <div class="fg-row">
+            <div class="fg"><label class="lbl">Email</label><input class="inp" type="email" name="email" value="{{ request.user.email }}"></div>
+            <div class="fg"><label class="lbl">WhatsApp</label><input class="inp" type="tel" name="phone" value="{{ request.user.phone }}"></div>
+          </div>
+          <div class="fg"><label class="lbl">Photo de profil</label><input class="inp" type="file" name="avatar" accept="image/*"></div>
+          <button type="submit" class="btn btn-gold">Enregistrer</button>
+        </div>
+      </div>
+    </form>
+
+    {% elif active_tab == 'notifs' %}
+    <!-- ===== NOTIFICATIONS ===== -->
+    <div class="flex-between" style="margin-bottom:24px">
+      <div class="dash-title" style="margin-bottom:0">🔔 Notifications</div>
+      <button class="btn btn-ghost btn-sm" onclick="fetch('/notifications/tout-lire/',{method:'POST',headers:{'X-CSRFToken':'{{ csrf_token }}'}}).then(()=>{toast('✅ Tout marqué comme lu','success');location.reload()})">Tout marquer comme lu</button>
+    </div>
+    <div class="dbox">
+      {% for n in notifications %}
+      <div class="notif-item {% if not n.is_read %}new{% endif %}">
+        <div class="notif-dot {% if n.is_read %}r{% endif %}"></div>
+        <div>
+          <div class="notif-msg"><strong>{{ n.title }}</strong> — {{ n.message }}</div>
+          <div class="notif-time">{{ n.created_at|timesince }}</div>
+        </div>
+      </div>
+      {% empty %}
+      <div class="text-center text-mut" style="padding:40px">Aucune notification.</div>
+      {% endfor %}
+    </div>
+
+    {% endif %}
+
+  </main>
+</div>
+
+<!-- Modal Ajouter service -->
+<div class="ov" id="ov-add-service">
+  <div class="modal">
+    <div class="mh"><div class="mt">➕ Ajouter un service</div><button class="mc" onclick="closeOv('ov-add-service')">✕</button></div>
+    <div class="mb">
+      <form method="post" action="#">
+        {% csrf_token %}
+        <div class="fg"><label class="lbl">Nom du service *</label><input class="inp" name="name" placeholder="Ex: Tresses africaines" required></div>
+        <div class="fg-row">
+          <div class="fg"><label class="lbl">Prix (FCFA) *</label><input class="inp" type="number" name="price" placeholder="5000" min="0" required></div>
+          <div class="fg"><label class="lbl">Durée (minutes)</label><input class="inp" type="number" name="duration_minutes" placeholder="60" min="15"></div>
+        </div>
+        <div class="fg"><label class="lbl">Description</label><textarea class="ta" name="description" placeholder="Décrivez le service…" style="min-height:70px"></textarea></div>
+        <div class="mf" style="padding:0"><button type="submit" class="btn btn-gold">Ajouter le service</button></div>
+      </form>
+    </div>
+  </div>
+</div>
+{% endblock %}

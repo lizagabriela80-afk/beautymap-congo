@@ -1,0 +1,46 @@
+[
+  {"model":"shops.service","pk":1,"fields":{"shop":"11111111-1111-1111-1111-111111111111","name":"Tresses africaines","description":"Tresses classiques, boxbraids, knotless braids selon longueur","price":"5000","duration_minutes":180,"is_active":true,"order":1}},
+  {"model":"shops.service","pk":2,"fields":{"shop":"11111111-1111-1111-1111-111111111111","name":"Lissage brésilien","description":"Lissage longue durée, effet miroir","price":"12000","duration_minutes":120,"is_active":true,"order":2}},
+  {"model":"shops.service","pk":3,"fields":{"shop":"11111111-1111-1111-1111-111111111111","name":"Coupe femme","description":"Coupe et mise en forme","price":"3000","duration_minutes":60,"is_active":true,"order":3}},
+  {"model":"shops.service","pk":4,"fields":{"shop":"11111111-1111-1111-1111-111111111111","name":"Coloration","description":"Coloration complète avec soin","price":"8000","duration_minutes":90,"is_active":true,"order":4}},
+  {"model":"shops.service","pk":5,"fields":{"shop":"11111111-1111-1111-1111-111111111111","name":"Coiffure de mariée","description":"Essai + jour J inclus","price":"25000","duration_minutes":240,"is_active":true,"order":5}},
+  {"model":"shops.service","pk":6,"fields":{"shop":"11111111-1111-1111-1111-111111111111","name":"Tissage","description":"Tissage sur mesure toutes longueurs","price":"9000","duration_minutes":120,"is_active":true,"order":6}},
+
+  {"model":"shops.service","pk":7,"fields":{"shop":"22222222-2222-2222-2222-222222222222","name":"Coupe homme","description":"Coupe classique ou tendance","price":"2000","duration_minutes":30,"is_active":true,"order":1}},
+  {"model":"shops.service","pk":8,"fields":{"shop":"22222222-2222-2222-2222-222222222222","name":"Dégradé américain","description":"Dégradé bas, milieu ou haut","price":"3000","duration_minutes":40,"is_active":true,"order":2}},
+  {"model":"shops.service","pk":9,"fields":{"shop":"22222222-2222-2222-2222-222222222222","name":"Barbe taillée","description":"Taille + mise en forme + huile","price":"1500","duration_minutes":20,"is_active":true,"order":3}},
+  {"model":"shops.service","pk":10,"fields":{"shop":"22222222-2222-2222-2222-222222222222","name":"Coupe + Barbe","description":"Pack complet homme","price":"4000","duration_minutes":50,"is_active":true,"order":4}},
+  {"model":"shops.service","pk":11,"fields":{"shop":"22222222-2222-2222-2222-222222222222","name":"Coupe enfant","description":"Pour les moins de 12 ans","price":"1500","duration_minutes":25,"is_active":true,"order":5}},
+
+  {"model":"shops.service","pk":12,"fields":{"shop":"33333333-3333-3333-3333-333333333333","name":"Pose gel","description":"Pose complète en gel UV","price":"8000","duration_minutes":90,"is_active":true,"order":1}},
+  {"model":"shops.service","pk":13,"fields":{"shop":"33333333-3333-3333-3333-333333333333","name":"Semi-permanent","description":"Vernis semi-permanent longue durée","price":"6000","duration_minutes":60,"is_active":true,"order":2}},
+  {"model":"shops.service","pk":14,"fields":{"shop":"33333333-3333-3333-3333-333333333333","name":"Nail art","description":"Designs personnalisés, strass, dégradés","price":"12000","duration_minutes":120,"is_active":true,"order":3}},
+  {"model":"shops.service","pk":15,"fields":{"shop":"33333333-3333-3333-3333-333333333333","name":"Manucure","description":"Lime, soin cuticules, vernis","price":"4000","duration_minutes":45,"is_active":true,"order":4}},
+  {"model":"shops.service","pk":16,"fields":{"shop":"33333333-3333-3333-3333-333333333333","name":"Pédicure","description":"Soin complet des pieds","price":"5000","duration_minutes":60,"is_active":true,"order":5}},
+
+  {"model":"shops.service","pk":17,"fields":{"shop":"44444444-4444-4444-4444-444444444444","name":"Soin visage hydratant","description":"Nettoyage + gommage + masque + sérum","price":"10000","duration_minutes":60,"is_active":true,"order":1}},
+  {"model":"shops.service","pk":18,"fields":{"shop":"44444444-4444-4444-4444-444444444444","name":"Épilation jambes","description":"Cire froide ou chaude","price":"6000","duration_minutes":45,"is_active":true,"order":2}},
+  {"model":"shops.service","pk":19,"fields":{"shop":"44444444-4444-4444-4444-444444444444","name":"Massage relaxant","description":"Massage corps complet aux huiles essentielles","price":"15000","duration_minutes":90,"is_active":true,"order":3}},
+  {"model":"shops.service","pk":20,"fields":{"shop":"44444444-4444-4444-4444-444444444444","name":"Hammam","description":"Séance hammam + gommage au savon beldi","price":"12000","duration_minutes":75,"is_active":true,"order":4}},
+  {"model":"shops.service","pk":21,"fields":{"shop":"44444444-4444-4444-4444-444444444444","name":"Épilation maillot","description":"Épilation complète ou partielle","price":"4000","duration_minutes":30,"is_active":true,"order":5}},
+
+  {"model":"shops.service","pk":22,"fields":{"shop":"55555555-5555-5555-5555-555555555555","name":"Pagne wax 3 yards","description":"Pagne certifié, motifs variés","price":"8000","duration_minutes":null,"is_active":true,"order":1}},
+  {"model":"shops.service","pk":23,"fields":{"shop":"55555555-5555-5555-5555-555555555555","name":"Confection robe","description":"Robe sur mesure, délai 48h","price":"25000","duration_minutes":null,"is_active":true,"order":2}},
+  {"model":"shops.service","pk":24,"fields":{"shop":"55555555-5555-5555-5555-555555555555","name":"Tenue homme complète","description":"Costume ou ensemble wax homme","price":"15000","duration_minutes":null,"is_active":true,"order":3}},
+
+  {"model":"shops.schedule","pk":1,"fields":{"shop":"11111111-1111-1111-1111-111111111111","day":"monday","open_time":"08:00:00","close_time":"19:00:00","is_closed":false}},
+  {"model":"shops.schedule","pk":2,"fields":{"shop":"11111111-1111-1111-1111-111111111111","day":"tuesday","open_time":"08:00:00","close_time":"19:00:00","is_closed":false}},
+  {"model":"shops.schedule","pk":3,"fields":{"shop":"11111111-1111-1111-1111-111111111111","day":"wednesday","open_time":"08:00:00","close_time":"19:00:00","is_closed":false}},
+  {"model":"shops.schedule","pk":4,"fields":{"shop":"11111111-1111-1111-1111-111111111111","day":"thursday","open_time":"08:00:00","close_time":"19:00:00","is_closed":false}},
+  {"model":"shops.schedule","pk":5,"fields":{"shop":"11111111-1111-1111-1111-111111111111","day":"friday","open_time":"08:00:00","close_time":"19:00:00","is_closed":false}},
+  {"model":"shops.schedule","pk":6,"fields":{"shop":"11111111-1111-1111-1111-111111111111","day":"saturday","open_time":"09:00:00","close_time":"17:00:00","is_closed":false}},
+  {"model":"shops.schedule","pk":7,"fields":{"shop":"11111111-1111-1111-1111-111111111111","day":"sunday","open_time":null,"close_time":null,"is_closed":true}},
+
+  {"model":"shops.schedule","pk":8,"fields":{"shop":"22222222-2222-2222-2222-222222222222","day":"monday","open_time":"08:00:00","close_time":"20:00:00","is_closed":false}},
+  {"model":"shops.schedule","pk":9,"fields":{"shop":"22222222-2222-2222-2222-222222222222","day":"tuesday","open_time":"08:00:00","close_time":"20:00:00","is_closed":false}},
+  {"model":"shops.schedule","pk":10,"fields":{"shop":"22222222-2222-2222-2222-222222222222","day":"wednesday","open_time":"08:00:00","close_time":"20:00:00","is_closed":false}},
+  {"model":"shops.schedule","pk":11,"fields":{"shop":"22222222-2222-2222-2222-222222222222","day":"thursday","open_time":"08:00:00","close_time":"20:00:00","is_closed":false}},
+  {"model":"shops.schedule","pk":12,"fields":{"shop":"22222222-2222-2222-2222-222222222222","day":"friday","open_time":"08:00:00","close_time":"20:00:00","is_closed":false}},
+  {"model":"shops.schedule","pk":13,"fields":{"shop":"22222222-2222-2222-2222-222222222222","day":"saturday","open_time":"08:00:00","close_time":"20:00:00","is_closed":false}},
+  {"model":"shops.schedule","pk":14,"fields":{"shop":"22222222-2222-2222-2222-222222222222","day":"sunday","open_time":"09:00:00","close_time":"15:00:00","is_closed":false}}
+]
