@@ -104,6 +104,8 @@ JAZZMIN_SETTINGS = {
 }
 
 # ── Auth ──────────────────────────────────────────────────
+ALLOWED_HOSTS = ['*']
+
 AUTH_USER_MODEL = 'accounts.User'
 
 AUTH_PASSWORD_VALIDATORS = [
@@ -123,6 +125,7 @@ USE_TZ        = True
 STATIC_URL      = '/static/'
 STATIC_ROOT     = BASE_DIR / 'staticfiles'
 STATICFILES_DIRS = [BASE_DIR / 'static']
+
 
 # En développement : StaticFilesStorage (pas besoin de collectstatic)
 # En production    : remplacer par whitenoise.storage.CompressedManifestStaticFilesStorage
