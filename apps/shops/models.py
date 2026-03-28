@@ -196,3 +196,67 @@ class Favorite(models.Model):
 
     class Meta:
         unique_together = ['user', 'shop']
+
+
+# ═══════════════════════════════════════════════════════════════
+#  À AJOUTER à la fin de apps/shops/models.py
+# ═══════════════════════════════════════════════════════════════
+
+class ShopPost(models.Model):
+    """
+    Publication d'un professionnel (style Facebook/Instagram).
+    Peut contenir du texte, des photos, et un tag de catégorie.
+    """
+    POST_TYPES = [
+        ('realisation', '✨ Réalisation'),
+        ('produit',     '🛒 Produit'),
+        ('promo',       '🎉 Promotion'),
+        ('soin',        '💆 Soin'),
+        ('avant_apres', '🔄 Avant / Après'),
+        ('annonce',     '📢 Annonce'),
+    ]
+
+    id          = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
+    shop        = models.ForeignKey(Shop, on_delete=models.CASCADE, related_name='posts')
+    post_type   = models.CharField(max_length=20, choices=POST_TYPES, default='realisation')
+    caption     = models.TextField(blank=True, help_text="Description de la publication")
+    price       = models.DecimalField(max_digits=10, decimal_places=0, null=True, blank=True,
+                                      help_text="Prix si c'est un produit ou service")
+    is_published = models.BooleanField(default=True)
+    likes_count  = models.PositiveIntegerField(default=0)
+    created_at   = models.DateTimeField(auto_now_add=True)
+    updated_at   = models.DateTimeField(auto_now=True)
+
+    class Meta:
+        verbose_name        = 'Publication'
+        verbose_name_plural = 'Publications'
+        ordering            = ['-created_at']
+
+    def __str__(self):
+        return f"{self.shop.name} — {self.get_post_type_display()} ({self.created_at:%d/%m/%Y})"
+
+    def get_main_image(self):
+        return self.images.first()
+
+
+class ShopPostImage(models.Model):
+    """Images attachées à une publication (une pub peut avoir plusieurs photos)"""
+    post    = models.ForeignKey(ShopPost, on_delete=models.CASCADE, related_name='images')
+    image   = models.ImageField(upload_to='shops/posts/%Y/%m/')
+    order   = models.PositiveIntegerField(default=0)
+
+    class Meta:
+        ordering = ['order']
+
+    def __str__(self):
+        return f"Image de {self.post}"
+
+
+class PostLike(models.Model):
+    """Like sur une publication (unique par utilisateur)"""
+    post       = models.ForeignKey(ShopPost, on_delete=models.CASCADE, related_name='likes')
+    user       = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    class Meta:
+        unique_together = ['post', 'user']

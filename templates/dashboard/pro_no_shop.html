@@ -3,22 +3,17 @@
 {% block footer %}{% endblock %}
 
 {% block content %}
-<div style="min-height:calc(100vh - 68px);display:flex;align-items:center;justify-content:center;padding:40px 20px">
-  <div style="width:100%;max-width:600px">
+<div style="min-height:calc(100vh - 68px);display:flex;align-items:center;justify-content:center;padding:40px 20px;margin-top:68px">
+  <div style="width:100%;max-width:640px">
 
-    <!-- En-tête -->
     <div style="text-align:center;margin-bottom:40px">
       <div style="font-size:3.5rem;margin-bottom:16px">🏪</div>
-      <h1 style="font-family:'Cormorant Garamond',serif;font-size:2.2rem;color:var(--parch);margin-bottom:12px">
-        Créez votre boutique
-      </h1>
+      <h1 style="font-family:'Cormorant Garamond',serif;font-size:2.2rem;color:var(--parch);margin-bottom:12px">Créez votre boutique</h1>
       <p style="color:var(--mut);line-height:1.7;max-width:440px;margin:0 auto">
-        Bienvenue {{ request.user.first_name }} ! Configurez votre boutique en quelques minutes
-        pour apparaître sur la carte et recevoir des réservations.
+        Bienvenue {{ request.user.first_name }} ! Configurez votre boutique en quelques minutes pour apparaître sur la carte et recevoir des réservations.
       </p>
     </div>
 
-    <!-- Messages -->
     {% if messages %}
     <div style="margin-bottom:20px">
       {% for message in messages %}
@@ -30,116 +25,125 @@
     </div>
     {% endif %}
 
-    <!-- Formulaire de création de boutique -->
     <div style="background:var(--ink2);border:1px solid rgba(201,151,58,.18);border-radius:var(--rxl);padding:36px">
-
-      <form method="post" action="{% url 'shops:create_shop' %}">
+      <form method="post" action="{% url 'shops:create_shop' %}" enctype="multipart/form-data" id="create-form">
         {% csrf_token %}
 
-        <!-- Infos boutique -->
-        <div style="margin-bottom:24px">
-          <div style="font-family:'Cormorant Garamond',serif;font-size:1.2rem;color:var(--parch);font-weight:600;margin-bottom:16px;padding-bottom:10px;border-bottom:1px solid rgba(255,255,255,.07)">
-            📋 Informations de la boutique
-          </div>
+        <!-- ── PHOTO DE COUVERTURE ───────────────────────────────── -->
+        <div style="margin-bottom:28px">
+          <label class="lbl" style="margin-bottom:10px;display:block">📸 Photo de couverture</label>
 
-          <div class="fg">
-            <label class="lbl">Nom de la boutique *</label>
-            <input class="inp" name="name" placeholder="Ex : Salon Élégance" required
-              value="{{ request.POST.name|default:'' }}">
-          </div>
-
-          <div class="fg-row">
-            <div class="fg">
-              <label class="lbl">Catégorie *</label>
-              <select class="sel" name="category" required>
-                <option value="">-- Choisir --</option>
-                <option value="coiffure"   {% if request.POST.category == 'coiffure'   %}selected{% endif %}>✂️ Coiffure</option>
-                <option value="esthetique" {% if request.POST.category == 'esthetique' %}selected{% endif %}>💆 Esthétique</option>
-                <option value="onglerie"   {% if request.POST.category == 'onglerie'   %}selected{% endif %}>💅 Onglerie</option>
-                <option value="vetements"  {% if request.POST.category == 'vetements'  %}selected{% endif %}>👗 Vêtements</option>
-                <option value="barbier"    {% if request.POST.category == 'barbier'    %}selected{% endif %}>🪒 Barbier</option>
-                <option value="maquillage" {% if request.POST.category == 'maquillage' %}selected{% endif %}>💄 Maquillage</option>
-                <option value="spa"        {% if request.POST.category == 'spa'        %}selected{% endif %}>🛁 Spa & Bien-être</option>
-                <option value="autre"      {% if request.POST.category == 'autre'      %}selected{% endif %}>🏪 Autre</option>
-              </select>
+          <!-- Zone de drop / preview -->
+          <div id="cover-drop-zone" onclick="document.getElementById('cover-input').click()"
+            style="height:180px;border:2px dashed rgba(201,151,58,.35);border-radius:var(--r);
+                   display:flex;flex-direction:column;align-items:center;justify-content:center;
+                   gap:10px;cursor:pointer;transition:all .25s;position:relative;overflow:hidden;
+                   background:var(--ink3)">
+            <img id="cover-preview" src="" alt=""
+              style="position:absolute;inset:0;width:100%;height:100%;object-fit:cover;display:none;border-radius:var(--r)">
+            <div id="cover-placeholder" style="text-align:center">
+              <div style="font-size:2.5rem;margin-bottom:8px">📷</div>
+              <div style="color:var(--mut);font-size:.84rem">Cliquez ou glissez une photo ici</div>
+              <div style="color:var(--mut);font-size:.75rem;margin-top:4px">JPG, PNG · Recommandé : 1200×400px</div>
             </div>
-            <div class="fg">
-              <label class="lbl">Quartier *</label>
-              <select class="sel" name="quartier" required>
-                <option value="">-- Choisir --</option>
-                <option value="bacongo"    {% if request.POST.quartier == 'bacongo'    %}selected{% endif %}>Bacongo</option>
-                <option value="poto_poto"  {% if request.POST.quartier == 'poto_poto'  %}selected{% endif %}>Poto-Poto</option>
-                <option value="moungali"   {% if request.POST.quartier == 'moungali'   %}selected{% endif %}>Moungali</option>
-                <option value="ouenze"     {% if request.POST.quartier == 'ouenze'     %}selected{% endif %}>Ouenzé</option>
-                <option value="talangai"   {% if request.POST.quartier == 'talangai'   %}selected{% endif %}>Talangaï</option>
-                <option value="makelekele" {% if request.POST.quartier == 'makelekele' %}selected{% endif %}>Makélékélé</option>
-                <option value="mfilou"     {% if request.POST.quartier == 'mfilou'     %}selected{% endif %}>Mfilou</option>
-                <option value="djiri"      {% if request.POST.quartier == 'djiri'      %}selected{% endif %}>Djiri</option>
-                <option value="autre"      {% if request.POST.quartier == 'autre'      %}selected{% endif %}>Autre</option>
-              </select>
+            <div id="cover-change-btn" style="display:none;position:absolute;bottom:12px;right:12px;
+              background:rgba(0,0,0,.6);color:#fff;padding:6px 14px;border-radius:var(--rsm);font-size:.78rem">
+              🔄 Changer
             </div>
           </div>
+          <input type="file" id="cover-input" name="cover_image" accept="image/*" style="display:none"
+            onchange="previewCover(this)">
+        </div>
 
-          <div class="fg">
-            <label class="lbl">Adresse complète</label>
-            <input class="inp" name="address"
-              placeholder="Ex : Avenue des Palmiers, face au marché, Bacongo"
-              value="{{ request.POST.address|default:'' }}">
+        <!-- ── LOGO ─────────────────────────────────────────────── -->
+        <div class="fg" style="display:flex;align-items:center;gap:16px;margin-bottom:24px">
+          <div id="logo-circle" onclick="document.getElementById('logo-input').click()"
+            style="width:72px;height:72px;border-radius:50%;background:var(--ink3);
+                   border:2px dashed rgba(201,151,58,.35);display:flex;align-items:center;
+                   justify-content:center;cursor:pointer;flex-shrink:0;overflow:hidden;transition:all .25s">
+            <img id="logo-preview" src="" alt="" style="width:100%;height:100%;object-fit:cover;display:none;border-radius:50%">
+            <span id="logo-placeholder" style="font-size:1.8rem">🏪</span>
           </div>
+          <div>
+            <div style="font-weight:600;color:var(--parch);font-size:.88rem;margin-bottom:4px">Logo (optionnel)</div>
+            <div style="color:var(--mut);font-size:.78rem;line-height:1.6">Photo de profil de la boutique.<br>Carré recommandé, min 200×200px.</div>
+          </div>
+          <input type="file" id="logo-input" name="logo" accept="image/*" style="display:none" onchange="previewLogo(this)">
+        </div>
 
+        <div style="height:1px;background:rgba(255,255,255,.07);margin-bottom:24px"></div>
+
+        <!-- ── INFOS BOUTIQUE ────────────────────────────────────── -->
+        <div style="font-family:'Cormorant Garamond',serif;font-size:1.2rem;color:var(--parch);font-weight:600;margin-bottom:16px">
+          📋 Informations
+        </div>
+
+        <div class="fg">
+          <label class="lbl">Nom de la boutique *</label>
+          <input class="inp" name="name" placeholder="Ex : Salon Élégance" required value="{{ request.POST.name|default:'' }}">
+        </div>
+
+        <div class="fg-row">
           <div class="fg">
-            <label class="lbl">Description</label>
-            <textarea class="ta" name="description"
-              placeholder="Décrivez votre boutique, vos spécialités, votre expérience…"
-              style="min-height:90px">{{ request.POST.description|default:'' }}</textarea>
+            <label class="lbl">Catégorie *</label>
+            <select class="sel" name="category" required>
+              <option value="">-- Choisir --</option>
+              {% for val, label in categories %}
+              <option value="{{ val }}" {% if request.POST.category == val %}selected{% endif %}>{{ label }}</option>
+              {% endfor %}
+            </select>
+          </div>
+          <div class="fg">
+            <label class="lbl">Quartier *</label>
+            <select class="sel" name="quartier" required>
+              <option value="">-- Choisir --</option>
+              {% for val, label in quartiers %}
+              <option value="{{ val }}" {% if request.POST.quartier == val %}selected{% endif %}>{{ label }}</option>
+              {% endfor %}
+            </select>
           </div>
         </div>
 
-        <!-- Contact -->
-        <div style="margin-bottom:24px">
-          <div style="font-family:'Cormorant Garamond',serif;font-size:1.2rem;color:var(--parch);font-weight:600;margin-bottom:16px;padding-bottom:10px;border-bottom:1px solid rgba(255,255,255,.07)">
-            📞 Contact
-          </div>
+        <div class="fg">
+          <label class="lbl">Adresse</label>
+          <input class="inp" name="address" placeholder="Ex : Avenue des Palmiers, face au marché" value="{{ request.POST.address|default:'' }}">
+        </div>
 
-          <div class="fg-row">
-            <div class="fg">
-              <label class="lbl">Téléphone *</label>
-              <input class="inp" name="phone" type="tel"
-                placeholder="+242 06 XXX XX XX" required
-                value="{{ request.POST.phone|default:request.user.phone }}">
-            </div>
-            <div class="fg">
-              <label class="lbl">WhatsApp</label>
-              <input class="inp" name="whatsapp" type="tel"
-                placeholder="+242 06 XXX XX XX"
-                value="{{ request.POST.whatsapp|default:'' }}">
-            </div>
-          </div>
+        <div class="fg">
+          <label class="lbl">Description *</label>
+          <textarea class="ta" name="description" placeholder="Décrivez votre boutique : spécialités, expérience, ambiance…" style="min-height:110px" required>{{ request.POST.description|default:'' }}</textarea>
+          <div class="form-help">Cette description apparaît sur votre fiche boutique. Soyez précis et attractif !</div>
+        </div>
 
+        <div style="height:1px;background:rgba(255,255,255,.07);margin-bottom:24px;margin-top:4px"></div>
+
+        <!-- ── CONTACT ───────────────────────────────────────────── -->
+        <div style="font-family:'Cormorant Garamond',serif;font-size:1.2rem;color:var(--parch);font-weight:600;margin-bottom:16px">
+          📞 Contact
+        </div>
+
+        <div class="fg-row">
           <div class="fg">
-            <label class="lbl">Email de la boutique</label>
-            <input class="inp" name="email" type="email"
-              placeholder="boutique@email.com"
-              value="{{ request.POST.email|default:'' }}">
+            <label class="lbl">Téléphone *</label>
+            <input class="inp" name="phone" type="tel" placeholder="+242 06 XXX XX XX" required value="{{ request.POST.phone|default:request.user.phone }}">
+          </div>
+          <div class="fg">
+            <label class="lbl">WhatsApp</label>
+            <input class="inp" name="whatsapp" type="tel" placeholder="+242 06 XXX XX XX" value="{{ request.POST.whatsapp|default:'' }}">
           </div>
         </div>
-        
+        <div class="fg">
+          <label class="lbl">Email de la boutique</label>
+          <input class="inp" name="email" type="email" placeholder="boutique@email.com" value="{{ request.POST.email|default:'' }}">
+        </div>
 
-        <!-- Bouton soumettre -->
         <button type="submit" class="btn btn-gold btn-w btn-lg" id="submit-btn">
           🚀 Créer ma boutique
         </button>
-
         <p style="text-align:center;font-size:.78rem;color:var(--mut);margin-top:12px">
-          Vous pourrez ajouter vos services, horaires et photos depuis votre tableau de bord.
+          Vous pourrez ajouter vos services, horaires et publications depuis votre tableau de bord.
         </p>
       </form>
-    </div>
-
-    <div style="text-align:center;margin-top:20px">
-      <a href="{% url 'logout' %}" style="font-size:.84rem;color:var(--mut)">
-        Se déconnecter
-      </a>
     </div>
   </div>
 </div>
@@ -147,10 +151,51 @@
 
 {% block extra_scripts %}
 <script>
-document.querySelector('form').addEventListener('submit', function() {
+/* ── Preview cover image ── */
+function previewCover(input) {
+  if (!input.files[0]) return;
+  const reader = new FileReader();
+  reader.onload = e => {
+    document.getElementById('cover-preview').src = e.target.result;
+    document.getElementById('cover-preview').style.display = 'block';
+    document.getElementById('cover-placeholder').style.display = 'none';
+    document.getElementById('cover-change-btn').style.display = 'block';
+    document.getElementById('cover-drop-zone').style.border = '2px solid rgba(201,151,58,.6)';
+  };
+  reader.readAsDataURL(input.files[0]);
+}
+
+/* ── Preview logo ── */
+function previewLogo(input) {
+  if (!input.files[0]) return;
+  const reader = new FileReader();
+  reader.onload = e => {
+    document.getElementById('logo-preview').src = e.target.result;
+    document.getElementById('logo-preview').style.display = 'block';
+    document.getElementById('logo-placeholder').style.display = 'none';
+  };
+  reader.readAsDataURL(input.files[0]);
+}
+
+/* ── Drag & drop ── */
+const dropZone = document.getElementById('cover-drop-zone');
+dropZone.addEventListener('dragover', e => { e.preventDefault(); dropZone.style.borderColor='var(--gold)'; });
+dropZone.addEventListener('dragleave', () => { dropZone.style.borderColor='rgba(201,151,58,.35)'; });
+dropZone.addEventListener('drop', e => {
+  e.preventDefault();
+  dropZone.style.borderColor = 'rgba(201,151,58,.35)';
+  const file = e.dataTransfer.files[0];
+  if (file && file.type.startsWith('image/')) {
+    const input = document.getElementById('cover-input');
+    const dt = new DataTransfer(); dt.items.add(file); input.files = dt.files;
+    previewCover(input);
+  }
+});
+
+/* ── Submit feedback ── */
+document.getElementById('create-form').addEventListener('submit', () => {
   const btn = document.getElementById('submit-btn');
-  btn.disabled    = true;
-  btn.textContent = '⏳ Création en cours…';
+  btn.disabled = true; btn.textContent = '⏳ Création en cours…';
 });
 </script>
 {% endblock %}

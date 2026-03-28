@@ -1,0 +1,86 @@
+{# templates/public/_post_card.html — Carte de publication individuelle #}
+{# Utilisé dans feed.html et shop_detail.html #}
+
+{% with main_img=post.get_main_image %}
+<div class="post-card" data-post-id="{{ post.id }}">
+
+  <!-- Image principale -->
+  {% if main_img %}
+  <a href="{% url 'shops:detail' post.shop.slug %}" style="display:block;aspect-ratio:4/3;overflow:hidden">
+    <img src="{{ main_img.image.url }}" alt="{{ post.caption|truncatechars:60 }}"
+      style="width:100%;height:100%;object-fit:cover;transition:transform .4s"
+      onmouseover="this.style.transform='scale(1.04)'" onmouseout="this.style.transform='scale(1)'">
+  </a>
+  {% else %}
+  <!-- Post texte sans image -->
+  <div style="padding:24px;min-height:120px;background:linear-gradient(135deg,var(--ink3),var(--ink4));display:flex;align-items:center;justify-content:center">
+    <div style="font-size:3rem;opacity:.3">{{ post.shop.category_emoji }}</div>
+  </div>
+  {% endif %}
+
+  <!-- Contenu -->
+  <div style="padding:14px 16px">
+
+    <!-- Boutique -->
+    <a href="{% url 'shops:detail' post.shop.slug %}"
+       style="display:flex;align-items:center;gap:10px;margin-bottom:10px;text-decoration:none">
+      {% if post.shop.logo %}
+      <img src="{{ post.shop.logo.url }}" alt="{{ post.shop.name }}"
+        style="width:36px;height:36px;border-radius:50%;object-fit:cover;flex-shrink:0;border:2px solid rgba(201,151,58,.3)">
+      {% else %}
+      <div style="width:36px;height:36px;border-radius:50%;background:linear-gradient(135deg,var(--gold),var(--gold-dk));display:flex;align-items:center;justify-content:center;font-size:.85rem;font-weight:700;color:var(--ink);flex-shrink:0">
+        {{ post.shop.category_emoji }}
+      </div>
+      {% endif %}
+      <div>
+        <div style="font-size:.84rem;font-weight:700;color:var(--parch)">{{ post.shop.name }}</div>
+        <div style="font-size:.72rem;color:var(--mut)">{{ post.shop.get_quartier_display }} · {{ post.created_at|timesince }}</div>
+      </div>
+    </a>
+
+    <!-- Badge type de post -->
+    <div style="display:flex;align-items:center;gap:8px;margin-bottom:8px;flex-wrap:wrap">
+      <span style="background:rgba(201,151,58,.12);border:1px solid rgba(201,151,58,.25);color:var(--gold-lt);
+                   font-size:.7rem;font-weight:700;padding:2px 10px;border-radius:100px">
+        {{ post.get_post_type_display }}
+      </span>
+      {% if post.price %}
+      <span style="background:rgba(46,148,88,.12);border:1px solid rgba(46,148,88,.25);color:#6ED89A;
+                   font-size:.7rem;font-weight:700;padding:2px 10px;border-radius:100px">
+        {{ post.price|floatformat:"0" }} FCFA
+      </span>
+      {% endif %}
+      {% if post.images.count > 1 %}
+      <span style="color:var(--mut);font-size:.7rem">📷 {{ post.images.count }}</span>
+      {% endif %}
+    </div>
+
+    <!-- Caption -->
+    {% if post.caption %}
+    <p style="font-size:.84rem;color:var(--txt);line-height:1.6;margin-bottom:12px;
+              display:-webkit-box;-webkit-line-clamp:3;-webkit-box-orient:vertical;overflow:hidden">
+      {{ post.caption }}
+    </p>
+    {% endif %}
+
+    <!-- Actions -->
+    <div style="display:flex;align-items:center;justify-content:space-between;padding-top:10px;border-top:1px solid rgba(255,255,255,.05)">
+      <!-- Like -->
+      <button onclick="toggleLike(this, '{{ post.id }}')"
+        style="background:none;border:none;cursor:pointer;display:flex;align-items:center;gap:6px;color:var(--mut);font-size:.84rem;padding:4px 0;transition:color .2s"
+        class="{% if request.user.is_authenticated and post.likes.filter(user=request.user).exists %}liked{% endif %}">
+        <span class="heart">{% if request.user.is_authenticated and post.likes.filter(user=request.user).exists %}❤️{% else %}🤍{% endif %}</span>
+        <span class="like-count">{{ post.likes_count }}</span>
+      </button>
+
+      <!-- Réserver -->
+      <a href="{% url 'bookings:book_service' post.shop.slug %}"
+         style="font-size:.75rem;font-weight:700;color:var(--gold-lt);text-decoration:none;transition:color .2s"
+         onmouseover="this.style.color='var(--gold)'" onmouseout="this.style.color='var(--gold-lt)'">
+        Réserver →
+      </a>
+    </div>
+  </div>
+
+</div>
+{% endwith %}

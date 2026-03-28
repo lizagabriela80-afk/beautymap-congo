@@ -1,0 +1,107 @@
+{# ═══════════════════════════════════════════════════════════════════
+   ONGLET PUBLICATIONS — à ajouter dans templates/dashboard/pro.html
+   Insérer dans la section {% elif active_tab == '...' %} après 'avis'
+═══════════════════════════════════════════════════════════════════ #}
+
+{% elif active_tab == 'publications' %}
+<!-- ===== PUBLICATIONS ===== -->
+<div class="flex-between" style="margin-bottom:24px">
+  <div class="dash-title" style="margin-bottom:0">📸 Mes publications</div>
+  <button class="btn btn-gold btn-sm" onclick="openOv('ov-new-post')">+ Publier</button>
+</div>
+
+<!-- Grille des publications existantes -->
+<div style="columns:2;gap:16px;margin-bottom:28px" id="my-posts-grid">
+  {% for post in shop.posts.all %}
+  <div style="break-inside:avoid;margin-bottom:16px;background:var(--ink3);border:1px solid rgba(255,255,255,.06);border-radius:var(--r);overflow:hidden">
+    {% with img=post.get_main_image %}
+    {% if img %}
+    <img src="{{ img.image.url }}" style="width:100%;aspect-ratio:4/3;object-fit:cover">
+    {% endif %}
+    {% endwith %}
+    <div style="padding:12px">
+      <div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:6px">
+        <span style="background:rgba(201,151,58,.12);color:var(--gold-lt);font-size:.7rem;font-weight:700;padding:2px 10px;border-radius:100px;border:1px solid rgba(201,151,58,.25)">
+          {{ post.get_post_type_display }}
+        </span>
+        <div style="display:flex;gap:6px">
+          {% if post.price %}<span style="font-size:.75rem;color:#6ED89A;font-weight:700">{{ post.price|floatformat:"0" }} FCFA</span>{% endif %}
+          <button onclick="deletePost('{{ post.id }}', this)" class="btn btn-red btn-sm" style="padding:4px 10px;font-size:.72rem">🗑️</button>
+        </div>
+      </div>
+      {% if post.caption %}
+      <p style="font-size:.8rem;color:var(--mut);line-height:1.5;margin-bottom:6px;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden">{{ post.caption }}</p>
+      {% endif %}
+      <div style="font-size:.7rem;color:var(--mut)">❤️ {{ post.likes_count }} · {{ post.images.count }} photo{{ post.images.count|pluralize }} · {{ post.created_at|timesince }}</div>
+    </div>
+  </div>
+  {% empty %}
+  <div style="grid-column:1/-1;text-align:center;padding:60px;color:var(--mut)">
+    <div style="font-size:3.5rem;margin-bottom:16px">📸</div>
+    <p>Aucune publication. Partagez vos réalisations !</p>
+    <button class="btn btn-outline btn-sm" style="margin-top:16px" onclick="openOv('ov-new-post')">Créer ma première publication</button>
+  </div>
+  {% endfor %}
+</div>
+
+
+{# ── MODAL NOUVELLE PUBLICATION ── #}
+{# À placer à la fin du fichier pro.html, avant le dernier </div> #}
+<div class="ov" id="ov-new-post">
+  <div class="modal modal-wide">
+    <div class="mh">
+      <div class="mt">📸 Nouvelle publication</div>
+      <button class="mc" onclick="closeOv('ov-new-post')">✕</button>
+    </div>
+    <div class="mb">
+
+      <!-- Zone d'upload photo -->
+      <div class="fg">
+        <label class="lbl">Photos (jusqu'à 10)</label>
+        <div id="post-drop-zone"
+          style="border:2px dashed rgba(201,151,58,.35);border-radius:var(--r);padding:20px;text-align:center;cursor:pointer;transition:all .25s;min-height:120px"
+          onclick="document.getElementById('post-images-input').click()"
+          ondragover="event.preventDefault();this.style.borderColor='var(--gold)'"
+          ondragleave="this.style.borderColor='rgba(201,151,58,.35)'"
+          ondrop="handlePostDrop(event)">
+          <div id="post-photos-preview" style="display:flex;flex-wrap:wrap;gap:8px;margin-bottom:12px"></div>
+          <div style="color:var(--mut);font-size:.84rem">📷 Cliquez ou glissez vos photos ici</div>
+          <div style="color:var(--mut);font-size:.72rem;margin-top:4px">JPG, PNG · Max 10 Mo par image</div>
+        </div>
+        <input type="file" id="post-images-input" multiple accept="image/*" style="display:none" onchange="previewPostImages(this.files)">
+      </div>
+
+      <!-- Type de publication -->
+      <div class="fg">
+        <label class="lbl">Type de publication</label>
+        <div style="display:flex;gap:8px;flex-wrap:wrap" id="post-type-pills">
+          {% for val, label in post_types %}
+          <button type="button" class="pill {% if forloop.first %}on{% endif %}" data-type="{{ val }}"
+            onclick="selectPostType(this)">{{ label }}</button>
+          {% endfor %}
+        </div>
+        <input type="hidden" id="selected-post-type" value="{{ post_types.0.0 }}">
+      </div>
+
+      <!-- Description -->
+      <div class="fg">
+        <label class="lbl">Description</label>
+        <textarea class="ta" id="post-caption" placeholder="Décrivez votre réalisation : technique, durée, produits utilisés…" style="min-height:100px"></textarea>
+      </div>
+
+      <!-- Prix optionnel -->
+      <div class="fg">
+        <label class="lbl">Prix (optionnel)</label>
+        <div style="position:relative">
+          <input class="inp" type="number" id="post-price" placeholder="Ex : 5000" min="0" style="padding-right:60px">
+          <span style="position:absolute;right:14px;top:50%;transform:translateY(-50%);font-size:.78rem;color:var(--mut)">FCFA</span>
+        </div>
+      </div>
+
+    </div>
+    <div class="mf">
+      <button class="btn btn-ghost" onclick="closeOv('ov-new-post')">Annuler</button>
+      <button class="btn btn-gold" id="publish-btn" onclick="publishPost('{{ shop.slug }}')">📤 Publier</button>
+    </div>
+  </div>
+</div>

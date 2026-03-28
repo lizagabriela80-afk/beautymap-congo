@@ -1,0 +1,134 @@
+{% extends "base/base.html" %}
+{% block title %}Découverte{% endblock %}
+
+{% block content %}
+<div style="margin-top:68px">
+
+  <!-- ── EN-TÊTE DÉCOUVERTE ── -->
+  <div style="background:var(--ink2);border-bottom:1px solid rgba(201,151,58,.1);padding:20px 48px;position:sticky;top:68px;z-index:100">
+    <div style="max-width:1100px;margin:0 auto;display:flex;align-items:center;gap:16px;flex-wrap:wrap">
+      <h1 style="font-family:'Cormorant Garamond',serif;font-size:1.5rem;color:var(--parch);font-weight:700;margin-right:8px">
+        ✨ Découverte
+      </h1>
+      <!-- Filtres par type de post -->
+      <div class="pills" id="feed-filters">
+        <button class="pill {% if not current_cat %}on{% endif %}" onclick="filterFeed('', this)">Tout</button>
+        {% for val, label in categories %}
+        <button class="pill {% if current_cat == val %}on{% endif %}" onclick="filterFeed('{{ val }}', this)">{{ label }}</button>
+        {% endfor %}
+      </div>
+    </div>
+  </div>
+
+  <!-- ── GRILLE DE POSTS ── -->
+  <div style="max-width:1100px;margin:0 auto;padding:28px 24px">
+
+    <div id="posts-grid" style="columns:1;gap:20px">
+      <!-- Rendu serveur initial -->
+      {% for post in posts %}
+      {% include "public/_post_card.html" %}
+      {% empty %}
+      <div style="text-align:center;padding:80px 20px;color:var(--mut);grid-column:1/-1">
+        <div style="font-size:4rem;margin-bottom:16px">✨</div>
+        <h3 style="font-family:'Cormorant Garamond',serif;color:var(--parch);margin-bottom:10px">Aucune publication pour le moment</h3>
+        <p>Les professionnels n'ont pas encore publié. Revenez bientôt !</p>
+        <a href="{% url 'shops:explore' %}" class="btn btn-outline" style="margin-top:20px">Explorer les boutiques</a>
+      </div>
+      {% endfor %}
+    </div>
+
+    <!-- ── LOADER INFINITE SCROLL ── -->
+    <div id="load-more-trigger" style="height:80px;display:flex;align-items:center;justify-content:center">
+      {% if posts.has_next %}
+      <div id="load-spinner" style="color:var(--mut);font-size:.84rem">
+        <div style="width:24px;height:24px;border:2px solid rgba(201,151,58,.2);border-top-color:var(--gold);border-radius:50%;animation:spin .8s linear infinite;margin:0 auto 8px"></div>
+        Chargement…
+      </div>
+      {% endif %}
+    </div>
+
+  </div>
+</div>
+
+<style>
+@keyframes spin { to { transform: rotate(360deg); } }
+#posts-grid { column-count: 1; }
+@media (min-width: 600px)  { #posts-grid { column-count: 2; } }
+@media (min-width: 900px)  { #posts-grid { column-count: 3; } }
+@media (min-width: 1200px) { #posts-grid { column-count: 4; } }
+
+.post-card {
+  break-inside: avoid;
+  margin-bottom: 20px;
+  background: var(--ink2);
+  border: 1px solid rgba(255,255,255,.06);
+  border-radius: var(--r);
+  overflow: hidden;
+  transition: transform .3s, border-color .3s;
+  display: block;
+}
+.post-card:hover { transform: translateY(-4px); border-color: rgba(201,151,58,.28); }
+</style>
+
+<script>
+let currentPage    = {{ posts.next_page_number|default:2 }};
+let currentCat     = '{{ current_cat }}';
+let isLoading      = false;
+let hasMore        = {{ posts.has_next|lower }};
+
+/* ── Infinite scroll ── */
+const observer = new IntersectionObserver(entries => {
+  if (entries[0].isIntersecting && hasMore && !isLoading) loadMorePosts();
+}, { threshold: 0.1 });
+
+const trigger = document.getElementById('load-more-trigger');
+if (trigger) observer.observe(trigger);
+
+async function loadMorePosts() {
+  isLoading = true;
+  try {
+    const url = `/decouverte/?page=${currentPage}&category=${currentCat}`;
+    const res = await fetch(url, { headers: { 'X-Requested-With': 'XMLHttpRequest' } });
+    const data = await res.json();
+    document.getElementById('posts-grid').insertAdjacentHTML('beforeend', data.html);
+    hasMore     = data.has_next;
+    currentPage = data.next_page;
+    if (!hasMore) {
+      const spinner = document.getElementById('load-spinner');
+      if (spinner) spinner.style.display = 'none';
+    }
+  } catch { }
+  finally { isLoading = false; }
+}
+
+/* ── Filtre par catégorie ── */
+function filterFeed(cat, btn) {
+  document.querySelectorAll('#feed-filters .pill').forEach(p => p.classList.remove('on'));
+  btn.classList.add('on');
+  currentCat  = cat;
+  currentPage = 1;
+  hasMore     = true;
+  document.getElementById('posts-grid').innerHTML = '<div style="text-align:center;padding:40px;color:var(--mut)">⏳ Chargement…</div>';
+  loadMorePosts();
+}
+
+/* ── Like ── */
+async function toggleLike(btn, postId) {
+  if (!{{ request.user.is_authenticated|lower }}) {
+    window.location.href = '/auth/login/?next=/decouverte/';
+    return;
+  }
+  btn.disabled = true;
+  const res    = await fetch(`/post/${postId}/like/`, {
+    method: 'POST', headers: { 'X-CSRFToken': getCsrfToken() }
+  });
+  const data   = await res.json();
+  btn.disabled = false;
+  const heart  = btn.querySelector('.heart');
+  const count  = btn.querySelector('.like-count');
+  if (heart) heart.textContent = data.liked ? '❤️' : '🤍';
+  if (count) count.textContent = data.count;
+  btn.classList.toggle('liked', data.liked);
+}
+</script>
+{% endblock %}
