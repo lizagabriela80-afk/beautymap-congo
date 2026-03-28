@@ -1,93 +1,106 @@
 {% extends "base/base.html" %}
-{% block title %}Messagerie{% endblock %}
+{% block title %}Messages{% endblock %}
 {% block footer %}{% endblock %}
 
 {% block content %}
-{% if active_conv %}<input type="hidden" id="conv-id" value="{{ active_conv.id }}">{% endif %}
-<input type="hidden" id="current-user-id" value="{{ request.user.id }}">
+<div style="margin-top:68px;display:grid;grid-template-columns:320px 1fr;height:calc(100vh - 68px)">
 
-<div style="height:calc(100vh - 68px);display:grid;grid-template-columns:280px 1fr; margin-top: 60px;">
-  <!-- Conversation list -->
+  <!-- LISTE DES CONVERSATIONS -->
   <div style="background:var(--ink2);border-right:1px solid rgba(255,255,255,.06);display:flex;flex-direction:column">
-    <div style="padding:20px 16px;border-bottom:1px solid rgba(255,255,255,.06)">
-      <h2 style="font-family:'Cormorant Garamond',serif;font-size:1.2rem;color:var(--parch);margin-bottom:12px">💬 Messages</h2>
-      <input class="inp" placeholder="Rechercher…" style="padding:9px 12px">
+    <div style="padding:20px;border-bottom:1px solid rgba(255,255,255,.06)">
+      <h2 style="font-family:'Cormorant Garamond',serif;font-size:1.3rem;color:var(--parch);margin-bottom:14px">💬 Messages</h2>
+      <input class="inp" placeholder="Rechercher une conversation…" style="font-size:.84rem" oninput="filterConvs(this.value)">
     </div>
-    <div style="flex:1;overflow-y:auto">
+    <div id="conv-list" style="flex:1;overflow-y:auto">
       {% for conv in conversations %}
-      {% with last=conv.get_last_message unread=conv.get_unread_count %}
-      <a href="?conv={{ conv.id }}"
-        style="display:flex;align-items:center;gap:12px;padding:14px 16px;border-bottom:1px solid rgba(255,255,255,.04);cursor:pointer;transition:background .2s;text-decoration:none;{% if active_conv.id == conv.id %}background:rgba(201,151,58,.07);{% endif %}"
-        onmouseover="this.style.background='rgba(255,255,255,.03)'" onmouseout="this.style.background='{% if active_conv.id == conv.id %}rgba(201,151,58,.07){% endif %}'">
-        <div class="rev-av" style="width:38px;height:38px;border-radius:50%;flex-shrink:0">
-          {% if request.user.is_pro %}{{ conv.client.get_initials }}{% else %}{{ conv.pro.get_initials }}{% endif %}
+      {% with other=conv.pro|default:conv.client last=conv.get_last_message %}
+      <a href="?conv={{ conv.id }}" class="notif-item {% if active_conv and active_conv.id == conv.id %}new{% endif %}"
+         style="display:flex;align-items:center;gap:12px;padding:16px 20px;border-bottom:1px solid rgba(255,255,255,.04);text-decoration:none;transition:background .2s">
+        <div style="width:42px;height:42px;border-radius:50%;background:linear-gradient(135deg,var(--gold),var(--gold-dk));display:flex;align-items:center;justify-content:center;font-weight:700;color:var(--ink);font-size:.9rem;flex-shrink:0">
+          {{ other.get_initials }}
         </div>
         <div style="flex:1;min-width:0">
-          <div style="display:flex;justify-content:space-between;margin-bottom:3px">
-            <span style="font-weight:600;font-size:.88rem;color:var(--parch)">
-              {% if request.user.is_pro %}{{ conv.client.get_full_name }}{% else %}{{ conv.pro.get_full_name }}{% endif %}
-            </span>
-            {% if last %}<span class="text-xs text-mut">{{ last.created_at|timesince }}</span>{% endif %}
+          <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:3px">
+            <strong style="color:var(--parch);font-size:.88rem;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">
+              {{ other.get_full_name }}
+            </strong>
+            {% if last %}<span style="font-size:.7rem;color:var(--mut)">{{ last.created_at|time:"H:i" }}</span>{% endif %}
           </div>
           <div style="font-size:.78rem;color:var(--mut);white-space:nowrap;overflow:hidden;text-overflow:ellipsis">
-            {{ last.content|default:"Démarrer la conversation"|truncatechars:40 }}
+            {% if conv.shop %}{{ conv.shop.name }} · {% endif %}
+            {% if last %}{{ last.content|truncatechars:40 }}{% else %}Aucun message{% endif %}
           </div>
         </div>
-        {% if unread %}<span class="sb-bdg">{{ unread }}</span>{% endif %}
+        {% with unread=conv.get_unread_count %}
+        {% if unread %}<span class="sb-bdg" style="flex-shrink:0">{{ unread }}</span>{% endif %}
+        {% endwith %}
       </a>
       {% endwith %}
       {% empty %}
-      <div class="text-center text-mut" style="padding:40px 20px;font-size:.88rem">
-        Aucune conversation.<br>Visitez une boutique pour démarrer.
+      <div style="text-align:center;padding:40px;color:var(--mut)">
+        <div style="font-size:3rem;margin-bottom:16px">💬</div>
+        <p>Aucune conversation.</p>
       </div>
       {% endfor %}
     </div>
   </div>
 
-  <!-- Chat area -->
+  <!-- ZONE DE CHAT -->
   <div style="display:flex;flex-direction:column;background:var(--ink)">
     {% if active_conv %}
-    <!-- Header -->
-    <div style="padding:16px 24px;border-bottom:1px solid rgba(255,255,255,.06);background:var(--ink2);display:flex;align-items:center;gap:14px">
-      <div class="rev-av" style="width:40px;height:40px;border-radius:50%">
-        {% if request.user.is_pro %}{{ active_conv.client.get_initials }}{% else %}{{ active_conv.pro.get_initials }}{% endif %}
+    <!-- Header chat -->
+    {% with other=active_conv.pro|default:active_conv.client %}
+    <div style="padding:16px 24px;background:var(--ink2);border-bottom:1px solid rgba(255,255,255,.06);display:flex;align-items:center;gap:14px">
+      <div style="width:40px;height:40px;border-radius:50%;background:linear-gradient(135deg,var(--gold),var(--gold-dk));display:flex;align-items:center;justify-content:center;font-weight:700;color:var(--ink);flex-shrink:0">
+        {{ other.get_initials }}
       </div>
       <div>
-        <div style="font-weight:600;color:var(--parch);font-size:.92rem">
-          {% if request.user.is_pro %}{{ active_conv.client.get_full_name }}{% else %}{{ active_conv.pro.get_full_name }}{% endif %}
-        </div>
-        {% if active_conv.shop %}
-        <div class="text-xs text-mut">{{ active_conv.shop.name }}</div>
-        {% endif %}
+        <div style="font-weight:700;color:var(--parch)">{{ other.get_full_name }}</div>
+        {% if active_conv.shop %}<div style="font-size:.78rem;color:var(--mut)">{{ active_conv.shop.name }}</div>{% endif %}
       </div>
+      {% if active_conv.shop %}
+      <a href="{% url 'shops:detail' active_conv.shop.slug %}" class="btn btn-ghost btn-sm" style="margin-left:auto">Voir la boutique →</a>
+      {% endif %}
     </div>
+    {% endwith %}
 
     <!-- Messages -->
-    <div class="chat-box" id="chat-box" style="flex:1;max-height:none;padding:24px">
+    <div id="chat-box" class="chat-box" style="flex:1;padding:20px 24px;max-height:none">
       {% for msg in active_conv.messages.all %}
-      <div class="cm {% if msg.sender == request.user %}me{% else %}them{% endif %}">
-        {{ msg.content }}
+      <div style="display:flex;flex-direction:column;{% if msg.sender == request.user %}align-items:flex-end{% else %}align-items:flex-start{% endif %}">
+        <div class="cm {% if msg.sender == request.user %}me{% else %}them{% endif %}">{{ msg.content }}</div>
         <div class="cm-time">{{ msg.created_at|time:"H:i" }}</div>
       </div>
-      {% empty %}
-      <div class="text-center text-mut" style="padding:40px">Envoyez le premier message !</div>
       {% endfor %}
     </div>
 
     <!-- Input -->
-    <div style="padding:16px 24px;border-top:1px solid rgba(255,255,255,.06);background:var(--ink2)">
+    <div style="padding:16px 24px;background:var(--ink2);border-top:1px solid rgba(255,255,255,.06)">
+      <input type="hidden" id="conv-id" value="{{ active_conv.id }}">
+      <input type="hidden" id="current-user-id" value="{{ request.user.id }}">
       <div class="chat-bar">
         <input class="chat-inp" id="chat-input" placeholder="Écrire un message…" autocomplete="off">
-        <button class="btn btn-gold" onclick="sendWsMessage('{{ active_conv.id }}')">Envoyer</button>
+        <button class="btn btn-gold" onclick="sendWsMessage('{{ active_conv.id }}')">Envoyer ↑</button>
       </div>
     </div>
 
     {% else %}
-    <div class="flex-center" style="flex:1;flex-direction:column;color:var(--mut)">
-      <div style="font-size:4rem;margin-bottom:16px">💬</div>
-      <p style="font-size:.92rem">Sélectionnez une conversation</p>
+    <!-- Aucune conversation sélectionnée -->
+    <div style="flex:1;display:flex;align-items:center;justify-content:center;flex-direction:column;color:var(--mut);text-align:center;padding:40px">
+      <div style="font-size:4rem;margin-bottom:20px">💬</div>
+      <h3 style="font-family:'Cormorant Garamond',serif;color:var(--parch);margin-bottom:12px">Sélectionnez une conversation</h3>
+      <p style="max-width:300px;line-height:1.7">Choisissez une conversation dans la liste ou démarrez-en une depuis la page d'un salon.</p>
+      <a href="{% url 'shops:explore' %}" class="btn btn-outline" style="margin-top:20px">Explorer les salons</a>
     </div>
     {% endif %}
   </div>
 </div>
+
+<script>
+function filterConvs(q) {
+  document.querySelectorAll('#conv-list a').forEach(el => {
+    el.style.display = el.textContent.toLowerCase().includes(q.toLowerCase()) ? '' : 'none';
+  });
+}
+</script>
 {% endblock %}

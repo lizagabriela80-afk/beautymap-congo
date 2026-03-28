@@ -1,0 +1,61 @@
+{% extends "base/base.html" %}
+{% block title %}Contact{% endblock %}
+
+{% block content %}
+<div class="sec-sm" style="margin-top:68px;max-width:680px;margin-left:auto;margin-right:auto">
+  <div style="text-align:center;margin-bottom:40px">
+    <div class="tag">📬 Nous contacter</div>
+    <h1 class="sec-title">Une question ?</h1>
+    <p class="sec-sub" style="margin:0 auto">Notre équipe basée à Brazzaville vous répond dans les 24h.</p>
+  </div>
+
+  {% if sent %}
+  <div style="background:rgba(46,148,88,.12);border:1px solid rgba(46,148,88,.3);border-radius:var(--r);padding:28px;text-align:center;margin-bottom:32px">
+    <div style="font-size:3rem;margin-bottom:12px">✅</div>
+    <h3 style="font-family:'Cormorant Garamond',serif;color:var(--parch);margin-bottom:8px">Message envoyé !</h3>
+    <p style="color:var(--mut)">Nous vous répondrons dans les meilleurs délais à l'adresse indiquée.</p>
+  </div>
+  {% endif %}
+
+  <div style="display:grid;grid-template-columns:1fr 1fr;gap:20px;margin-bottom:32px">
+    <div style="background:var(--ink2);border:1px solid rgba(255,255,255,.06);border-radius:var(--r);padding:24px;text-align:center">
+      <div style="font-size:2rem;margin-bottom:10px">📧</div>
+      <div style="font-weight:600;color:var(--parch);margin-bottom:6px">Email</div>
+      <a href="mailto:contact@beautymap-congo.com" style="color:var(--gold-lt);font-size:.88rem">contact@beautymap-congo.com</a>
+    </div>
+    <div style="background:var(--ink2);border:1px solid rgba(255,255,255,.06);border-radius:var(--r);padding:24px;text-align:center">
+      <div style="font-size:2rem;margin-bottom:10px">💬</div>
+      <div style="font-weight:600;color:var(--parch);margin-bottom:6px">WhatsApp</div>
+      <a href="https://wa.me/242060000000" target="_blank" style="color:var(--green);font-size:.88rem">+242 06 000 00 00</a>
+    </div>
+  </div>
+
+  <div class="dbox">
+    <div class="dbox-h"><div class="dbox-t">📝 Formulaire de contact</div></div>
+    <div class="dbox-b">
+      <form method="post">
+        {% csrf_token %}
+        <div class="fg-row">
+          <div class="fg"><label class="lbl">Nom complet *</label><input class="inp" name="name" placeholder="Votre nom" required></div>
+          <div class="fg"><label class="lbl">Email *</label><input class="inp" type="email" name="email" placeholder="votre@email.com" required></div>
+        </div>
+        <div class="fg">
+          <label class="lbl">Sujet</label>
+          <select class="sel" name="subject">
+            <option value="Question générale">Question générale</option>
+            <option value="Problème technique">Problème technique</option>
+            <option value="Inscription salon">Inscription salon</option>
+            <option value="Signalement">Signalement</option>
+            <option value="Partenariat">Partenariat</option>
+          </select>
+        </div>
+        <div class="fg">
+          <label class="lbl">Message *</label>
+          <textarea class="ta" name="message" placeholder="Décrivez votre demande en détail…" style="min-height:140px" required></textarea>
+        </div>
+        <button type="submit" class="btn btn-gold btn-w">📨 Envoyer le message</button>
+      </form>
+    </div>
+  </div>
+</div>
+{% endblock %}

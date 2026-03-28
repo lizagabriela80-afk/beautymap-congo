@@ -1,0 +1,110 @@
+/* ============================================================
+   BEAUTYMAP CONGO — additions.css
+   À ajouter à la fin de static/css/main.css
+   ============================================================ */
+
+/* ── LIVE SEARCH DROPDOWN ──────────────────────────────────── */
+.hero-search { position: relative; }
+#search-results-dropdown {
+  position: absolute; top: 100%; left: 0; right: 0; z-index: 400;
+  background: var(--ink2); border: 1px solid rgba(201,151,58,.25);
+  border-top: none; border-radius: 0 0 var(--r) var(--r);
+  box-shadow: 0 20px 60px rgba(0,0,0,.7); max-height: 320px; overflow-y: auto;
+}
+#search-results-dropdown a:last-child { border-bottom: none !important; }
+
+/* ── SEARCH BAR ON EXPLORE ─────────────────────────────────── */
+.search-dropdown {
+  position: absolute; top: 100%; left: 0; right: 0; z-index: 300;
+  background: var(--ink2); border: 1px solid rgba(201,151,58,.2);
+  border-top: none; border-radius: 0 0 var(--rsm) var(--rsm);
+  box-shadow: 0 16px 48px rgba(0,0,0,.6); max-height: 260px; overflow-y: auto;
+}
+
+/* ── PULL-TO-REFRESH ────────────────────────────────────────── */
+#ptr-indicator {
+  position: fixed; top: 0; left: 0; right: 0; height: 48px; z-index: 9999;
+  background: rgba(201,151,58,.15); backdrop-filter: blur(12px);
+  display: flex; align-items: center; justify-content: center;
+  gap: 8px; font-size: .84rem; color: var(--gold); pointer-events: none;
+}
+.ptr-arrow { display: inline-block; transition: transform .3s; }
+
+/* ── TOAST AMÉLIORATION ─────────────────────────────────────── */
+.toast.show { animation: tIn .3s ease forwards; }
+@keyframes tIn  { from{opacity:0;transform:translateX(20px)} to{opacity:1;transform:translateX(0)} }
+
+/* ── MAP MARKER PIN ─────────────────────────────────────────── */
+.map-pin { }
+.pin-inner {
+  width: 36px; height: 36px; border-radius: 50% 50% 50% 0;
+  background: var(--gold); display: flex; align-items: center;
+  justify-content: center; font-size: 1rem; transform: rotate(-45deg);
+  box-shadow: 0 4px 14px rgba(0,0,0,.5);
+}
+.pin-inner span { transform: rotate(45deg); display: inline-block; }
+
+/* ── NOTIFICATION PAGE ──────────────────────────────────────── */
+.notif-item { cursor: pointer; transition: background var(--trans); }
+.notif-item:hover { background: rgba(255,255,255,.025); }
+
+/* ── SLOTS LOADING / EMPTY ──────────────────────────────────── */
+.slots-loading, .slots-empty, .slots-error, .slots-hint {
+  color: var(--mut); font-size: .84rem; padding: 14px 0; grid-column: 1/-1;
+}
+.slots-error { color: var(--red); }
+.slots-grid  { display: grid; grid-template-columns: repeat(4,1fr); gap: 8px; }
+
+/* ── CHAT STATUS INDICATOR ──────────────────────────────────── */
+#chat-status { width: 8px; height: 8px; border-radius: 50%; background: var(--green); display: inline-block; }
+#chat-status.offline { background: var(--red); }
+
+/* ── BOOKING CONFIRMATION PAGE ──────────────────────────────── */
+.bs-row { display: flex; justify-content: space-between; align-items: center; padding: 9px 0; border-bottom: 1px solid rgba(255,255,255,.05); font-size: .875rem; color: var(--txt); }
+.bs-row:last-child { border-bottom: none; }
+.bs-total { font-weight: 700; color: var(--parch); font-size: .95rem; }
+
+/* ── ALIGN CENTER UTIL ──────────────────────────────────────── */
+.align-center { align-items: center; }
+
+/* ── INBOX LAYOUT ───────────────────────────────────────────── */
+@media (max-width: 768px) {
+  /* Sur mobile, l'inbox stack verticalement */
+  .inbox-grid { grid-template-columns: 1fr !important; }
+  .conv-list  { max-height: 280px; border-right: none !important; border-bottom: 1px solid rgba(255,255,255,.06); }
+}
+
+/* ── API DOCS BADGE ─────────────────────────────────────────── */
+.api-endpoint {
+  display: flex; align-items: center; gap: 10px; padding: 10px 14px;
+  background: var(--ink3); border: 1px solid rgba(255,255,255,.06);
+  border-radius: var(--rsm); margin-bottom: 8px; font-family: monospace; font-size: .82rem;
+}
+.method-get    { background: rgba(46,148,88,.2);  color: #6ED89A; padding: 2px 8px; border-radius: 4px; font-weight: 700; font-size: .72rem; }
+.method-post   { background: rgba(58,120,201,.2); color: #80A8F0; padding: 2px 8px; border-radius: 4px; font-weight: 700; font-size: .72rem; }
+.method-patch  { background: rgba(201,151,58,.2); color: var(--gold-lt); padding: 2px 8px; border-radius: 4px; font-weight: 700; font-size: .72rem; }
+.method-delete { background: rgba(192,65,46,.2);  color: #E07060; padding: 2px 8px; border-radius: 4px; font-weight: 700; font-size: .72rem; }
+
+/* ── PRO PROFILE CARD HOVER FIX ─────────────────────────────── */
+.shop-card:focus-within { border-color: rgba(201,151,58,.32); }
+
+/* ── EMPTY STATE GENERIC ─────────────────────────────────────── */
+.empty-state {
+  text-align: center; padding: 60px 20px; color: var(--mut);
+}
+.empty-state .empty-icon { font-size: 4rem; margin-bottom: 16px; }
+.empty-state h3 { font-family: 'Cormorant Garamond',serif; color: var(--parch); margin-bottom: 10px; }
+
+/* ── SCROLLBAR DANS CHAT ─────────────────────────────────────── */
+.chat-box::-webkit-scrollbar       { width: 4px; }
+.chat-box::-webkit-scrollbar-thumb { background: var(--ink4); border-radius: 2px; }
+
+/* ── AVATAR IMAGE ────────────────────────────────────────────── */
+.nav-avatar img { width: 100%; height: 100%; object-fit: cover; border-radius: 50%; }
+
+/* ── RESPONSIVE FIXES ────────────────────────────────────────── */
+@media (max-width: 640px) {
+  .slots-grid { grid-template-columns: repeat(3,1fr); }
+  #search-results-dropdown { max-height: 240px; }
+  .auth-box { padding: 24px 16px; }
+}

@@ -2,388 +2,127 @@
 {% block title %}Pour les professionnels{% endblock %}
 
 {% block content %}
-
-<!-- ═══ HERO PROS ═══ -->
-<section style="position:relative;min-height:80vh;display:flex;align-items:center;padding:120px 48px 80px;overflow:hidden;background:linear-gradient(135deg,var(--ink) 0%,var(--ink2) 100%)">
-  <div style="position:absolute;inset:0;background:radial-gradient(ellipse 60% 70% at 70% 50%,rgba(201,151,58,.08) 0%,transparent 60%)"></div>
-  <div style="position:absolute;inset:0;background-image:repeating-linear-gradient(45deg,rgba(201,151,58,.02) 0,rgba(201,151,58,.02) 1px,transparent 0,transparent 50%);background-size:24px 24px"></div>
-
-  <div style="position:relative;z-index:1;max-width:640px;animation:heroIn .9s ease">
-    <div class="tag" style="margin-bottom:22px">🚀 Espace Professionnels</div>
-    <h1 style="font-family:'Cormorant Garamond',serif;font-size:clamp(2.8rem,5vw,4.2rem);font-weight:700;color:var(--parch);line-height:1.05;margin-bottom:20px">
-      Développez votre activité<br>avec <em style="color:var(--gold);font-style:normal">BeautyMap Congo</em>
-    </h1>
-    <p style="font-size:1.05rem;color:var(--mut);line-height:1.75;margin-bottom:36px;max-width:500px">
-      Rejoignez des centaines de professionnels de la beauté et de la mode qui ont digitalisé leur activité à Brazzaville. Créez votre boutique en moins de 10 minutes.
-    </p>
-    <div style="display:flex;gap:14px;flex-wrap:wrap">
-      <a href="{% url 'shops:create_shop' %}" class="btn btn-gold btn-lg">
-        🚀 Créer ma boutique gratuitement
-      </a>
-      <a href="#fonctionnalites" class="btn btn-ghost btn-lg">
-        Voir les fonctionnalités ↓
-      </a>
+<!-- HERO PRO -->
+<section class="hero" style="min-height:80vh">
+  <div class="hero-bg"></div>
+  <div class="hero-left">
+    <div class="hero-eyebrow"><span class="pulse"></span> Pour les professionnels de la beauté</div>
+    <h1 class="hero-h1">Développez votre activité<br><em>en ligne</em></h1>
+    <p class="hero-p">Créez votre vitrine digitale, gérez vos rendez-vous et touchez des milliers de clients à Brazzaville et partout au Congo.</p>
+    <div class="flex gap-12 flex-wrap">
+      <a href="{% url 'register' %}?type=pro" class="btn btn-gold btn-xl">🚀 Créer ma boutique gratuitement</a>
+      <a href="#fonctionnalites" class="btn btn-ghost btn-xl">En savoir plus</a>
     </div>
-    <p style="font-size:.78rem;color:var(--mut);margin-top:14px">
-      ✓ Gratuit · ✓ Sans carte bancaire · ✓ Prêt en 10 minutes
-    </p>
-  </div>
-
-  <!-- Cartes flottantes déco -->
-  <div style="position:absolute;right:5%;top:50%;transform:translateY(-50%);pointer-events:none;display:flex;flex-direction:column;gap:16px;opacity:.85"
-       class="pros-hero-cards">
-    <div style="background:var(--ink2);border:1px solid rgba(201,151,58,.2);border-radius:var(--r);padding:18px 22px;min-width:220px;animation:fc1 5s ease-in-out infinite">
-      <div style="display:flex;align-items:center;gap:10px;margin-bottom:10px">
-        <div style="width:36px;height:36px;border-radius:50%;background:linear-gradient(135deg,var(--gold),var(--gold-dk));display:flex;align-items:center;justify-content:center;font-size:1rem">✂️</div>
-        <div>
-          <div style="font-weight:700;font-size:.88rem;color:var(--parch)">Salon Élégance</div>
-          <div style="font-size:.72rem;color:var(--mut)">Bacongo · Coiffure</div>
-        </div>
-      </div>
-      <div style="display:flex;justify-content:space-between;font-size:.78rem">
-        <span style="color:var(--gold)">★★★★★ 4.9</span>
-        <span style="color:var(--green)">↑ +32% ce mois</span>
-      </div>
-    </div>
-    <div style="background:var(--ink2);border:1px solid rgba(201,151,58,.2);border-radius:var(--r);padding:16px 20px;min-width:200px;animation:fc1 5s ease-in-out infinite 2s;margin-left:24px">
-      <div style="font-size:.72rem;color:var(--mut);margin-bottom:6px;text-transform:uppercase;letter-spacing:.07em">Aujourd'hui</div>
-      <div style="font-family:'Cormorant Garamond',serif;font-size:1.6rem;color:var(--gold);font-weight:700">48</div>
-      <div style="font-size:.78rem;color:var(--mut)">Vues du profil</div>
-    </div>
-    <div style="background:var(--ink2);border:1px solid rgba(46,148,88,.2);border-radius:var(--r);padding:14px 18px;min-width:190px;animation:fc1 5s ease-in-out infinite 1s">
-      <div style="display:flex;align-items:center;gap:8px">
-        <div style="width:8px;height:8px;border-radius:50%;background:var(--green);box-shadow:0 0 6px var(--green)"></div>
-        <div style="font-size:.8rem;color:var(--parch);font-weight:600">Nouvelle réservation</div>
-      </div>
-      <div style="font-size:.75rem;color:var(--mut);margin-top:5px">Amélie K. · Tresses · 14h00</div>
-    </div>
+    <p style="font-size:.78rem;color:var(--mut);margin-top:14px">✅ Gratuit · Aucune carte bancaire · Prêt en 10 minutes</p>
   </div>
 </section>
 
-<!-- ═══ STATS BAR ═══ -->
+<!-- STATISTIQUES -->
 <div class="stats-bar">
-  <div class="stat-item"><div class="stat-n">240+</div><div class="stat-l">Professionnels inscrits</div></div>
-  <div class="stat-item"><div class="stat-n">5 400+</div><div class="stat-l">Réservations effectuées</div></div>
-  <div class="stat-item"><div class="stat-n">4.8 ★</div><div class="stat-l">Note moyenne</div></div>
-  <div class="stat-item"><div class="stat-n">10 min</div><div class="stat-l">Pour créer sa boutique</div></div>
+  <div class="stat-item"><div class="stat-n" data-count="150" data-suffix="+">0</div><div class="stat-l">Professionnels inscrits</div></div>
+  <div class="stat-item"><div class="stat-n" data-count="3200" data-suffix="+">0</div><div class="stat-l">Réservations gérées</div></div>
+  <div class="stat-item"><div class="stat-n" data-count="98">0</div><div class="stat-l">% de satisfaction</div></div>
+  <div class="stat-item"><div class="stat-n">4.8 ★</div><div class="stat-l">Note moyenne des pros</div></div>
 </div>
 
-<!-- ═══ FONCTIONNALITÉS ═══ -->
-<section class="sec sec-dark" id="fonctionnalites">
+<!-- FONCTIONNALITÉS -->
+<section id="fonctionnalites" class="sec sec-dark">
   <div class="sec-header sec-center">
     <div class="tag">✦ Fonctionnalités</div>
     <h2 class="sec-title">Tout ce dont vous avez besoin</h2>
-    <p class="sec-sub">Une plateforme complète pour gérer et développer votre activité beauté en ligne.</p>
+    <p class="sec-sub">Une plateforme complète, pensée pour les professionnels de beauté congolais.</p>
   </div>
-
-  <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:20px;max-width:1100px;margin:0 auto">
-
-    {% for icon, title, desc in features %}
-    <div style="background:var(--ink);border:1px solid rgba(255,255,255,.06);border-radius:var(--r);padding:28px;transition:all .3s"
-         onmouseover="this.style.borderColor='rgba(201,151,58,.3)';this.style.transform='translateY(-4px)'"
-         onmouseout="this.style.borderColor='rgba(255,255,255,.06)';this.style.transform='translateY(0)'">
-      <div style="font-size:2.2rem;margin-bottom:16px">{{ icon }}</div>
-      <h3 style="font-family:'Cormorant Garamond',serif;font-size:1.15rem;color:var(--parch);font-weight:700;margin-bottom:10px">{{ title }}</h3>
-      <p style="font-size:.875rem;color:var(--mut);line-height:1.7">{{ desc }}</p>
+  <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:24px;max-width:1100px;margin:0 auto">
+    {% for feat in features %}
+    <div style="background:var(--ink3);border:1px solid rgba(255,255,255,.06);border-radius:var(--r);padding:28px">
+      <div style="font-size:2rem;margin-bottom:16px">{{ feat.icon }}</div>
+      <div style="font-family:'Cormorant Garamond',serif;font-size:1.15rem;color:var(--parch);font-weight:700;margin-bottom:10px">{{ feat.title }}</div>
+      <div style="color:var(--mut);font-size:.88rem;line-height:1.7">{{ feat.desc }}</div>
     </div>
     {% endfor %}
-
-    <!-- Fallback si pas de context features -->
-    {% if not features %}
-    <div style="background:var(--ink);border:1px solid rgba(255,255,255,.06);border-radius:var(--r);padding:28px;transition:all .3s" onmouseover="this.style.borderColor='rgba(201,151,58,.3)';this.style.transform='translateY(-4px)'" onmouseout="this.style.borderColor='rgba(255,255,255,.06)';this.style.transform='translateY(0)'">
-      <div style="font-size:2.2rem;margin-bottom:16px">🏪</div>
-      <h3 style="font-family:'Cormorant Garamond',serif;font-size:1.15rem;color:var(--parch);font-weight:700;margin-bottom:10px">Vitrine digitale complète</h3>
-      <p style="font-size:.875rem;color:var(--mut);line-height:1.7">Photos, vidéos, services, tarifs, horaires — tout en un profil professionnel visible par des milliers de clients.</p>
-    </div>
-    <div style="background:var(--ink);border:1px solid rgba(255,255,255,.06);border-radius:var(--r);padding:28px;transition:all .3s" onmouseover="this.style.borderColor='rgba(201,151,58,.3)';this.style.transform='translateY(-4px)'" onmouseout="this.style.borderColor='rgba(255,255,255,.06)';this.style.transform='translateY(0)'">
-      <div style="font-size:2.2rem;margin-bottom:16px">📍</div>
-      <h3 style="font-family:'Cormorant Garamond',serif;font-size:1.15rem;color:var(--parch);font-weight:700;margin-bottom:10px">Présence sur la carte</h3>
-      <p style="font-size:.875rem;color:var(--mut);line-height:1.7">Votre boutique géolocalisée sur la carte interactive. Les clients près de vous vous trouvent instantanément.</p>
-    </div>
-    <div style="background:var(--ink);border:1px solid rgba(255,255,255,.06);border-radius:var(--r);padding:28px;transition:all .3s" onmouseover="this.style.borderColor='rgba(201,151,58,.3)';this.style.transform='translateY(-4px)'" onmouseout="this.style.borderColor='rgba(255,255,255,.06)';this.style.transform='translateY(0)'">
-      <div style="font-size:2.2rem;margin-bottom:16px">📅</div>
-      <h3 style="font-family:'Cormorant Garamond',serif;font-size:1.15rem;color:var(--parch);font-weight:700;margin-bottom:10px">Gestion des rendez-vous</h3>
-      <p style="font-size:.875rem;color:var(--mut);line-height:1.7">Recevez des demandes en ligne, confirmez ou refusez en un clic. Calendrier intégré, rappels automatiques par SMS.</p>
-    </div>
-    <div style="background:var(--ink);border:1px solid rgba(255,255,255,.06);border-radius:var(--r);padding:28px;transition:all .3s" onmouseover="this.style.borderColor='rgba(201,151,58,.3)';this.style.transform='translateY(-4px)'" onmouseout="this.style.borderColor='rgba(255,255,255,.06)';this.style.transform='translateY(0)'">
-      <div style="font-size:2.2rem;margin-bottom:16px">⭐</div>
-      <h3 style="font-family:'Cormorant Garamond',serif;font-size:1.15rem;color:var(--parch);font-weight:700;margin-bottom:10px">Avis & réputation</h3>
-      <p style="font-size:.875rem;color:var(--mut);line-height:1.7">Collectez des avis vérifiés, répondez aux commentaires, renforcez la confiance et attirez de nouveaux clients.</p>
-    </div>
-    <div style="background:var(--ink);border:1px solid rgba(255,255,255,.06);border-radius:var(--r);padding:28px;transition:all .3s" onmouseover="this.style.borderColor='rgba(201,151,58,.3)';this.style.transform='translateY(-4px)'" onmouseout="this.style.borderColor='rgba(255,255,255,.06)';this.style.transform='translateY(0)'">
-      <div style="font-size:2.2rem;margin-bottom:16px">💬</div>
-      <h3 style="font-family:'Cormorant Garamond',serif;font-size:1.15rem;color:var(--parch);font-weight:700;margin-bottom:10px">Messagerie intégrée</h3>
-      <p style="font-size:.875rem;color:var(--mut);line-height:1.7">Communiquez directement avec vos clients, répondez aux questions, partagez des photos de vos créations.</p>
-    </div>
-    <div style="background:var(--ink);border:1px solid rgba(255,255,255,.06);border-radius:var(--r);padding:28px;transition:all .3s" onmouseover="this.style.borderColor='rgba(201,151,58,.3)';this.style.transform='translateY(-4px)'" onmouseout="this.style.borderColor='rgba(255,255,255,.06)';this.style.transform='translateY(0)'">
-      <div style="font-size:2.2rem;margin-bottom:16px">📊</div>
-      <h3 style="font-family:'Cormorant Garamond',serif;font-size:1.15rem;color:var(--parch);font-weight:700;margin-bottom:10px">Tableau de bord analytique</h3>
-      <p style="font-size:.875rem;color:var(--mut);line-height:1.7">Suivez vos performances : vues du profil, réservations, revenus, évolution des avis — tout en temps réel.</p>
-    </div>
-    {% endif %}
   </div>
 </section>
 
-<!-- ═══ TARIFS ═══ -->
-<section class="sec sec-center" id="tarifs">
+<!-- TARIFS -->
+<section id="tarifs" class="sec sec-center">
   <div class="sec-header">
-    <div class="tag">💰 Tarifs</div>
+    <div class="tag">💎 Tarifs</div>
     <h2 class="sec-title">Des offres adaptées à votre activité</h2>
-    <p class="sec-sub">Commencez gratuitement et évoluez selon vos besoins. Pas de surprise, pas d'engagement.</p>
+    <p class="sec-sub">Commencez gratuitement. Passez au Premium quand vous êtes prêt.</p>
   </div>
-
-  <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:24px;max-width:920px;margin:0 auto">
-
+  <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:24px;max-width:900px;margin:0 auto">
     <!-- Gratuit -->
-    <div style="background:var(--ink2);border:1px solid rgba(255,255,255,.08);border-radius:var(--r);padding:36px;text-align:center">
-      <div style="font-size:.85rem;font-weight:700;color:var(--mut);text-transform:uppercase;letter-spacing:.1em;margin-bottom:14px">Gratuit</div>
-      <div style="font-family:'Cormorant Garamond',serif;font-size:3rem;font-weight:700;color:var(--parch);line-height:1">
-        0 <span style="font-size:1.1rem">FCFA</span>
-      </div>
-      <div style="font-size:.83rem;color:var(--mut);margin-bottom:28px">/mois · pour toujours</div>
-      <div style="text-align:left;margin-bottom:32px">
-        {% for item in "1234" %}{% endfor %}
-        <div style="display:flex;align-items:center;gap:10px;padding:8px 0;border-bottom:1px solid rgba(255,255,255,.04);font-size:.875rem;color:var(--txt)">
-          <span style="color:var(--green);font-weight:700">✓</span> Profil boutique complet
-        </div>
-        <div style="display:flex;align-items:center;gap:10px;padding:8px 0;border-bottom:1px solid rgba(255,255,255,.04);font-size:.875rem;color:var(--txt)">
-          <span style="color:var(--green);font-weight:700">✓</span> Présence sur la carte
-        </div>
-        <div style="display:flex;align-items:center;gap:10px;padding:8px 0;border-bottom:1px solid rgba(255,255,255,.04);font-size:.875rem;color:var(--txt)">
-          <span style="color:var(--green);font-weight:700">✓</span> 5 réservations / mois
-        </div>
-        <div style="display:flex;align-items:center;gap:10px;padding:8px 0;border-bottom:1px solid rgba(255,255,255,.04);font-size:.875rem;color:var(--mut)">
-          <span style="color:var(--mut)">✗</span> Statistiques avancées
-        </div>
-        <div style="display:flex;align-items:center;gap:10px;padding:8px 0;font-size:.875rem;color:var(--mut)">
-          <span style="color:var(--mut)">✗</span> Badge Vérifié
-        </div>
-      </div>
-      <a href="{% url 'shops:create_shop' %}" class="btn btn-outline btn-w">
-        Commencer gratuitement
-      </a>
+    <div style="background:var(--ink2);border:1px solid rgba(255,255,255,.08);border-radius:var(--rxl);padding:36px;text-align:center">
+      <div style="font-size:.8rem;font-weight:700;color:var(--mut);text-transform:uppercase;letter-spacing:.1em;margin-bottom:12px">Gratuit</div>
+      <div style="font-family:'Cormorant Garamond',serif;font-size:3rem;color:var(--parch);font-weight:700">0 FCFA</div>
+      <div style="color:var(--mut);font-size:.84rem;margin:8px 0 28px">Pour commencer</div>
+      <ul style="list-style:none;text-align:left;margin-bottom:28px;display:flex;flex-direction:column;gap:10px">
+        <li style="font-size:.88rem;color:var(--txt)">✅ Profil boutique complet</li>
+        <li style="font-size:.88rem;color:var(--txt)">✅ 3 services maximum</li>
+        <li style="font-size:.88rem;color:var(--txt)">✅ Réservations en ligne</li>
+        <li style="font-size:.88rem;color:var(--mut)">❌ Apparition sur la carte</li>
+        <li style="font-size:.88rem;color:var(--mut)">❌ Statistiques avancées</li>
+        <li style="font-size:.88rem;color:var(--mut)">❌ Badge vérifié</li>
+      </ul>
+      <a href="{% url 'register' %}?type=pro" class="btn btn-ghost btn-w">Commencer gratuitement</a>
     </div>
-
     <!-- Premium -->
-    <div style="background:linear-gradient(135deg,rgba(201,151,58,.12),rgba(201,151,58,.04));border:1.5px solid rgba(201,151,58,.4);border-radius:var(--r);padding:36px;text-align:center;position:relative;overflow:hidden">
-      <div style="position:absolute;top:16px;right:16px;padding:4px 12px;background:var(--gold);color:var(--ink);border-radius:100px;font-size:.72rem;font-weight:700;letter-spacing:.05em">
-        ⭐ POPULAIRE
-      </div>
-      <div style="font-size:.85rem;font-weight:700;color:var(--gold);text-transform:uppercase;letter-spacing:.1em;margin-bottom:14px">Premium</div>
-      <div style="font-family:'Cormorant Garamond',serif;font-size:2.4rem;font-weight:700;color:var(--parch);line-height:1">
-        15 000 <span style="font-size:1rem">FCFA</span>
-      </div>
-      <div style="font-size:.83rem;color:var(--mut);margin-bottom:28px">/mois · résiliable à tout moment</div>
-      <div style="text-align:left;margin-bottom:32px">
-        <div style="display:flex;align-items:center;gap:10px;padding:8px 0;border-bottom:1px solid rgba(255,255,255,.06);font-size:.875rem;color:var(--txt)">
-          <span style="color:var(--green);font-weight:700">✓</span> Tout le plan Gratuit
-        </div>
-        <div style="display:flex;align-items:center;gap:10px;padding:8px 0;border-bottom:1px solid rgba(255,255,255,.06);font-size:.875rem;color:var(--txt)">
-          <span style="color:var(--green);font-weight:700">✓</span> Réservations illimitées
-        </div>
-        <div style="display:flex;align-items:center;gap:10px;padding:8px 0;border-bottom:1px solid rgba(255,255,255,.06);font-size:.875rem;color:var(--txt)">
-          <span style="color:var(--green);font-weight:700">✓</span> Mise en avant sur la carte
-        </div>
-        <div style="display:flex;align-items:center;gap:10px;padding:8px 0;border-bottom:1px solid rgba(255,255,255,.06);font-size:.875rem;color:var(--txt)">
-          <span style="color:var(--green);font-weight:700">✓</span> Statistiques détaillées
-        </div>
-        <div style="display:flex;align-items:center;gap:10px;padding:8px 0;border-bottom:1px solid rgba(255,255,255,.06);font-size:.875rem;color:var(--txt)">
-          <span style="color:var(--green);font-weight:700">✓</span> Badge ✓ Vérifié
-        </div>
-        <div style="display:flex;align-items:center;gap:10px;padding:8px 0;font-size:.875rem;color:var(--txt)">
-          <span style="color:var(--green);font-weight:700">✓</span> Support prioritaire
-        </div>
-      </div>
-      <a href="{% url 'register' %}?type=pro" class="btn btn-gold btn-w">
-        Démarrer l'essai gratuit 14 jours
-      </a>
-    </div>
-
-    <!-- Enterprise -->
-    <div style="background:var(--ink2);border:1px solid rgba(255,255,255,.08);border-radius:var(--r);padding:36px;text-align:center">
-      <div style="font-size:.85rem;font-weight:700;color:var(--mut);text-transform:uppercase;letter-spacing:.1em;margin-bottom:14px">Enterprise</div>
-      <div style="font-family:'Cormorant Garamond',serif;font-size:2.4rem;font-weight:700;color:var(--parch);line-height:1">
-        Sur <span style="font-size:1.3rem">devis</span>
-      </div>
-      <div style="font-size:.83rem;color:var(--mut);margin-bottom:28px">Chaînes & franchises</div>
-      <div style="text-align:left;margin-bottom:32px">
-        <div style="display:flex;align-items:center;gap:10px;padding:8px 0;border-bottom:1px solid rgba(255,255,255,.04);font-size:.875rem;color:var(--txt)">
-          <span style="color:var(--green);font-weight:700">✓</span> Multi-boutiques
-        </div>
-        <div style="display:flex;align-items:center;gap:10px;padding:8px 0;border-bottom:1px solid rgba(255,255,255,.04);font-size:.875rem;color:var(--txt)">
-          <span style="color:var(--green);font-weight:700">✓</span> API dédiée
-        </div>
-        <div style="display:flex;align-items:center;gap:10px;padding:8px 0;border-bottom:1px solid rgba(255,255,255,.04);font-size:.875rem;color:var(--txt)">
-          <span style="color:var(--green);font-weight:700">✓</span> Gestionnaire de compte
-        </div>
-        <div style="display:flex;align-items:center;gap:10px;padding:8px 0;border-bottom:1px solid rgba(255,255,255,.04);font-size:.875rem;color:var(--txt)">
-          <span style="color:var(--green);font-weight:700">✓</span> Formation de l'équipe
-        </div>
-        <div style="display:flex;align-items:center;gap:10px;padding:8px 0;font-size:.875rem;color:var(--txt)">
-          <span style="color:var(--green);font-weight:700">✓</span> Intégrations sur mesure
-        </div>
-      </div>
-      <a href="mailto:contact@beautymapcongo.com" class="btn btn-ghost btn-w">
-        Nous contacter
-      </a>
+    <div style="background:linear-gradient(135deg,rgba(201,151,58,.12),rgba(201,151,58,.04));border:1.5px solid rgba(201,151,58,.4);border-radius:var(--rxl);padding:36px;text-align:center;position:relative">
+      <div style="position:absolute;top:-14px;left:50%;transform:translateX(-50%);background:var(--gold);color:var(--ink);font-size:.72rem;font-weight:700;padding:4px 16px;border-radius:100px;letter-spacing:.08em;white-space:nowrap">⭐ RECOMMANDÉ</div>
+      <div style="font-size:.8rem;font-weight:700;color:var(--gold-lt);text-transform:uppercase;letter-spacing:.1em;margin-bottom:12px">Premium</div>
+      <div style="font-family:'Cormorant Garamond',serif;font-size:3rem;color:var(--gold);font-weight:700">15 000</div>
+      <div style="color:var(--mut);font-size:.84rem;margin:4px 0 4px">FCFA / mois</div>
+      <div style="color:var(--gold-lt);font-size:.78rem;margin-bottom:28px">14 jours d'essai offerts</div>
+      <ul style="list-style:none;text-align:left;margin-bottom:28px;display:flex;flex-direction:column;gap:10px">
+        <li style="font-size:.88rem;color:var(--txt)">✅ Tout du plan gratuit</li>
+        <li style="font-size:.88rem;color:var(--txt)">✅ Services illimités</li>
+        <li style="font-size:.88rem;color:var(--txt)">✅ Apparition prioritaire sur la carte</li>
+        <li style="font-size:.88rem;color:var(--txt)">✅ Badge vérifié ✓</li>
+        <li style="font-size:.88rem;color:var(--txt)">✅ Statistiques & revenus</li>
+        <li style="font-size:.88rem;color:var(--txt)">✅ Photos illimitées</li>
+        <li style="font-size:.88rem;color:var(--txt)">✅ Support prioritaire</li>
+      </ul>
+      <a href="{% url 'register' %}?type=pro&plan=premium" class="btn btn-gold btn-w">Commencer l'essai gratuit</a>
     </div>
   </div>
 </section>
 
-<!-- ═══ TÉMOIGNAGES ═══ -->
-<section class="sec sec-dark">
-  <div class="sec-header sec-center">
+<!-- TÉMOIGNAGES -->
+<section class="sec sec-dark sec-center">
+  <div class="sec-header">
     <div class="tag">💬 Témoignages</div>
     <h2 class="sec-title">Ils nous font confiance</h2>
   </div>
-  <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:20px;max-width:960px;margin:0 auto">
-    <div style="background:var(--ink);border:1px solid rgba(255,255,255,.06);border-radius:var(--r);padding:28px">
-      <div style="color:var(--gold);font-size:1.2rem;margin-bottom:14px">★★★★★</div>
-      <p style="color:var(--txt);font-size:.9rem;line-height:1.75;margin-bottom:18px;font-style:italic">
-        "Depuis que j'ai rejoint BeautyMap Congo, mes réservations ont augmenté de 40%. Les clients me trouvent facilement sur la carte et je gère tout depuis mon téléphone."
-      </p>
-      <div style="display:flex;align-items:center;gap:12px">
-        <div style="width:40px;height:40px;border-radius:50%;background:linear-gradient(135deg,var(--gold),var(--gold-dk));display:flex;align-items:center;justify-content:center;font-weight:700;color:var(--ink)">MK</div>
-        <div>
-          <div style="font-weight:600;font-size:.88rem;color:var(--parch)">Marie Kouba</div>
-          <div style="font-size:.75rem;color:var(--mut)">Salon Élégance · Bacongo</div>
-        </div>
+  <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:20px;max-width:900px;margin:0 auto">
+    <div class="rev-card">
+      <div class="rev-h">
+        <div class="rev-av">MS</div>
+        <div><div class="rev-nm">Marie-Stella K.</div><div class="rev-dt" style="color:var(--gold)">★★★★★ · Salon Grâce, Bacongo</div></div>
       </div>
+      <div class="rev-txt">Depuis que j'ai rejoint BeautyMap, j'ai doublé mes réservations. Mes clients peuvent choisir leurs créneaux directement en ligne, c'est révolutionnaire !</div>
     </div>
-    <div style="background:var(--ink);border:1px solid rgba(255,255,255,.06);border-radius:var(--r);padding:28px">
-      <div style="color:var(--gold);font-size:1.2rem;margin-bottom:14px">★★★★★</div>
-      <p style="color:var(--txt);font-size:.9rem;line-height:1.75;margin-bottom:18px;font-style:italic">
-        "La plateforme est simple à utiliser. J'ai créé ma boutique en 10 minutes et j'ai reçu mes premiers clients dès la semaine suivante. Je recommande à tous les professionnels."
-      </p>
-      <div style="display:flex;align-items:center;gap:12px">
-        <div style="width:40px;height:40px;border-radius:50%;background:linear-gradient(135deg,#3A78C9,#1a3a80);display:flex;align-items:center;justify-content:center;font-weight:700;color:#fff">PM</div>
-        <div>
-          <div style="font-weight:600;font-size:.88rem;color:var(--parch)">Pascal Mboungou</div>
-          <div style="font-size:.75rem;color:var(--mut)">Barber King · Poto-Poto</div>
-        </div>
+    <div class="rev-card">
+      <div class="rev-h">
+        <div class="rev-av">PD</div>
+        <div><div class="rev-nm">Patrick D.</div><div class="rev-dt" style="color:var(--gold)">★★★★★ · Barbier King, Poto-Poto</div></div>
       </div>
+      <div class="rev-txt">Le dashboard est très simple à utiliser. Je vois tous mes rendez-vous d'un coup d'œil et je peux confirmer ou annuler en un clic.</div>
     </div>
-    <div style="background:var(--ink);border:1px solid rgba(255,255,255,.06);border-radius:var(--r);padding:28px">
-      <div style="color:var(--gold);font-size:1.2rem;margin-bottom:14px">★★★★☆</div>
-      <p style="color:var(--txt);font-size:.9rem;line-height:1.75;margin-bottom:18px;font-style:italic">
-        "Le système de messagerie est top. Je peux discuter directement avec mes clientes avant leur rendez-vous. Ça crée une relation de confiance dès le début."
-      </p>
-      <div style="display:flex;align-items:center;gap:12px">
-        <div style="width:40px;height:40px;border-radius:50%;background:linear-gradient(135deg,#2E9458,#1a5c36);display:flex;align-items:center;justify-content:center;font-weight:700;color:#fff">JT</div>
-        <div>
-          <div style="font-weight:600;font-size:.88rem;color:var(--parch)">Joëlle Tamba</div>
-          <div style="font-size:.75rem;color:var(--mut)">Nails Paradise · Poto-Poto</div>
-        </div>
+    <div class="rev-card">
+      <div class="rev-h">
+        <div class="rev-av">AN</div>
+        <div><div class="rev-nm">Adèle N.</div><div class="rev-dt" style="color:var(--gold)">★★★★★ · Nails & Co, Moungali</div></div>
       </div>
+      <div class="rev-txt">Les avis clients me permettent d'améliorer mes services. La carte me donne une visibilité incroyable dans mon quartier.</div>
     </div>
   </div>
 </section>
 
-<!-- ═══ FAQ ═══ -->
-<section class="sec">
-  <div class="sec-header sec-center">
-    <div class="tag">❓ Questions fréquentes</div>
-    <h2 class="sec-title">Vous avez des questions ?</h2>
-  </div>
-  <div style="max-width:700px;margin:0 auto;display:flex;flex-direction:column;gap:12px">
-    {% for q, a in faq %}
-    <div style="background:var(--ink2);border:1px solid rgba(255,255,255,.07);border-radius:var(--r);overflow:hidden">
-      <button onclick="toggleFaq(this)"
-        style="width:100%;padding:18px 22px;display:flex;justify-content:space-between;align-items:center;background:none;border:none;color:var(--parch);font-family:'Outfit',sans-serif;font-size:.92rem;font-weight:600;cursor:pointer;text-align:left">
-        <span>{{ q }}</span>
-        <span style="color:var(--gold);font-size:1.1rem;transition:transform .3s;flex-shrink:0;margin-left:12px">+</span>
-      </button>
-      <div style="display:none;padding:0 22px 18px;color:var(--mut);font-size:.875rem;line-height:1.7">{{ a }}</div>
-    </div>
-    {% empty %}
-    <!-- FAQ statique si pas de contexte -->
-    <div style="background:var(--ink2);border:1px solid rgba(255,255,255,.07);border-radius:var(--r);overflow:hidden">
-      <button onclick="toggleFaq(this)" style="width:100%;padding:18px 22px;display:flex;justify-content:space-between;align-items:center;background:none;border:none;color:var(--parch);font-family:'Outfit',sans-serif;font-size:.92rem;font-weight:600;cursor:pointer;text-align:left">
-        <span>Est-ce vraiment gratuit pour commencer ?</span>
-        <span style="color:var(--gold);font-size:1.1rem;transition:transform .3s;flex-shrink:0;margin-left:12px">+</span>
-      </button>
-      <div style="display:none;padding:0 22px 18px;color:var(--mut);font-size:.875rem;line-height:1.7">Oui, totalement gratuit. Créez votre boutique, apparaissez sur la carte et recevez jusqu'à 5 réservations par mois sans payer quoi que ce soit. Le plan Premium débloque les fonctionnalités avancées.</div>
-    </div>
-    <div style="background:var(--ink2);border:1px solid rgba(255,255,255,.07);border-radius:var(--r);overflow:hidden">
-      <button onclick="toggleFaq(this)" style="width:100%;padding:18px 22px;display:flex;justify-content:space-between;align-items:center;background:none;border:none;color:var(--parch);font-family:'Outfit',sans-serif;font-size:.92rem;font-weight:600;cursor:pointer;text-align:left">
-        <span>Combien de temps pour créer ma boutique ?</span>
-        <span style="color:var(--gold);font-size:1.1rem;transition:transform .3s;flex-shrink:0;margin-left:12px">+</span>
-      </button>
-      <div style="display:none;padding:0 22px 18px;color:var(--mut);font-size:.875rem;line-height:1.7">Moins de 10 minutes ! Il vous suffit de renseigner le nom de votre boutique, votre catégorie, votre quartier et votre numéro de téléphone. Vous pourrez compléter votre profil (photos, services, horaires) depuis votre tableau de bord ensuite.</div>
-    </div>
-    <div style="background:var(--ink2);border:1px solid rgba(255,255,255,.07);border-radius:var(--r);overflow:hidden">
-      <button onclick="toggleFaq(this)" style="width:100%;padding:18px 22px;display:flex;justify-content:space-between;align-items:center;background:none;border:none;color:var(--parch);font-family:'Outfit',sans-serif;font-size:.92rem;font-weight:600;cursor:pointer;text-align:left">
-        <span>Les clients peuvent-ils réserver sans créer un compte ?</span>
-        <span style="color:var(--gold);font-size:1.1rem;transition:transform .3s;flex-shrink:0;margin-left:12px">+</span>
-      </button>
-      <div style="display:none;padding:0 22px 18px;color:var(--mut);font-size:.875rem;line-height:1.7">Les clients doivent créer un compte gratuit pour réserver. Cela nous permet de vous envoyer leurs coordonnées et de sécuriser les réservations. L'inscription prend moins d'une minute.</div>
-    </div>
-    <div style="background:var(--ink2);border:1px solid rgba(255,255,255,.07);border-radius:var(--r);overflow:hidden">
-      <button onclick="toggleFaq(this)" style="width:100%;padding:18px 22px;display:flex;justify-content:space-between;align-items:center;background:none;border:none;color:var(--parch);font-family:'Outfit',sans-serif;font-size:.92rem;font-weight:600;cursor:pointer;text-align:left">
-        <span>Comment puis-je passer au plan Premium ?</span>
-        <span style="color:var(--gold);font-size:1.1rem;transition:transform .3s;flex-shrink:0;margin-left:12px">+</span>
-      </button>
-      <div style="display:none;padding:0 22px 18px;color:var(--mut);font-size:.875rem;line-height:1.7">Depuis votre tableau de bord, allez dans "Abonnement" et choisissez le plan Premium. Le paiement se fait par Mobile Money (MTN, Airtel). Le plan Premium donne accès immédiatement à toutes les fonctionnalités avancées.</div>
-    </div>
-    {% endfor %}
-  </div>
+<!-- CTA FINAL -->
+<section class="sec sec-center">
+  <div class="tag">🚀 Rejoignez-nous</div>
+  <h2 class="sec-title">Prêt à développer votre activité ?</h2>
+  <p class="sec-sub" style="margin:0 auto 32px">Créez votre boutique gratuite en moins de 10 minutes. Aucune carte bancaire requise.</p>
+  <a href="{% url 'register' %}?type=pro" class="btn btn-gold btn-xl">🚀 Créer ma boutique maintenant</a>
 </section>
-
-<!-- ═══ CTA FINAL ═══ -->
-<section style="background:linear-gradient(135deg,rgba(201,151,58,.12),rgba(201,151,58,.04));border-top:1px solid rgba(201,151,58,.2);padding:80px 48px;text-align:center">
-  <div class="tag" style="margin-bottom:20px">🇨🇬 BeautyMap Congo</div>
-  <h2 style="font-family:'Cormorant Garamond',serif;font-size:clamp(2rem,4vw,3rem);color:var(--parch);font-weight:700;margin-bottom:16px">
-    Prêt à booster votre activité ?
-  </h2>
-  <p style="color:var(--mut);font-size:1rem;max-width:500px;margin:0 auto 36px;line-height:1.7">
-    Rejoignez la communauté BeautyMap Congo et commencez à recevoir des clients dès aujourd'hui.
-  </p>
-  <div style="display:flex;gap:14px;justify-content:center;flex-wrap:wrap">
-    <a href="{% url 'shops:create_shop' %}" class="btn btn-gold btn-xl">
-      🚀 Créer ma boutique gratuitement
-    </a>
-    <a href="{% url 'shops:explore' %}" class="btn btn-ghost btn-lg">
-      Voir les boutiques →
-    </a>
-  </div>
-  <p style="font-size:.78rem;color:var(--mut);margin-top:16px">
-    ✓ Gratuit · ✓ Sans engagement · ✓ Prêt en 10 minutes · ✓ Support en français
-  </p>
-</section>
-
-{% endblock %}
-
-{% block extra_scripts %}
-<script>
-/* ── Accordion FAQ ── */
-function toggleFaq(btn) {
-  const content = btn.nextElementSibling;
-  const icon    = btn.querySelector('span:last-child');
-  const isOpen  = content.style.display === 'block';
-
-  // Fermer tous les autres
-  document.querySelectorAll('.faq-content').forEach(c => c.style.display = 'none');
-  document.querySelectorAll('.faq-icon').forEach(i => { i.textContent = '+'; i.style.transform = 'rotate(0deg)'; });
-
-  if (!isOpen) {
-    content.style.display = 'block';
-    icon.textContent      = '−';
-    icon.style.transform  = 'rotate(0deg)';
-  }
-}
-
-/* ── Smooth scroll ── */
-document.querySelectorAll('a[href^="#"]').forEach(a => {
-  a.addEventListener('click', e => {
-    const target = document.querySelector(a.getAttribute('href'));
-    if (target) { e.preventDefault(); target.scrollIntoView({ behavior: 'smooth', block: 'start' }); }
-  });
-});
-
-/* ── Masquer les cartes déco sur mobile ── */
-if (window.innerWidth < 960) {
-  const cards = document.querySelector('.pros-hero-cards');
-  if (cards) cards.style.display = 'none';
-}
-</script>
 {% endblock %}

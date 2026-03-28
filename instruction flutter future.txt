@@ -1,0 +1,95 @@
+J’ai vérifié ton dépôt BeautyMap‑Congo sur GitHub (branche master)
+ — il contient bien tout le code de ton projet Django, y compris :
+
+📁 le dossier apps/ (avec la structure complète des apps)
+📁 manage.py
+📁 fichiers de configuration Docker et .env.example
+📁 une base de données .db, fichiers statiques, etc.
+
+Et le README inclut déjà une liste d’API REST disponibles exposées par Django REST Framework pour une utilisation par une app mobile :
+
+🔌 API REST exposées (pré‑configurées)
+
+Base URL : /api/v1/
+
+✔️ Authentification
+
+POST /api/v1/auth/register/ → Créer un compte
+POST /api/v1/auth/login/ → Se connecter (retourne token)
+GET /api/v1/auth/me/ → Infos du profil connecté
+
+✔️ Boutiques
+
+GET /api/v1/shops/ → Liste des boutiques (avec filtres)
+GET /api/v1/shops/{id}/ → Détail d’une boutique
+POST /api/v1/shops/ → Créer une boutique (auth requis)
+GET /api/v1/shops/map_markers/ → Données de géolocalisation (lat/lng)
+POST /api/v1/shops/{id}/toggle_favorite/ → Ajouter/retirer favori
+
+✔️ Réservations
+
+GET /api/v1/bookings/ → Mes réservations
+POST /api/v1/bookings/ → Créer une réservation
+
+✔️ Avis
+
+GET /api/v1/reviews/?shop={id} → Avis d’une boutique
+POST /api/v1/reviews/ → Soumettre un avis
+
+👉 Ces routes sont prêtes à être utilisées par ton application Flutter pour faire tout ce que tu veux côté mobile : inscription, login, affichage des boutiques, réservations, avis, favoris, etc.
+
+📱 Comment utiliser ces API dans Flutter
+📌 1. Auth (Inscription & Connexion)
+
+Tu peux appeler ces endpoints avec Flutter comme ceci (exemple en Dart) :
+
+import 'dart:convert';
+import 'package:http/http.dart' as http;
+
+// Login
+Future login(String email, String password) async {
+  final url = Uri.parse('https://ton‑backend/api/v1/auth/login/');
+  final response = await http.post(url, body: {
+    'email': email,
+    'password': password,
+  });
+  final data = jsonDecode(response.body);
+  // Récupère token
+  final token = data['token'];
+}
+
+Ensuite tu pourras envoyer token dans les headers pour les requêtes protégées :
+
+final headers = {'Authorization': 'Token $token'};
+📌 2. Liste des boutiques
+Future getShops(String token) async {
+  final url = Uri.parse('https://ton‑backend/api/v1/shops/');
+  final response = await http.get(url, headers: {
+    'Authorization': 'Token $token',
+  });
+  return jsonDecode(response.body);
+}
+📌 3. Détail boutique
+Future getShopDetail(String token, int id) async {
+  final url = Uri.parse('https://ton‑backend/api/v1/shops/$id/');
+  final response = await http.get(url, headers: {
+    'Authorization': 'Token $token',
+  });
+  return jsonDecode(response.body);
+}
+🛠️ Conseils pour Flutter
+
+✅ Installe le package http pour faire des requêtes API.
+✅ Stocke le token (par ex. avec shared_preferences).
+✅ Gère les erreurs 401 / 403 (non autorisé).
+✅ Utilise des modèles Dart (class) pour convertir JSON en objets faciles à utiliser.
+
+🚀 Prochaine étape
+
+Si tu veux, je peux te générer :
+
+📌 Une documentation complète des endpoints avec exemples de requêtes et réponses JSON
+📌 Le code Flutter prêt à l’emploi (pages login, boutiques, détails, réservations…)
+📌 Un système d’authentification JWT ou Token complet pour Flutter
+
+Dis‑moi juste ce que tu veux construire en premier (ex : page d’accueil des boutiques, profil utilisateur, réservations…) et je te prépare le code Flutter tout prêt à coller dans ton projet.
