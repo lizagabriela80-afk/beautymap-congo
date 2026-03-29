@@ -15,7 +15,7 @@
       </div>
     </div>
 
-    <div class="sb-sec">
+    <div class="sb-sec" style="margin-top: 10px;">
       <div class="sb-lbl">Administration</div>
       <a class="sb-item {% if active_tab == 'overview' %}on{% endif %}" href="?tab=overview">
         <span class="sb-ico">📊</span> Vue d'ensemble
@@ -37,7 +37,7 @@
       </a>
     </div>
 
-    <div class="sb-sec">
+    <div class="sb-sec" style="margin-top: 50px;">
       <div class="sb-lbl">Accès rapide</div>
       <a class="sb-item" href="/admin/" target="_blank">
         <span class="sb-ico">⚙️</span> Django Admin
@@ -52,7 +52,7 @@
   </aside>
 
   <!-- ═══ CONTENU PRINCIPAL ═══ -->
-  <main class="dash-main">
+  <main class="dash-main" style="margin-top: 80px;">
 
     <!-- Messages Django -->
     {% if messages %}
