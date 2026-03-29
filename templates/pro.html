@@ -28,13 +28,6 @@
       </button>
       <button class="sb-item {% if active_tab == 'boutique' %}on{% endif %}" onclick="window.location.href='?tab=boutique'"><span class="sb-ico">🏪</span>Ma boutique</button>
       <button class="sb-item {% if active_tab == 'services' %}on{% endif %}" onclick="window.location.href='?tab=services'"><span class="sb-ico">✂️</span>Mes services</button>
-
-      {# ── LIEN PUBLICATIONS (NOUVEAU) ── #}
-      <button class="sb-item {% if active_tab == 'publications' %}on{% endif %}" onclick="window.location.href='?tab=publications'">
-        <span class="sb-ico">📸</span>Publications
-        {% if posts_count %}<span class="sb-bdg">{{ posts_count }}</span>{% endif %}
-      </button>
-
       <button class="sb-item {% if active_tab == 'avis' %}on{% endif %}" onclick="window.location.href='?tab=avis'"><span class="sb-ico">⭐</span>Avis clients</button>
       <button class="sb-item {% if active_tab == 'messages' %}on{% endif %}" onclick="window.location.href='{% url 'inbox' %}'"><span class="sb-ico">💬</span>Messages
         {% if stats.unread_messages %}<span class="sb-bdg">{{ stats.unread_messages }}</span>{% endif %}
@@ -42,6 +35,7 @@
       <button class="sb-item {% if active_tab == 'notifs' %}on{% endif %}" onclick="window.location.href='?tab=notifs'"><span class="sb-ico">🔔</span>Notifications
         {% if stats.unread_notifs %}<span class="sb-bdg">{{ stats.unread_notifs }}</span>{% endif %}
       </button>
+      <button class="sb-item {% if active_tab == 'commandes' %}on{% endif %}" onclick="window.location.href='?tab=commandes'"><span class="sb-ico">🛒</span>Commandes</button>
     </div>
 
     <div class="sb-sec">
@@ -63,7 +57,7 @@
       <div class="stat-box"><div class="sl">RDV ce mois</div><div class="sv">{{ stats.bookings_month }}</div><div class="sd sd-up">↑ Confirmés: {{ stats.bookings_confirmed }}</div></div>
       <div class="stat-box"><div class="sl">Note moyenne</div><div class="sv">{{ stats.avg_rating|default:"—" }} ★</div><div class="sd sd-up">{{ stats.review_count }} avis</div></div>
       <div class="stat-box"><div class="sl">Revenus estimés</div><div class="sv">{{ stats.revenue_month|floatformat:"0" }}</div><div class="sd sd-up">FCFA ce mois</div></div>
-      <div class="stat-box"><div class="sl">Publications</div><div class="sv">{{ posts_count|default:"0" }}</div><div class="sd"><a href="?tab=publications" style="color:var(--gold-lt);font-size:.78rem">Voir tout →</a></div></div>
+      <div class="stat-box"><div class="sl">Vues du profil</div><div class="sv">{{ stats.views_month }}</div><div class="sd sd-up">↑ Ce mois</div></div>
     </div>
 
     <!-- Rendez-vous du jour -->
@@ -106,6 +100,7 @@
       {% endif %}
     </div>
 
+    <!-- En attente -->
     {% if bookings_pending %}
     <div class="dbox">
       <div class="dbox-h"><div class="dbox-t">⏳ En attente de confirmation ({{ bookings_pending.count }})</div></div>
@@ -130,6 +125,7 @@
     </div>
     {% endif %}
 
+    <!-- Derniers avis -->
     <div class="dbox">
       <div class="dbox-h"><div class="dbox-t">⭐ Derniers avis</div><a href="?tab=avis" class="btn btn-ghost btn-sm">Voir tout</a></div>
       <div class="dbox-b">
@@ -157,13 +153,15 @@
     <!-- ===== RENDEZ-VOUS ===== -->
     <div class="flex-between flex-wrap gap-12" style="margin-bottom:24px">
       <div class="dash-title" style="margin-bottom:0">📅 Tous les rendez-vous</div>
-      <select class="sel" style="width:auto" onchange="window.location.href='?tab=rdv&status='+this.value">
-        <option value="">Tous statuts</option>
-        <option value="pending">En attente</option>
-        <option value="confirmed">Confirmés</option>
-        <option value="cancelled">Annulés</option>
-        <option value="completed">Terminés</option>
-      </select>
+      <div class="flex gap-10">
+        <select class="sel" style="width:auto" onchange="window.location.href='?tab=rdv&status='+this.value">
+          <option value="">Tous statuts</option>
+          <option value="pending">En attente</option>
+          <option value="confirmed">Confirmés</option>
+          <option value="cancelled">Annulés</option>
+          <option value="completed">Terminés</option>
+        </select>
+      </div>
     </div>
     <div class="dbox">
       <div class="tbl-wrap">
@@ -173,7 +171,10 @@
           {% for b in shop.bookings.all|slice:":50" %}
           <tr>
             <td class="text-xs text-mut">{{ b.get_booking_ref }}</td>
-            <td><strong>{{ b.client.get_full_name }}</strong><br><span class="text-xs text-mut">{{ b.client.phone }}</span></td>
+            <td>
+              <strong>{{ b.client.get_full_name }}</strong><br>
+              <span class="text-xs text-mut">{{ b.client.phone }}</span>
+            </td>
             <td>{{ b.service.name|default:"—" }}</td>
             <td>{{ b.date|date:"d/m/Y" }}<br><span class="text-xs text-mut">{{ b.start_time|time:"H:i" }}</span></td>
             <td class="text-gold">{% if b.total_price %}{{ b.total_price|floatformat:"0" }} FCFA{% else %}—{% endif %}</td>
@@ -185,8 +186,12 @@
               {% else %}<span class="st">{{ b.get_status_display }}</span>{% endif %}
             </td>
             <td style="display:flex;gap:6px;flex-wrap:wrap">
-              {% if b.status == 'pending' %}<button class="btn btn-green btn-sm" onclick="confirmBooking('{{ b.id }}',this)">✓</button>{% endif %}
-              {% if b.status in 'pending,confirmed' %}<button class="btn btn-red btn-sm" onclick="cancelBooking('{{ b.id }}',this)">✗</button>{% endif %}
+              {% if b.status == 'pending' %}
+              <button class="btn btn-green btn-sm" onclick="confirmBooking('{{ b.id }}',this)">✓</button>
+              {% endif %}
+              {% if b.status in 'pending,confirmed' %}
+              <button class="btn btn-red btn-sm" onclick="cancelBooking('{{ b.id }}',this)">✗</button>
+              {% endif %}
             </td>
           </tr>
           {% empty %}
@@ -203,119 +208,23 @@
       <div class="dash-title" style="margin-bottom:0">✂️ Mes services</div>
       <button class="btn btn-gold btn-sm" onclick="openOv('ov-add-service')">+ Ajouter</button>
     </div>
-    {% for svc in shop.services.all %}
-    <div class="srv-item">
-      <div>
-        <div class="srv-nm">{{ svc.name }}</div>
-        <div class="srv-dur">⏱ {{ svc.duration_minutes }} min{% if svc.description %} · {{ svc.description|truncatechars:50 }}{% endif %}</div>
-      </div>
-      <div class="flex gap-10 align-center flex-wrap">
-        <span class="srv-pr">{{ svc.price|floatformat:"0" }} FCFA</span>
-        <span class="b {% if svc.is_active %}b-esth{% else %}b-ongl{% endif %}">{% if svc.is_active %}Actif{% else %}Inactif{% endif %}</span>
-      </div>
-    </div>
-    {% empty %}
-    <div class="text-center text-mut" style="padding:40px">
-      <div style="font-size:3rem;margin-bottom:12px">✂️</div>
-      <p>Aucun service ajouté. <button class="btn btn-outline btn-sm" onclick="openOv('ov-add-service')">Ajouter le premier</button></p>
-    </div>
-    {% endfor %}
-
-    {% elif active_tab == 'publications' %}
-    <!-- ===== PUBLICATIONS ===== -->
-    <div class="flex-between" style="margin-bottom:24px">
-      <div class="dash-title" style="margin-bottom:0">📸 Mes publications</div>
-      <div class="flex gap-10">
-        <a href="{% url 'shops:feed' %}" class="btn btn-ghost btn-sm" target="_blank">Voir le feed →</a>
-        <button class="btn btn-gold btn-sm" onclick="openOv('ov-new-post')">+ Nouvelle publication</button>
-      </div>
-    </div>
-
-    {# Statistiques rapides #}
-    <div class="stat-row" style="margin-bottom:24px">
-      <div class="stat-box">
-        <div class="sl">Total publications</div>
-        <div class="sv">{{ shop.posts.count }}</div>
-      </div>
-      <div class="stat-box">
-        <div class="sl">Total likes</div>
-        <div class="sv">{{ total_likes|default:"0" }}</div>
-      </div>
-      <div class="stat-box">
-        <div class="sl">Ce mois</div>
-        <div class="sv">{{ posts_this_month|default:"0" }}</div>
-      </div>
-    </div>
-
-    {# Grille des publications #}
-    <div id="my-posts-grid" style="display:grid;grid-template-columns:repeat(auto-fill,minmax(220px,1fr));gap:16px">
-      {% for post in shop_posts %}
-      <div class="post-dash-card" data-post-id="{{ post.id }}"
-        style="background:var(--ink2);border:1px solid rgba(255,255,255,.06);border-radius:var(--r);overflow:hidden;transition:border-color .2s"
-        onmouseover="this.style.borderColor='rgba(201,151,58,.3)'" onmouseout="this.style.borderColor='rgba(255,255,255,.06)'">
-
-        {# Image principale #}
-        {% with img=post.get_main_image %}
-        {% if img %}
-        <div style="aspect-ratio:4/3;overflow:hidden;position:relative">
-          <img src="{{ img.image.url }}" style="width:100%;height:100%;object-fit:cover">
-          {% if post.images.count > 1 %}
-          <span style="position:absolute;top:8px;right:8px;background:rgba(0,0,0,.65);color:#fff;
-                       font-size:.7rem;padding:2px 8px;border-radius:99px">📷 {{ post.images.count }}</span>
-          {% endif %}
+    <div>
+      {% for svc in shop.services.all %}
+      <div class="srv-item">
+        <div>
+          <div class="srv-nm">{{ svc.name }}</div>
+          <div class="srv-dur">⏱ {{ svc.duration_minutes }} min{% if svc.description %} · {{ svc.description|truncatechars:50 }}{% endif %}</div>
         </div>
-        {% else %}
-        <div style="aspect-ratio:4/3;background:var(--ink3);display:flex;align-items:center;justify-content:center">
-          <span style="font-size:2.5rem;opacity:.3">{{ shop.category_emoji }}</span>
-        </div>
-        {% endif %}
-        {% endwith %}
-
-        {# Corps #}
-        <div style="padding:12px">
-          {# Badge type #}
-          <span style="background:rgba(201,151,58,.12);border:1px solid rgba(201,151,58,.25);
-                       color:var(--gold-lt);font-size:.68rem;font-weight:700;padding:2px 9px;
-                       border-radius:99px;display:inline-block;margin-bottom:7px">
-            {{ post.get_post_type_display }}
-          </span>
-          {% if post.price %}
-          <span style="background:rgba(46,148,88,.12);border:1px solid rgba(46,148,88,.25);
-                       color:#6ED89A;font-size:.68rem;font-weight:700;padding:2px 9px;
-                       border-radius:99px;display:inline-block;margin-bottom:7px;margin-left:4px">
-            {{ post.price|floatformat:"0" }} FCFA
-          </span>
-          {% endif %}
-
-          {# Caption #}
-          {% if post.caption %}
-          <p style="font-size:.78rem;color:var(--mut);line-height:1.5;margin-bottom:8px;
-                    display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden">
-            {{ post.caption }}
-          </p>
-          {% endif %}
-
-          {# Footer : likes + date + supprimer #}
-          <div style="display:flex;align-items:center;justify-content:space-between;
-                      padding-top:8px;border-top:1px solid rgba(255,255,255,.05)">
-            <span style="font-size:.72rem;color:var(--mut)">❤️ {{ post.likes_count }} · {{ post.created_at|timesince }}</span>
-            <button onclick="deletePost('{{ post.id }}', this)"
-              style="background:rgba(192,65,46,.15);border:1px solid rgba(192,65,46,.3);color:#E07060;
-                     padding:3px 10px;border-radius:var(--rsm);font-size:.72rem;cursor:pointer;
-                     transition:all .2s"
-              onmouseover="this.style.background='rgba(192,65,46,.3)'"
-              onmouseout="this.style.background='rgba(192,65,46,.15)'">
-              🗑️
-            </button>
-          </div>
+        <div class="flex gap-10 align-center flex-wrap">
+          <span class="srv-pr">{{ svc.price|floatformat:"0" }} FCFA</span>
+          <button class="btn btn-ghost btn-sm">✏️ Modifier</button>
+          <span class="b {% if svc.is_active %}b-esth{% else %}b-ongl{% endif %}">{% if svc.is_active %}Actif{% else %}Inactif{% endif %}</span>
         </div>
       </div>
       {% empty %}
-      <div style="grid-column:1/-1;text-align:center;padding:60px 20px;color:var(--mut)">
-        <div style="font-size:4rem;margin-bottom:16px">📸</div>
-        <h3 style="font-family:'Cormorant Garamond',serif;color:var(--parch);margin-bottom:10px">Aucune publication</h3>
-        <p style="margin-bottom:20px">Partagez vos réalisations, produits et promotions pour attirer plus de clients.</p>
-        <button class="btn btn-gold" onclick="openOv('ov-new-post')">✨ Créer ma première publication</button>
+      <div class="text-center text-mut" style="padding:40px">
+        <div style="font-size:3rem;margin-bottom:12px">✂️</div>
+        <p>Aucun service ajouté. <button class="btn btn-outline btn-sm" onclick="openOv('ov-add-service')">Ajouter le premier</button></p>
       </div>
       {% endfor %}
     </div>
@@ -329,7 +238,7 @@
         <div><div style="color:var(--gold)">★★★★★</div><div class="text-xs text-mut">{{ stats.review_count }} avis</div></div>
       </div>
     </div>
-    {% for review in shop.reviews.all %}
+    {% for review in shop.reviews.filter.all %}
     <div class="rev-card">
       <div class="rev-h">
         <div class="rev-av">{{ review.client.get_initials }}</div>
@@ -343,7 +252,7 @@
       <div class="rev-txt">{{ review.comment }}</div>
     </div>
     {% empty %}
-    <div class="text-center text-mut" style="padding:60px"><div style="font-size:3rem;margin-bottom:16px">⭐</div><p>Aucun avis pour le moment.</p></div>
+    <div class="text-center text-mut" style="padding:60px"><div style="font-size:3rem;margin-bottom:16px">⭐</div><p>Aucun avis approuvé pour le moment.</p></div>
     {% endfor %}
 
     {% elif active_tab == 'profile' %}
@@ -401,9 +310,7 @@
   </main>
 </div>
 
-<!-- ══════════════════════════════════════════
-     MODAL : Ajouter un service
-══════════════════════════════════════════ -->
+<!-- Modal Ajouter service -->
 <div class="ov" id="ov-add-service">
   <div class="modal">
     <div class="mh"><div class="mt">➕ Ajouter un service</div><button class="mc" onclick="closeOv('ov-add-service')">✕</button></div>
@@ -421,80 +328,4 @@
     </div>
   </div>
 </div>
-
-<!-- ══════════════════════════════════════════
-     MODAL : Nouvelle publication
-══════════════════════════════════════════ -->
-<div class="ov" id="ov-new-post">
-  <div class="modal modal-wide">
-    <div class="mh">
-      <div class="mt">📸 Nouvelle publication</div>
-      <button class="mc" onclick="closeOv('ov-new-post')">✕</button>
-    </div>
-    <div class="mb">
-
-      {# Zone upload photos #}
-      <div class="fg">
-        <label class="lbl">Photos (jusqu'à 10)</label>
-        <div id="post-drop-zone"
-          style="border:2px dashed rgba(201,151,58,.35);border-radius:var(--r);padding:20px;
-                 text-align:center;cursor:pointer;transition:border-color .25s;background:var(--ink3)"
-          onclick="document.getElementById('post-images-input').click()"
-          ondragover="event.preventDefault();this.style.borderColor='var(--gold)'"
-          ondragleave="this.style.borderColor='rgba(201,151,58,.35)'"
-          ondrop="handlePostDrop(event)">
-          <div id="post-photos-preview" style="display:flex;flex-wrap:wrap;gap:8px;margin-bottom:12px;justify-content:center"></div>
-          <div style="color:var(--mut);font-size:.84rem">📷 Cliquez ou glissez vos photos ici</div>
-          <div style="color:var(--mut);font-size:.72rem;margin-top:4px">JPG, PNG · Max 10 images</div>
-        </div>
-        <input type="file" id="post-images-input" multiple accept="image/*" style="display:none"
-          onchange="previewPostImages(this.files)">
-      </div>
-
-      {# Type de publication #}
-      <div class="fg">
-        <label class="lbl">Type de publication</label>
-        <div style="display:flex;gap:8px;flex-wrap:wrap" id="post-type-pills">
-          <button type="button" class="pill on"  data-type="realisation" onclick="selectPostType(this)">✨ Réalisation</button>
-          <button type="button" class="pill"     data-type="produit"     onclick="selectPostType(this)">🛒 Produit</button>
-          <button type="button" class="pill"     data-type="promo"       onclick="selectPostType(this)">🎉 Promotion</button>
-          <button type="button" class="pill"     data-type="soin"        onclick="selectPostType(this)">💆 Soin</button>
-          <button type="button" class="pill"     data-type="avant_apres" onclick="selectPostType(this)">🔄 Avant/Après</button>
-          <button type="button" class="pill"     data-type="annonce"     onclick="selectPostType(this)">📢 Annonce</button>
-        </div>
-        <input type="hidden" id="selected-post-type" value="realisation">
-      </div>
-
-      {# Description #}
-      <div class="fg">
-        <label class="lbl">Description</label>
-        <textarea class="ta" id="post-caption"
-          placeholder="Décrivez votre réalisation : technique utilisée, durée, prix, disponibilités…"
-          style="min-height:100px"></textarea>
-        <div class="form-help">Soyez précis pour attirer l'attention de vos futurs clients.</div>
-      </div>
-
-      {# Prix optionnel #}
-      <div class="fg">
-        <label class="lbl">Prix (optionnel)</label>
-        <div style="position:relative">
-          <input class="inp" type="number" id="post-price" placeholder="Ex: 5000" min="0" style="padding-right:60px">
-          <span style="position:absolute;right:14px;top:50%;transform:translateY(-50%);font-size:.78rem;color:var(--mut)">FCFA</span>
-        </div>
-      </div>
-
-    </div>
-    <div class="mf">
-      <button class="btn btn-ghost" onclick="closeOv('ov-new-post')">Annuler</button>
-      <button class="btn btn-gold" id="publish-btn" onclick="publishPost('{{ shop.slug }}')">
-        📤 Publier maintenant
-      </button>
-    </div>
-  </div>
-</div>
-
-{% block extra_scripts %}
-<script src="/static/js/posts.js"></script>
-{% endblock %}
-
 {% endblock %}

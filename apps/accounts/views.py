@@ -339,7 +339,7 @@ def pro_dashboard(request):
         shop=shop, date__gte=this_month_start
     )
 
-    recent_reviews   = Review.objects.filter(
+    recent_reviews = Review.objects.filter(
         shop=shop, is_approved=True
     ).select_related('client').order_by('-created_at')[:5]
 
@@ -351,6 +351,15 @@ def pro_dashboard(request):
     notifs = Notification.objects.filter(
         user=user, is_read=False
     ).order_by('-created_at')[:20]
+
+    # ── Publications ────────────────────────────────────────────
+    from apps.shops.models import ShopPost
+    shop_posts       = ShopPost.objects.filter(shop=shop).prefetch_related('images').order_by('-created_at')
+    posts_count      = shop_posts.count()
+    posts_this_month = shop_posts.filter(created_at__gte=this_month_start).count()
+
+    from django.db.models import Sum as DSum
+    total_likes = shop_posts.aggregate(total=DSum('likes_count'))['total'] or 0
 
     stats = {
         'bookings_month':     bookings_month.count(),
@@ -375,6 +384,11 @@ def pro_dashboard(request):
         'notifications':    notifs,
         'stats':            stats,
         'active_tab':       request.GET.get('tab', 'overview'),
+        # Publications
+        'shop_posts':       shop_posts,
+        'posts_count':      posts_count,
+        'posts_this_month': posts_this_month,
+        'total_likes':      total_likes,
     })
 
 
