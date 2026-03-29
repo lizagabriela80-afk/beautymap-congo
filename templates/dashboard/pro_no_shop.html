@@ -84,25 +84,36 @@
         </div>
 
         <div class="fg-row">
-          <div class="fg">
-            <label class="lbl">Catégorie *</label>
-            <select class="sel" name="category" required>
-              <option value="">-- Choisir --</option>
-              {% for val, label in categories %}
-              <option value="{{ val }}" {% if request.POST.category == val %}selected{% endif %}>{{ label }}</option>
-              {% endfor %}
-            </select>
+            <div class="fg">
+              <label class="lbl">Catégorie *</label>
+              <select class="sel" name="category" required>
+                <option value="">-- Choisir --</option>
+                <option value="coiffure"   {% if request.POST.category == 'coiffure'   %}selected{% endif %}>✂️ Coiffure</option>
+                <option value="esthetique" {% if request.POST.category == 'esthetique' %}selected{% endif %}>💆 Esthétique</option>
+                <option value="onglerie"   {% if request.POST.category == 'onglerie'   %}selected{% endif %}>💅 Onglerie</option>
+                <option value="vetements"  {% if request.POST.category == 'vetements'  %}selected{% endif %}>👗 Vêtements</option>
+                <option value="barbier"    {% if request.POST.category == 'barbier'    %}selected{% endif %}>🪒 Barbier</option>
+                <option value="maquillage" {% if request.POST.category == 'maquillage' %}selected{% endif %}>💄 Maquillage</option>
+                <option value="spa"        {% if request.POST.category == 'spa'        %}selected{% endif %}>🛁 Spa & Bien-être</option>
+                <option value="autre"      {% if request.POST.category == 'autre'      %}selected{% endif %}>🏪 Autre</option>
+              </select>
+            </div>
+            <div class="fg">
+              <label class="lbl">Quartier *</label>
+              <select class="sel" name="quartier" required>
+                <option value="">-- Choisir --</option>
+                <option value="bacongo"    {% if request.POST.quartier == 'bacongo'    %}selected{% endif %}>Bacongo</option>
+                <option value="poto_poto"  {% if request.POST.quartier == 'poto_poto'  %}selected{% endif %}>Poto-Poto</option>
+                <option value="moungali"   {% if request.POST.quartier == 'moungali'   %}selected{% endif %}>Moungali</option>
+                <option value="ouenze"     {% if request.POST.quartier == 'ouenze'     %}selected{% endif %}>Ouenzé</option>
+                <option value="talangai"   {% if request.POST.quartier == 'talangai'   %}selected{% endif %}>Talangaï</option>
+                <option value="makelekele" {% if request.POST.quartier == 'makelekele' %}selected{% endif %}>Makélékélé</option>
+                <option value="mfilou"     {% if request.POST.quartier == 'mfilou'     %}selected{% endif %}>Mfilou</option>
+                <option value="djiri"      {% if request.POST.quartier == 'djiri'      %}selected{% endif %}>Djiri</option>
+                <option value="autre"      {% if request.POST.quartier == 'autre'      %}selected{% endif %}>Autre</option>
+              </select>
+            </div>
           </div>
-          <div class="fg">
-            <label class="lbl">Quartier *</label>
-            <select class="sel" name="quartier" required>
-              <option value="">-- Choisir --</option>
-              {% for val, label in quartiers %}
-              <option value="{{ val }}" {% if request.POST.quartier == val %}selected{% endif %}>{{ label }}</option>
-              {% endfor %}
-            </select>
-          </div>
-        </div>
 
         <div class="fg">
           <label class="lbl">Adresse</label>
