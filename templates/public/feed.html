@@ -1,49 +1,73 @@
 {% extends "base/base.html" %}
-{% block title %}Découverte{% endblock %}
+{% block title %}Découverte — Publications & Réalisations{% endblock %}
 
 {% block content %}
 <div style="margin-top:68px">
 
-  <!-- ── EN-TÊTE DÉCOUVERTE ── -->
-  <div style="background:var(--ink2);border-bottom:1px solid rgba(201,151,58,.1);padding:20px 48px;position:sticky;top:68px;z-index:100">
-    <div style="max-width:1100px;margin:0 auto;display:flex;align-items:center;gap:16px;flex-wrap:wrap">
-      <h1 style="font-family:'Cormorant Garamond',serif;font-size:1.5rem;color:var(--parch);font-weight:700;margin-right:8px">
-        ✨ Découverte
-      </h1>
-      <!-- Filtres par type de post -->
-      <div class="pills" id="feed-filters">
-        <button class="pill {% if not current_cat %}on{% endif %}" onclick="filterFeed('', this)">Tout</button>
+  <!-- ── EN-TÊTE ── -->
+  <div style="background:var(--ink2);border-bottom:1px solid rgba(201,151,58,.12);
+              padding:24px 48px;position:sticky;top:68px;z-index:100;backdrop-filter:blur(12px); position: static;">
+    <div style="max-width:1200px;margin:0 auto">
+      <div style="display:flex;align-items:center;gap:20px;flex-wrap:wrap;margin-bottom:14px">
+        <div>
+          <h1 style="font-family:'Cormorant Garamond',serif;font-size:1.6rem;color:var(--parch);font-weight:700;margin:0">
+            ✨ Découverte
+          </h1>
+          <p style="color:var(--mut);font-size:.78rem;margin-top:2px">Réalisations, produits et offres des pros BeautyMap Congo</p>
+        </div>
+        <div style="margin-left:auto;display:flex;gap:10px">
+          <a href="{% url 'shops:explore' %}" class="btn btn-ghost btn-sm">🏪 Boutiques</a>
+          {% if user.is_authenticated and user.is_pro %}
+          <button class="btn btn-gold btn-sm" onclick="openPostModal()">+ Publier</button>
+          {% endif %}
+        </div>
+      </div>
+
+      <!-- Filtres par type -->
+      <div class="pills" id="feed-filters" style="flex-wrap:wrap">
+        <button class="pill {% if not current_cat %}on{% endif %}" onclick="filterFeed('', this)">
+          🔥 Tout
+        </button>
         {% for val, label in categories %}
-        <button class="pill {% if current_cat == val %}on{% endif %}" onclick="filterFeed('{{ val }}', this)">{{ label }}</button>
+        <button class="pill {% if current_cat == val %}on{% endif %}" onclick="filterFeed('{{ val }}', this)">
+          {{ label }}
+        </button>
         {% endfor %}
       </div>
     </div>
   </div>
 
-  <!-- ── GRILLE DE POSTS ── -->
-  <div style="max-width:1100px;margin:0 auto;padding:28px 24px">
+  <!-- ── GRILLE MASONRY ── -->
+  <div style="max-width:1200px;margin:0 auto;padding:28px 24px">
 
-    <div id="posts-grid" style="columns:1;gap:20px">
-      <!-- Rendu serveur initial -->
+    <div id="posts-grid">
       {% for post in posts %}
       {% include "public/_post_card.html" %}
       {% empty %}
-      <div style="text-align:center;padding:80px 20px;color:var(--mut);grid-column:1/-1">
-        <div style="font-size:4rem;margin-bottom:16px">✨</div>
-        <h3 style="font-family:'Cormorant Garamond',serif;color:var(--parch);margin-bottom:10px">Aucune publication pour le moment</h3>
-        <p>Les professionnels n'ont pas encore publié. Revenez bientôt !</p>
-        <a href="{% url 'shops:explore' %}" class="btn btn-outline" style="margin-top:20px">Explorer les boutiques</a>
+      <div style="text-align:center;padding:100px 20px;color:var(--mut)">
+        <div style="font-size:5rem;margin-bottom:20px;opacity:.4">📸</div>
+        <h3 style="font-family:'Cormorant Garamond',serif;color:var(--parch);font-size:1.8rem;margin-bottom:12px">
+          Aucune publication pour l'instant
+        </h3>
+        <p style="max-width:360px;margin:0 auto 28px;line-height:1.7">
+          Les professionnels n'ont pas encore partagé de réalisations.
+          {% if user.is_authenticated and user.is_pro %}Soyez le premier !{% endif %}
+        </p>
+        <a href="{% url 'shops:explore' %}" class="btn btn-outline">Explorer les boutiques</a>
       </div>
       {% endfor %}
     </div>
 
-    <!-- ── LOADER INFINITE SCROLL ── -->
-    <div id="load-more-trigger" style="height:80px;display:flex;align-items:center;justify-content:center">
+    <!-- Loader infinite scroll -->
+    <div id="load-trigger" style="height:80px;display:flex;align-items:center;justify-content:center;margin-top:20px">
       {% if posts.has_next %}
-      <div id="load-spinner" style="color:var(--mut);font-size:.84rem">
-        <div style="width:24px;height:24px;border:2px solid rgba(201,151,58,.2);border-top-color:var(--gold);border-radius:50%;animation:spin .8s linear infinite;margin:0 auto 8px"></div>
-        Chargement…
+      <div id="load-spinner">
+        <div style="width:28px;height:28px;border:2.5px solid rgba(201,151,58,.2);border-top-color:var(--gold);
+                    border-radius:50%;animation:spin .8s linear infinite;margin:0 auto 8px"></div>
+        <div style="color:var(--mut);font-size:.78rem;text-align:center">Chargement…</div>
       </div>
+      {% else %}
+      <div style="color:var(--mut);font-size:.78rem">— Fin des publications —</div>
       {% endif %}
     </div>
 
@@ -52,83 +76,99 @@
 
 <style>
 @keyframes spin { to { transform: rotate(360deg); } }
-#posts-grid { column-count: 1; }
-@media (min-width: 600px)  { #posts-grid { column-count: 2; } }
-@media (min-width: 900px)  { #posts-grid { column-count: 3; } }
-@media (min-width: 1200px) { #posts-grid { column-count: 4; } }
+
+#posts-grid {
+  columns: 2;
+  gap: 18px;
+}
+@media (min-width: 700px)  { #posts-grid { columns: 3; } }
+@media (min-width: 1000px) { #posts-grid { columns: 4; } }
 
 .post-card {
   break-inside: avoid;
-  margin-bottom: 20px;
+  margin-bottom: 18px;
   background: var(--ink2);
   border: 1px solid rgba(255,255,255,.06);
   border-radius: var(--r);
   overflow: hidden;
-  transition: transform .3s, border-color .3s;
-  display: block;
+  transition: transform .3s ease, border-color .3s, box-shadow .3s;
+  cursor: pointer;
 }
-.post-card:hover { transform: translateY(-4px); border-color: rgba(201,151,58,.28); }
+.post-card:hover {
+  transform: translateY(-5px);
+  border-color: rgba(201,151,58,.3);
+  box-shadow: 0 16px 48px rgba(0,0,0,.5);
+}
 </style>
 
 <script>
-let currentPage    = {{ posts.next_page_number|default:2 }};
-let currentCat     = '{{ current_cat }}';
-let isLoading      = false;
-let hasMore        = {{ posts.has_next|lower }};
+let currentPage = let currentPage = {% if posts.has_next %}{{ posts.next_page_number }}{% else %}1{% endif %};;
+let currentCat  = '{{ current_cat }}';
+let isLoading   = false;
+let hasMore     = {{ posts.has_next|lower }};
 
-/* ── Infinite scroll ── */
-const observer = new IntersectionObserver(entries => {
-  if (entries[0].isIntersecting && hasMore && !isLoading) loadMorePosts();
+/* Infinite scroll */
+const obs = new IntersectionObserver(entries => {
+  if (entries[0].isIntersecting && hasMore && !isLoading) loadMore();
 }, { threshold: 0.1 });
+const trigger = document.getElementById('load-trigger');
+if (trigger) obs.observe(trigger);
 
-const trigger = document.getElementById('load-more-trigger');
-if (trigger) observer.observe(trigger);
-
-async function loadMorePosts() {
+async function loadMore() {
   isLoading = true;
   try {
-    const url = `/decouverte/?page=${currentPage}&category=${currentCat}`;
-    const res = await fetch(url, { headers: { 'X-Requested-With': 'XMLHttpRequest' } });
+    const res  = await fetch(`/decouverte/?page=${currentPage}&category=${currentCat}`,
+      { headers: { 'X-Requested-With': 'XMLHttpRequest' } });
     const data = await res.json();
     document.getElementById('posts-grid').insertAdjacentHTML('beforeend', data.html);
     hasMore     = data.has_next;
     currentPage = data.next_page;
     if (!hasMore) {
-      const spinner = document.getElementById('load-spinner');
-      if (spinner) spinner.style.display = 'none';
+      const sp = document.getElementById('load-spinner');
+      if (sp) sp.innerHTML = '<div style="color:var(--mut);font-size:.78rem">— Fin des publications —</div>';
     }
-  } catch { }
+  } catch(e) { }
   finally { isLoading = false; }
 }
 
-/* ── Filtre par catégorie ── */
 function filterFeed(cat, btn) {
   document.querySelectorAll('#feed-filters .pill').forEach(p => p.classList.remove('on'));
   btn.classList.add('on');
   currentCat  = cat;
   currentPage = 1;
   hasMore     = true;
-  document.getElementById('posts-grid').innerHTML = '<div style="text-align:center;padding:40px;color:var(--mut)">⏳ Chargement…</div>';
-  loadMorePosts();
+  document.getElementById('posts-grid').innerHTML =
+    '<div style="text-align:center;padding:60px;color:var(--mut);column-span:all">' +
+    '<div style="width:28px;height:28px;border:2.5px solid rgba(201,151,58,.2);border-top-color:var(--gold);' +
+    'border-radius:50%;animation:spin .8s linear infinite;margin:0 auto 12px"></div>Chargement…</div>';
+  loadMore();
 }
 
-/* ── Like ── */
+function openPostModal() {
+  /* Redirige vers le dashboard si pas de shop connu */
+  window.location.href = '/dashboard/pro/?tab=publications';
+}
+
+/* Like (défini aussi dans posts.js, mais gardé ici pour le feed) */
 async function toggleLike(btn, postId) {
   if (!{{ request.user.is_authenticated|lower }}) {
     window.location.href = '/auth/login/?next=/decouverte/';
     return;
   }
+  if (btn.disabled) return;
   btn.disabled = true;
-  const res    = await fetch(`/post/${postId}/like/`, {
-    method: 'POST', headers: { 'X-CSRFToken': getCsrfToken() }
-  });
-  const data   = await res.json();
-  btn.disabled = false;
-  const heart  = btn.querySelector('.heart');
-  const count  = btn.querySelector('.like-count');
-  if (heart) heart.textContent = data.liked ? '❤️' : '🤍';
-  if (count) count.textContent = data.count;
-  btn.classList.toggle('liked', data.liked);
+  try {
+    const res  = await fetch(`/post/${postId}/like/`, {
+      method: 'POST', headers: { 'X-CSRFToken': getCsrfToken() }
+    });
+    const data = await res.json();
+    const heart = btn.querySelector('.heart');
+    const count = btn.querySelector('.like-count');
+    if (heart) heart.textContent = data.liked ? '❤️' : '🤍';
+    if (count) count.textContent = data.count;
+    btn.classList.toggle('liked', data.liked);
+  } catch { toast('Erreur réseau', 'error'); }
+  finally  { btn.disabled = false; }
 }
 </script>
 {% endblock %}

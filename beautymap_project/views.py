@@ -1,4 +1,4 @@
-"""BeautyMap Congo — Vues d'erreur personnalisées"""
+"""BeautyMap Congo — Vues d'erreur"""
 from django.shortcuts import render
 
 

@@ -99,10 +99,6 @@ class Shop(models.Model):
         return round(reviews.aggregate(models.Avg('rating'))['rating__avg'], 1)
 
     @property
-    def review_count(self):
-        return self.reviews.filter(is_approved=True).count()
-
-    @property
     def is_open(self):
         from django.utils import timezone
         now = timezone.localtime()

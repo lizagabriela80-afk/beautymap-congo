@@ -48,3 +48,4 @@ if settings.DEBUG:
 # ── Gestionnaires d'erreurs personnalisés ─────────────────────────────────────
 handler404 = 'beautymap_project.views.error_404'
 handler500 = 'beautymap_project.views.error_500'
+

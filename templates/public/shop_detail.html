@@ -4,7 +4,7 @@
 {% block meta_desc %}{{ shop.description|truncatechars:160 }}{% endblock %}
 
 {% block content %}
-<!-- Hero -->
+<!-- ── HERO ── -->
 <div class="shop-hero">
   {% if shop.cover_image %}
     <img class="shop-hero-img" src="{{ shop.cover_image.url }}" alt="{{ shop.name }}">
@@ -18,6 +18,11 @@
       <span class="b b-{{ shop.category }}">{{ shop.get_category_display }}</span>
       {% if shop.is_verified %}<span class="b b-verified">✓ Vérifié</span>{% endif %}
       {% if shop.is_featured %}<span class="b" style="background:rgba(201,151,58,.2);color:var(--gold);border:1px solid rgba(201,151,58,.4)">⭐ Recommandé</span>{% endif %}
+      {% if shop.is_open %}
+      <span class="badge-open">🟢 Ouvert</span>
+      {% else %}
+      <span class="badge-close">🔴 Fermé</span>
+      {% endif %}
     </div>
     <h1 style="font-family:'Cormorant Garamond',serif;font-size:clamp(1.8rem,4vw,2.8rem);color:var(--parch);font-weight:700;margin-bottom:10px">{{ shop.name }}</h1>
     <div class="flex gap-16 flex-wrap" style="color:var(--parch2);font-size:.88rem">
@@ -27,42 +32,93 @@
         <strong>{{ shop.average_rating }}</strong>
         <span style="color:var(--mut)">({{ shop.review_count }} avis)</span>
       </span>
-      <span class="flex gap-8 align-center">
-        <span class="odot {% if shop.is_open %}odot-on{% else %}odot-off{% endif %}"></span>
-        {% if shop.is_open %}Ouvert maintenant{% else %}Fermé actuellement{% endif %}
-      </span>
+      {% if shop.views_count %}
+      <span style="color:var(--mut)">👁 {{ shop.views_count }} vues</span>
+      {% endif %}
     </div>
   </div>
 </div>
 
-<!-- Content -->
+<!-- ── CONTENU PRINCIPAL ── -->
 <div class="sec-sm">
   <div class="shop-detail-grid">
 
-    <!-- Left: main info -->
+    <!-- COLONNE GAUCHE -->
     <div>
+
       <!-- Description -->
       <div class="dbox">
         <div class="dbox-h"><div class="dbox-t">À propos</div></div>
         <div class="dbox-b">
           <p style="color:var(--mut);line-height:1.75;font-size:.93rem">{{ shop.description }}</p>
           <div class="flex gap-16 flex-wrap mt-16" style="font-size:.85rem;color:var(--txt)">
-            {% if shop.phone %}<span>📞 <a href="tel:{{ shop.phone }}" style="color:var(--gold-lt)">{{ shop.phone }}</a></span>{% endif %}
-            {% if shop.whatsapp %}<span>💬 <a href="https://wa.me/{{ shop.whatsapp }}" target="_blank" style="color:var(--green)">WhatsApp</a></span>{% endif %}
-            {% if shop.email %}<span>✉️ <a href="mailto:{{ shop.email }}" style="color:var(--gold-lt)">{{ shop.email }}</a></span>{% endif %}
+            {% if shop.phone %}
+            <span>📞 <a href="tel:{{ shop.phone }}" style="color:var(--gold-lt)">{{ shop.phone }}</a></span>
+            {% endif %}
+            {% if shop.whatsapp %}
+            <span>💬 <a href="https://wa.me/{{ shop.whatsapp }}" target="_blank" rel="noopener" style="color:var(--green)">WhatsApp</a></span>
+            {% endif %}
+            {% if shop.email %}
+            <span>✉️ <a href="mailto:{{ shop.email }}" style="color:var(--gold-lt)">{{ shop.email }}</a></span>
+            {% endif %}
           </div>
         </div>
       </div>
 
-      <!-- Photos -->
+      <!-- ⭐ PUBLICATIONS DU SALON ── -->
+      {% if posts %}
+      <div class="dbox" id="posts">
+        <div class="dbox-h">
+          <div class="dbox-t">📸 Réalisations & Publications</div>
+          <a href="{% url 'shops:feed' %}" class="btn btn-ghost btn-sm">Voir le feed →</a>
+        </div>
+        <div class="dbox-b">
+          <div class="shop-posts-preview">
+            {% for post in posts %}
+            {% with img=post.get_main_image %}
+            {% if img %}
+            <div style="position:relative;aspect-ratio:1;overflow:hidden;border-radius:var(--rsm);cursor:pointer"
+                 onclick="openPostDetail('{{ post.id }}')">
+              <img src="{{ img.image.url }}" alt="{{ post.caption|truncatechars:40 }}" loading="lazy"
+                   style="width:100%;height:100%;object-fit:cover;transition:transform .4s"
+                   onmouseover="this.style.transform='scale(1.07)'"
+                   onmouseout="this.style.transform='scale(1)'">
+              <!-- Overlay au survol -->
+              <div style="position:absolute;inset:0;background:rgba(8,6,4,.55);opacity:0;
+                          transition:opacity .3s;display:flex;flex-direction:column;
+                          align-items:center;justify-content:center;gap:4px"
+                   onmouseover="this.style.opacity=1" onmouseout="this.style.opacity=0">
+                <span style="color:#fff;font-size:.72rem;font-weight:700">{{ post.get_post_type_display }}</span>
+                {% if post.price %}
+                <span style="color:var(--gold-lt);font-size:.68rem">{{ post.price|floatformat:"0" }} FCFA</span>
+                {% endif %}
+                <span style="color:var(--mut);font-size:.68rem">❤️ {{ post.likes_count }}</span>
+              </div>
+            </div>
+            {% else %}
+            <div style="aspect-ratio:1;background:var(--ink3);border-radius:var(--rsm);
+                        display:flex;align-items:center;justify-content:center;
+                        font-size:1.4rem;opacity:.4">
+              {{ shop.category_emoji }}
+            </div>
+            {% endif %}
+            {% endwith %}
+            {% endfor %}
+          </div>
+        </div>
+      </div>
+      {% endif %}
+
+      <!-- Photos galerie -->
       {% if photos %}
       <div class="dbox">
-        <div class="dbox-h"><div class="dbox-t">📸 Photos</div></div>
+        <div class="dbox-h"><div class="dbox-t">📷 Galerie</div></div>
         <div class="dbox-b">
-          <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(160px,1fr));gap:10px">
+          <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:10px">
             {% for photo in photos %}
             <img src="{{ photo.image.url }}" alt="{{ photo.caption|default:shop.name }}"
-              style="width:100%;height:140px;object-fit:cover;border-radius:var(--rsm);cursor:pointer"
+              style="width:100%;height:130px;object-fit:cover;border-radius:var(--rsm);cursor:pointer;transition:opacity .2s"
+              onmouseover="this.style.opacity=.8" onmouseout="this.style.opacity=1"
               onclick="window.open('{{ photo.image.url }}','_blank')">
             {% endfor %}
           </div>
@@ -70,7 +126,7 @@
       </div>
       {% endif %}
 
-      <!-- Services -->
+      <!-- Services & Tarifs -->
       <div class="dbox">
         <div class="dbox-h">
           <div class="dbox-t">✂️ Services & Tarifs</div>
@@ -84,7 +140,7 @@
           <div class="srv-item">
             <div>
               <div class="srv-nm">{{ service.name }}</div>
-              <div class="srv-dur">⏱ {{ service.duration_minutes }} min{% if service.description %} · {{ service.description|truncatechars:60 }}{% endif %}</div>
+              <div class="srv-dur">⏱ {{ service.duration_minutes }} min{% if service.description %} · {{ service.description|truncatechars:55 }}{% endif %}</div>
             </div>
             <div class="flex gap-12 align-center">
               <span class="srv-pr">{{ service.price|floatformat:"0" }} FCFA</span>
@@ -100,7 +156,7 @@
         </div>
       </div>
 
-      <!-- Reviews -->
+      <!-- Avis clients -->
       <div class="dbox">
         <div class="dbox-h">
           <div class="dbox-t">⭐ Avis clients ({{ shop.review_count }})</div>
@@ -118,7 +174,7 @@
                 <div class="rev-nm">{{ review.client.get_full_name }}</div>
                 <div class="rev-dt" style="color:var(--gold)">
                   {% for i in "12345" %}{% if forloop.counter <= review.rating %}★{% else %}☆{% endif %}{% endfor %}
-                  · {{ review.created_at|timesince }} ago
+                  · {{ review.created_at|timesince }}
                 </div>
               </div>
               {% if review.title %}
@@ -141,24 +197,27 @@
           {% endif %}
         </div>
       </div>
+
     </div>
 
-    <!-- Right: sticky info -->
+    <!-- COLONNE DROITE (sticky) -->
     <aside class="shop-info-sticky">
+
       <!-- Actions -->
       <div class="dbox" style="margin-bottom:20px">
         <div class="dbox-b" style="display:flex;flex-direction:column;gap:10px">
           {% if user.is_authenticated %}
           <a href="{% url 'book_service' shop.slug %}" class="btn btn-gold btn-w btn-lg">📅 Prendre rendez-vous</a>
           {% if shop.whatsapp %}
-          <a href="https://wa.me/{{ shop.whatsapp }}" target="_blank" class="btn btn-w" style="background:#25D366;color:#fff">💬 Contacter sur WhatsApp</a>
+          <a href="https://wa.me/{{ shop.whatsapp }}?text=Bonjour, je vous contacte via BeautyMap Congo 👋" target="_blank" rel="noopener" class="btn btn-w" style="background:#25D366;color:#fff">
+            💬 Contacter sur WhatsApp
+          </a>
           {% elif shop.phone %}
-          <a href="tel:{{ shop.phone }}" class="btn btn-ghost btn-w">📞 Appeler {{ shop.phone }}</a>
+          <a href="tel:{{ shop.phone }}" class="btn btn-ghost btn-w">📞 Appeler</a>
           {% endif %}
           <a href="{% url 'start_conversation' shop.slug %}" class="btn btn-ghost btn-w">✉️ Envoyer un message</a>
           <button class="btn {% if is_favorite %}btn-red{% else %}btn-ghost{% endif %} btn-w"
-            onclick="toggleFavAjax(this, '{{ shop.id }}')"
-            id="fav-btn">
+            onclick="toggleFavAjax(this, '{{ shop.id }}')" id="fav-btn">
             {% if is_favorite %}❤️ Retirer des favoris{% else %}🤍 Ajouter aux favoris{% endif %}
           </button>
           {% else %}
@@ -200,10 +259,11 @@
           {% endif %}
         </div>
       </div>
+
     </aside>
   </div>
 
-  <!-- Related shops -->
+  <!-- Boutiques similaires -->
   {% if related_shops %}
   <div style="margin-top:48px">
     <div class="sec-header">
@@ -212,14 +272,14 @@
     </div>
     <div class="shop-grid" style="grid-template-columns:repeat(auto-fill,minmax(260px,1fr))">
       {% for rshop in related_shops %}
-      {% include "base/shop_card.html" with shop=rshop %}
+      {% include "base/shop_card.html" %}
       {% endfor %}
     </div>
   </div>
   {% endif %}
 </div>
 
-<!-- Review Modal -->
+<!-- MODAL AVIS -->
 {% if user.is_authenticated %}
 <div class="ov" id="ov-review">
   <div class="modal">
@@ -234,11 +294,11 @@
       </div>
       <div class="fg">
         <label class="lbl">Titre (optionnel)</label>
-        <input class="inp" id="review-title" placeholder="Ex: Excellent service, je recommande !">
+        <input class="inp" id="review-title" placeholder="Ex: Excellent service !">
       </div>
       <div class="fg">
         <label class="lbl">Votre commentaire *</label>
-        <textarea class="ta" id="review-comment" placeholder="Décrivez votre expérience : qualité du service, accueil, propreté, rapport qualité-prix…"></textarea>
+        <textarea class="ta" id="review-comment" placeholder="Décrivez votre expérience…" style="min-height:100px"></textarea>
       </div>
     </div>
     <div class="mf">
@@ -248,6 +308,7 @@
   </div>
 </div>
 {% endif %}
+
 {% endblock %}
 
 {% block extra_scripts %}
@@ -259,11 +320,21 @@ document.addEventListener('DOMContentLoaded', () => {
     .setView([{{ shop.latitude }}, {{ shop.longitude }}], 15);
   L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png').addTo(m);
   const icon = L.divIcon({
-    html: '<div style="width:36px;height:36px;border-radius:50%;background:#111;border:2.5px solid #C9973A;display:flex;align-items:center;justify-content:center;font-size:1.1rem">{{ shop.category_emoji }}</div>',
-    className: '', iconSize:[36,36], iconAnchor:[18,18]
+    html: `<div style="width:36px;height:36px;border-radius:50%;background:var(--gold);
+                       display:flex;align-items:center;justify-content:center;font-size:1.1rem;
+                       box-shadow:0 4px 14px rgba(0,0,0,.5)">{{ shop.category_emoji }}</div>`,
+    className: '', iconSize: [36, 36], iconAnchor: [18, 18]
   });
-  L.marker([{{ shop.latitude }}, {{ shop.longitude }}], {icon}).addTo(m);
+  L.marker([{{ shop.latitude }}, {{ shop.longitude }}], { icon }).addTo(m);
 });
 </script>
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
 {% endif %}
+<script>
+function openPostDetail(postId) {
+  /* TODO: ouvrir une modale de détail du post */
+  const url = document.querySelector(`[data-post-id="${postId}"] a`)?.href;
+  if (url) window.location.href = url + '#posts';
+}
+</script>
 {% endblock %}

@@ -148,3 +148,41 @@ def confirm_booking(request, pk):
     Notification.send(booking.client, 'booking_confirmed', 'RDV confirmé !',
         f"Votre RDV chez {booking.shop.name} le {booking.date} à {booking.start_time.strftime('%H:%M')} est confirmé.")
     return JsonResponse({'success': True})
+
+@login_required
+def book_service(request, shop_slug):
+    """
+    Page de réservation d’un service pour une boutique
+    """
+    shop = get_object_or_404(Shop, slug=shop_slug, is_active=True)
+    services = shop.services.filter(is_active=True)
+
+    if request.method == 'POST':
+        service_id = request.POST.get('service')
+        date       = request.POST.get('date')
+        time       = request.POST.get('time')
+        notes      = request.POST.get('notes', '')
+
+        if not service_id or not date or not time:
+            messages.error(request, "Veuillez remplir tous les champs.")
+            return redirect('bookings:book_service', shop_slug=shop.slug)
+
+        service = get_object_or_404(Service, id=service_id, shop=shop)
+
+        booking = Booking.objects.create(
+            client=request.user,
+            shop=shop,
+            service=service,
+            date=date,
+            time=time,
+            notes=notes,
+            status='pending'
+        )
+
+        messages.success(request, "🎉 Réservation envoyée avec succès !")
+        return redirect('shops:shop_detail', slug=shop.slug)
+
+    return render(request, 'bookings/book_service.html', {
+        'shop': shop,
+        'services': services,
+    })

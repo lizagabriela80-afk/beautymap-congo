@@ -3,19 +3,19 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<meta name="description" content="{% block meta_desc %}BeautyMap Congo — Trouvez les meilleurs prestataires beauté à Brazzaville{% endblock %}">
+<meta name="description" content="{% block meta_desc %}BeautyMap Congo — Trouvez, comparez et réservez les meilleurs salons de beauté à Brazzaville{% endblock %}">
+<meta name="theme-color" content="#C9973A">
 <title>{% block title %}BeautyMap Congo{% endblock %} — Beauté & Mode à Brazzaville</title>
 
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;0,700;1,400&family=Outfit:wght@300;400;500;600;700&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"/>
-<link rel="stylesheet" href="{% load static %}{% static 'css/main.css' %}">
-
+{% load static %}
+<link rel="stylesheet" href="{% static 'css/main.css' %}">
+<link rel="stylesheet" href="{% static 'css/additions.css' %}">
 {% block extra_head %}{% endblock %}
 </head>
-<body class="{% block body_class %}{% endblock %}">
-
-{% load static %}
+<body class="{% block body_class %}{% endblock %}" data-authenticated="{{ user.is_authenticated|lower }}">
 
 <!-- GRAIN -->
 <div class="grain" aria-hidden="true"></div>
@@ -28,17 +28,22 @@
   </a>
 
   <div class="nav-links" id="nav-links">
-    <a href="{% url 'shops:home' %}" {% if request.resolver_match.url_name == 'home' %}class="on"{% endif %}>Accueil</a>
-    <a href="{% url 'shops:explore' %}" {% if 'explore' in request.path %}class="on"{% endif %}>Explorer</a>
-    <a href="{% url 'shops:map' %}" {% if 'carte' in request.path %}class="on"{% endif %}>Carte</a>
-    <a href="/pros/" {% if 'pros' in request.path %}class="on"{% endif %}>Pour les pros</a>
+    <a href="{% url 'shops:home' %}"    {% if request.resolver_match.url_name == 'home'    %}class="on"{% endif %}>Accueil</a>
+    <a href="{% url 'shops:explore' %}" {% if 'explorer' in request.path                   %}class="on"{% endif %}>Explorer</a>
+    <a href="{% url 'shops:feed' %}"    {% if 'decouverte' in request.path                 %}class="on"{% endif %}>✨ Découverte</a>
+    <a href="{% url 'shops:map' %}"     {% if 'carte' in request.path                      %}class="on"{% endif %}>Carte</a>
+    <a href="{% url 'shops:pros' %}"    {% if 'pros' in request.path                       %}class="on"{% endif %}>Pour les pros</a>
   </div>
 
   <div class="nav-right">
     {% if user.is_authenticated %}
       <div class="nav-user-menu" id="nav-user-menu">
         <div class="nav-user-btn" onclick="toggleUserMenu()">
+          {% if user.avatar %}
+          <img src="{{ user.avatar.url }}" style="width:34px;height:34px;border-radius:50%;object-fit:cover;border:2px solid rgba(201,151,58,.4)" alt="{{ user.get_full_name }}">
+          {% else %}
           <div class="nav-avatar" aria-label="Menu utilisateur">{{ user.get_initials }}</div>
+          {% endif %}
           <span class="nav-uname">{{ user.first_name }}</span>
           <span class="nav-caret">▾</span>
         </div>
@@ -73,7 +78,7 @@
   </div>
 </nav>
 
-<!-- MESSAGES -->
+<!-- MESSAGES DJANGO -->
 {% if messages %}
 <div class="django-messages" id="django-messages">
   {% for message in messages %}
@@ -90,7 +95,7 @@
   {% block content %}{% endblock %}
 </main>
 
-<!-- FOOTER (hidden on dashboard) -->
+<!-- FOOTER -->
 {% block footer %}
 <footer role="contentinfo">
   <div class="foot-inner">
@@ -99,17 +104,18 @@
         <a class="logo" href="{% url 'shops:home' %}" style="margin-bottom:14px;display:inline-flex">
           <div class="logo-icon">💄</div>Beauty<em>Map</em>&nbsp;<span class="logo-congo">Congo</span>
         </a>
-        <p class="foot-desc">La première plateforme congolaise dédiée aux professionnels de la beauté et de la mode. Trouvez, comparez, réservez.</p>
+        <p class="foot-desc">La première plateforme congolaise dédiée aux professionnels de la beauté. Trouvez, comparez, réservez.</p>
         <div class="foot-social">
           <a href="#" class="social-btn" aria-label="Facebook">📘</a>
           <a href="#" class="social-btn" aria-label="Instagram">📸</a>
           <a href="#" class="social-btn" aria-label="WhatsApp">💬</a>
-          <a href="#" class="social-btn" aria-label="YouTube">▶️</a>
+          <a href="#" class="social-btn" aria-label="TikTok">🎵</a>
         </div>
       </div>
       <div>
         <div class="foot-title">Explorer</div>
         <nav class="foot-links">
+          <a href="{% url 'shops:feed' %}">✨ Découverte</a>
           <a href="{% url 'shops:explore' %}?category=coiffure">✂️ Coiffure</a>
           <a href="{% url 'shops:explore' %}?category=esthetique">💆 Esthétique</a>
           <a href="{% url 'shops:explore' %}?category=onglerie">💅 Onglerie</a>
@@ -121,45 +127,45 @@
         <div class="foot-title">Pour les pros</div>
         <nav class="foot-links">
           <a href="{% url 'shops:create_shop' %}">Créer ma boutique</a>
-          <a href="/pros/#tarifs">Tarifs</a>
-          <a href="/pros/#fonctionnalites">Fonctionnalités</a>
-          <a href="/contact/">Support</a>
+          <a href="{% url 'shops:pros' %}#tarifs">Tarifs</a>
+          <a href="{% url 'shops:pros' %}#fonctionnalites">Fonctionnalités</a>
+          <a href="{% url 'shops:contact' %}">Support</a>
         </nav>
       </div>
       <div>
         <div class="foot-title">À propos</div>
         <nav class="foot-links">
-          <a href="/a-propos/">Notre mission</a>
+          <a href="{% url 'shops:contact' %}">Contact</a>
           <a href="/cgu/">Conditions d'utilisation</a>
           <a href="/confidentialite/">Confidentialité</a>
-          <a href="/contact/">Contact</a>
+          <a href="/api/v1/health/" target="_blank" rel="noopener">API Status</a>
         </nav>
       </div>
     </div>
     <div class="foot-bottom">
       <div class="foot-copy">© {% now "Y" %} BeautyMap Congo · Tous droits réservés · 🇨🇬 Made in Brazzaville</div>
-      <div class="foot-copy">v1.0.0 · Django {{ django_version }}</div>
+      <div class="foot-copy">v2.0</div>
     </div>
   </div>
 </footer>
 {% endblock %}
 
-<!-- TOAST CONTAINER -->
+<!-- TOASTS -->
 <div class="toasts" id="toasts" aria-live="polite"></div>
 
 <!-- SCRIPTS -->
 <script src="{% static 'js/main.js' %}"></script>
+<script src="{% static 'js/posts.js' %}"></script>
 {% if 'carte' in request.path or 'map' in request.path %}
 <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
 {% endif %}
 {% block extra_scripts %}{% endblock %}
 
 <script>
-// Auto-dismiss django messages
 setTimeout(() => {
   document.querySelectorAll('.dmsg').forEach(el => el.style.opacity = '0');
   setTimeout(() => document.getElementById('django-messages')?.remove(), 500);
-}, 4000);
+}, 5000);
 </script>
 </body>
 </html>

@@ -104,7 +104,142 @@
 
 /* ── RESPONSIVE FIXES ────────────────────────────────────────── */
 @media (max-width: 640px) {
-  .slots-grid { grid-template-columns: repeat(3,1fr); }
+  .slots-grid { grid-template-columns: repeat(3,1fr); }/* ============================================================
+   BEAUTYMAP CONGO — additions.css v2
+   Nouveaux styles + corrections
+   ============================================================ */
+
+/* ── LIEN DÉCOUVERTE DANS LA NAV (effet spécial) ── */
+.nav-links a[href*="decouverte"] {
+  color: var(--gold-lt) !important;
+  font-weight: 600;
+}
+.nav-links a[href*="decouverte"]::before {
+  content: '';
+}
+.nav-links a[href*="decouverte"].on {
+  color: var(--gold) !important;
+}
+
+/* ── SEARCH DROPDOWN ── */
+.hero-search { position: relative; }
+.search-dropdown {
+  position: absolute;
+  top: calc(100% + 4px); left: 0; right: 60px;
+  z-index: 400;
+  background: var(--ink2);
+  border: 1px solid rgba(201,151,58,.25);
+  border-top: none;
+  border-radius: 0 0 var(--r) var(--r);
+  box-shadow: 0 24px 60px rgba(0,0,0,.7);
+  max-height: 320px; overflow-y: auto;
+}
+.search-dropdown a {
+  display: flex; align-items: center; gap: 12px;
+  padding: 12px 16px;
+  border-bottom: 1px solid rgba(255,255,255,.04);
+  color: var(--txt); text-decoration: none;
+  transition: background .2s;
+  font-size: .875rem;
+}
+.search-dropdown a:hover { background: rgba(255,255,255,.04); }
+.search-dropdown a:last-child { border-bottom: none; }
+.search-dropdown .sd-empty, .search-dropdown .sd-loading {
+  padding: 14px 16px; color: var(--mut); font-size: .84rem;
+}
+
+/* ── POST CARD HOME ── */
+#home-posts-grid .post-card { margin-bottom: 16px; }
+#home-posts-grid {
+  column-gap: 16px;
+}
+
+/* ── FEED PAGE ── */
+.post-card { position: relative; }
+
+/* ── PULL TO REFRESH ── */
+#ptr-indicator {
+  display: none;
+  position: fixed; top: 0; left: 0; right: 0;
+  height: 52px; z-index: 9999;
+  background: rgba(201,151,58,.15);
+  backdrop-filter: blur(8px);
+  align-items: center; justify-content: center;
+  gap: 10px; font-size: .84rem;
+  color: var(--gold); pointer-events: none;
+}
+.ptr-arrow { display: inline-block; transition: transform .3s; }
+
+/* ── CORRECTION TOAST ── */
+.toast { pointer-events: all; }
+
+/* ── NAV MOBILE: 5 liens ── */
+@media (max-width: 960px) {
+  .nav-links a[href*="decouverte"] { order: 2; }
+}
+
+/* ── PROFILE IMAGE IN NAV ── */
+.nav-user-btn img {
+  width: 34px; height: 34px; border-radius: 50%;
+  object-fit: cover;
+  border: 2px solid rgba(201,151,58,.4);
+  flex-shrink: 0;
+}
+
+/* ── STAT BOX LINK ── */
+.stat-box a { text-decoration: none; }
+.stat-box a:hover { color: var(--gold); }
+
+/* ── OPEN STATUS ALIGN ── */
+.align-center { align-items: center; }
+
+/* ── POSTS FEED GRID ── */
+@keyframes fadeSlideUp {
+  from { opacity: 0; transform: translateY(18px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+.post-card { animation: fadeSlideUp .4s ease both; }
+
+/* ── SHOP DETAIL POSTS SECTION ── */
+.shop-posts-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+  gap: 14px;
+}
+
+/* ── BADGE OPEN/CLOSE ── */
+.badge-open  { background: rgba(46,148,88,.15); color: #5EC98A; border: 1px solid rgba(46,148,88,.3); padding: 2px 10px; border-radius: 99px; font-size: .72rem; font-weight: 700; }
+.badge-close { background: rgba(192,65,46,.15); color: #E07060; border: 1px solid rgba(192,65,46,.3); padding: 2px 10px; border-radius: 99px; font-size: .72rem; font-weight: 700; }
+
+/* ── SECTION PUBLICATIONS SUR SHOP DETAIL ── */
+.shop-posts-preview {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 8px;
+  margin-top: 4px;
+}
+.shop-posts-preview img {
+  width: 100%; aspect-ratio: 1;
+  object-fit: cover;
+  border-radius: var(--rsm);
+  cursor: pointer;
+  transition: opacity .2s;
+}
+.shop-posts-preview img:hover { opacity: .85; }
+
+@media (max-width: 640px) {
+  .shop-posts-preview { grid-template-columns: repeat(2, 1fr); }
+}
+
+/* ── BUTTON LIKE ACTIVE ── */
+.liked .heart { color: var(--red); }
+button.liked { color: var(--red) !important; }
+
+/* ── FOOTER LINK DÉCOUVERTE ── */
+.foot-links a[href*="decouverte"] { color: var(--gold-lt); }
+
+/* ── INFINITE SCROLL SPINNER ── */
+#load-trigger { min-height: 60px; }
   #search-results-dropdown { max-height: 240px; }
   .auth-box { padding: 24px 16px; }
 }
