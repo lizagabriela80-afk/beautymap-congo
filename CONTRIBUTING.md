@@ -97,7 +97,6 @@ Une description claire de la fonctionnalité
 
 ## 🛠️ Prérequis
 Avant de commencer à coder, assurez-vous d'avoir :
-```
 
 |Outil|	Version	|Lien|
 |------|--------|---------|
@@ -106,7 +105,6 @@ Avant de commencer à coder, assurez-vous d'avoir :
 |Docker (optionnel)|	24+|	docker.com|
 |PostgreSQL	|15+	[postgresql.org[|
 
-```
 
 ## 🔧 Installation pour le développement
 
