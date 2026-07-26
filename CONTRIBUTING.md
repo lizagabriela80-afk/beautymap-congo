@@ -164,7 +164,7 @@ Votre PR doit respecter ces critères :
 ### Critère Exigence
 
 | Tests|	Tous les tests doivent passer|
-||||
+|||
 |Style|	Code conforme au PEP8 et au style du projet|
 | Documentation|	Documentation mise à jour si nécessaire|
 |Commits|	Messages de commit clairs et en anglais|
