@@ -71,7 +71,7 @@ Si possible, ajoutez des captures d'écran.
 - Version du projet : [ex: v1.0.0]
 ```
 
-
+markdown
 ##💡Suggestion de fonctionnalités
 Pour proposer une nouvelle fonctionnalité :
 
