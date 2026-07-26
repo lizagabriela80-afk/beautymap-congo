@@ -23,16 +23,6 @@ Ce projet est publié sous la **licence MIT**, ce qui signifie que vous êtes li
 ---
 
 ```markdown
-# 💄 BeautyMap Congo
-
-> *La première plateforme congolaise dédiée aux professionnels de la beauté et de la mode à Brazzaville.*
-
-[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
-[![Python](https://img.shields.io/badge/Python-3.11-blue.svg)](https://www.python.org/)
-[![Django](https://img.shields.io/badge/Django-4.2-green.svg)](https://www.djangoproject.com/)
-[![PostgreSQL](https://img.shields.io/badge/PostgreSQL-15-blue.svg)](https://www.postgresql.org/)
-[![Docker](https://img.shields.io/badge/Docker-Ready-blue.svg)](https://www.docker.com/)
-
 
 ---
 
