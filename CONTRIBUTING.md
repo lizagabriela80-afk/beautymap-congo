@@ -69,6 +69,7 @@ Si possible, ajoutez des captures d'écran.
 - OS : [ex: Windows 11, Ubuntu 22.04]
 - Navigateur : [ex: Chrome 120, Firefox 119]
 - Version du projet : [ex: v1.0.0]
+```
 
 
 💡 Suggestion de fonctionnalités
