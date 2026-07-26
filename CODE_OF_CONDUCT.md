@@ -68,7 +68,7 @@ Si vous êtes témoin ou victime d'un comportement inacceptable, **n'hésitez pa
 
 | Contact | Adresse |
 |---------|---------|
-| **Créatrice** | (votre email) |
+| **Créatrice** | lizagabriela84@gmail.com |
 | **GitHub** | [@lizagabriela80-afk](https://github.com/lizagabriela80-afk) |
 
 ### Procédure de signalement
