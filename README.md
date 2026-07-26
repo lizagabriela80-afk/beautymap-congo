@@ -505,8 +505,7 @@ Un grand merci à :
 | | |
 |---|---|
 | **Auteur** | [@lizagabriela80-afk](https://github.com/lizagabriela80-afk) |
-| **Email** | (votre email) |
-| **Site** | (votre site) |
+| **Email** | lizagabriela84@gmail.com |
 | **Issues** | [Signaler un problème](https://github.com/lizagabriela80-afk/beautymap-congo/issues) |
 
 ---
