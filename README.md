@@ -257,56 +257,6 @@ docker compose logs -f web
 
 ---
 
-## 🤝 Contribuer
-
-Les contributions sont les bienvenues ! 🎉
-
-1. 🍴 **Fork** le projet
-2. 🌿 Créez une branche : `git checkout -b feature/amazing-feature`
-3. 💾 **Commit** : `git commit -m 'Add some amazing feature'`
-4. 📤 **Push** : `git push origin feature/amazing-feature`
-5. 🔄 Ouvrez une **Pull Request**
-
-> Consultez notre [`CODE_OF_CONDUCT.md`](CODE_OF_CONDUCT.md) avant de contribuer.
-
----
-
-## 🙏 Remerciements
-
-Un grand merci à :
-
-- [Django](https://www.djangoproject.com/) & [Django REST Framework](https://www.django-rest-framework.org/) — pour ce framework exceptionnel
-- [Leaflet](https://leafletjs.com/) & [OpenStreetMap](https://www.openstreetmap.org/) — pour la cartographie libre
-- [Africa's Talking](https://africastalking.com/) — pour les solutions SMS en Afrique
-- **Toutes les personnes** qui ont contribué, testé ou soutenu ce projet 🇨🇬
-
----
-
-## 📞 Contact & Support
-
-| | |
-|---|---|
-| **Auteur** | [@lizagabriela80-afk](https://github.com/lizagabriela80-afk) |
-| **Email** | (votre email) |
-| **Site** | (votre site) |
-| **Issues** | [Signaler un problème](https://github.com/lizagabriela80-afk/beautymap-congo/issues) |
-
----
-
-## 🇨🇬 Made in Brazzaville, Congo
-
-<div align="center">
-
-**BeautyMap Congo** — © 2026 · Sous licence MIT
-
-*Fierté congolaise* ❤️💛💚
-
-</div>
-
----
-
----
-
 # 🪟 Guide Windows avec VS Code
 
 > Toutes les commandes sont à taper dans le **Terminal intégré de VS Code** (`Ctrl + ù`)
@@ -523,8 +473,53 @@ python manage.py runserver
 | http://127.0.0.1:8000/dashboard/ | Dashboard (redirige selon le rôle) |
 | http://127.0.0.1:8000/admin/ | Interface admin Django |
 | http://127.0.0.1:8000/api/v1/shops/ | API REST boutiques |
-```
 
 
+## 🤝 Contribuer
 
-BeautyMap Congo — © 2026 · Sous licence MIT
+Les contributions sont les bienvenues ! 🎉
+
+1. 🍴 **Fork** le projet
+2. 🌿 Créez une branche : `git checkout -b feature/amazing-feature`
+3. 💾 **Commit** : `git commit -m 'Add some amazing feature'`
+4. 📤 **Push** : `git push origin feature/amazing-feature`
+5. 🔄 Ouvrez une **Pull Request**
+
+> Consultez notre [`CODE_OF_CONDUCT.md`](CODE_OF_CONDUCT.md) avant de contribuer.
+
+---
+
+## 🙏 Remerciements
+
+Un grand merci à :
+
+- [Django](https://www.djangoproject.com/) & [Django REST Framework](https://www.django-rest-framework.org/) — pour ce framework exceptionnel
+- [Leaflet](https://leafletjs.com/) & [OpenStreetMap](https://www.openstreetmap.org/) — pour la cartographie libre
+- [Africa's Talking](https://africastalking.com/) — pour les solutions SMS en Afrique
+- **Toutes les personnes** qui ont contribué, testé ou soutenu ce projet 🇨🇬
+
+---
+
+## 📞 Contact & Support
+
+| | |
+|---|---|
+| **Auteur** | [@lizagabriela80-afk](https://github.com/lizagabriela80-afk) |
+| **Email** | (votre email) |
+| **Site** | (votre site) |
+| **Issues** | [Signaler un problème](https://github.com/lizagabriela80-afk/beautymap-congo/issues) |
+
+---
+
+## 🇨🇬 Made in Brazzaville, Congo
+
+<div align="center">
+
+**BeautyMap Congo** — © 2026 · Sous licence MIT
+
+*Fierté congolaise* ❤️💛💚
+
+</div>
+
+---
+
