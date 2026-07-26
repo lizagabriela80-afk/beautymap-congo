@@ -70,7 +70,7 @@ Si possible, ajoutez des captures d'écran.
 - Navigateur : [ex: Chrome 120, Firefox 119]
 - Version du projet : [ex: v1.0.0]
 ```
-
+---
 
 ### 💡 Suggestion de fonctionnalités
 
@@ -84,9 +84,11 @@ Décrivez la solution : comment voyez-vous la fonctionnalité ?
 
 Ajoutez des exemples si possible
 
+---
 
 ### 💡 Idée de fonctionnalité
 Une description claire de la fonctionnalité.
+
 
 ### 🎯 Problème résolu
 Quel est le problème que cette fonctionnalité corrige ?
@@ -96,15 +98,20 @@ Comment la fonctionnalité devrait-elle fonctionner ?
 
 ### 📸 Mockup (optionnel)
 Ajoutez un croquis ou une maquette.
+
+---
+
 💻 Guide de développement
+
 🛠️ Prérequis
 Avant de commencer à coder, assurez-vous d'avoir :
 
-Outil	Version	Lien
-Python	3.11+	python.org
-Git	2.0+	git-scm.com
-Docker (optionnel)	24+	docker.com
-PostgreSQL	15+	postgresql.org
+|Outil|	Version	|Lien|
+|------|--------|---------|
+|Python|	3.11+|	python.org|
+|Git   |2.0+     |	git-scm.com|
+|Docker (optionnel)|	24+|	docker.com|
+|PostgreSQL	|15+	[postgresql.org[
 🔧 Installation pour le développement
 bash
 ### 1. Cloner le projet
