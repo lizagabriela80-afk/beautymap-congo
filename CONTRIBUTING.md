@@ -107,61 +107,66 @@ Docker (optionnel)	24+	docker.com
 PostgreSQL	15+	postgresql.org
 🔧 Installation pour le développement
 bash
-# 1. Cloner le projet
+### 1. Cloner le projet
 git clone https://github.com/lizagabriela80-afk/beautymap-congo.git
 cd beautymap_full
 
-# 2. Créer un environnement virtuel
+### 2. Créer un environnement virtuel
 python -m venv venv
 source venv/bin/activate  # Sur Windows: venv\Scripts\activate
 
-# 3. Installer les dépendances
+### 3. Installer les dépendances
 pip install -r requirements.txt
 
-# 4. Configurer .env
+### 4. Configurer .env
 cp .env.example .env
-# Éditez .env avec vos valeurs
+#### Éditez .env avec vos valeurs
 
-# 5. Migrer la base de données
+### 5. Migrer la base de données
 python manage.py migrate
 
-# 6. Charger les données de test
+### 6. Charger les données de test
 python manage.py seed_data
 
-# 7. Lancer le serveur
+### 7. Lancer le serveur
 python manage.py runserver
-🔄 Workflow de développement
-bash
-# 1. Créer une branche
+### 💡 Workflow de développement
+🔄
+
+### 1. Créer une branche
 git checkout -b feature/nom-de-la-fonctionnalite
-# ou
+### ou
 git checkout -b fix/nom-du-bug
 
-# 2. Faire vos modifications
+### 2. Faire vos modifications
 
-# 3. Tester vos modifications
+### 3. Tester vos modifications
 python manage.py test
 
-# 4. Commiter
+### 4. Commiter
 git add .
 git commit -m "feat: description claire du changement"
 
-# 5. Pusher
+### 5. Pusher
 git push origin feature/nom-de-la-fonctionnalite
 
-# 6. Ouvrir une Pull Request
+### 6. Ouvrir une Pull Request
 📤 Processus de Pull Request
 ✅ Critères d'acceptation
 Votre PR doit respecter ces critères :
 
-Critère	Exigence
+### Critère Exigence
+
 ✅ Tests	Tous les tests doivent passer
 ✅ Style	Code conforme au PEP8 et au style du projet
 ✅ Documentation	Documentation mise à jour si nécessaire
 ✅ Commits	Messages de commit clairs et en anglais
 ✅ Branche	À jour avec master
 ✅ Code review	Au moins 1 approbation d'un mainteneur
-✨ Convention de nommage des commits
+
+
+### Convention de nommage des commits
+✨ 
 Type	Description	Exemple
 feat	Nouvelle fonctionnalité	feat: add shop search filters
 fix	Correction de bug	fix: resolve booking date issue
@@ -171,8 +176,11 @@ refactor	Refactorisation (ni correction, ni nouvelle fonction)	refactor: simplif
 test	Ajout ou correction de tests	test: add tests for review model
 chore	Maintenance (dépendances, config, etc.)	chore: update requirements.txt
 perf	Optimisation des performances	perf: optimize database queries
-📝 Exemple de PR
-markdown
+
+### Exemple de PR
+
+📝 
+
 ## 🎯 Objectif
 Ajout d'un filtre de recherche par quartier.
 
