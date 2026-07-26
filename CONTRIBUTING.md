@@ -86,7 +86,7 @@ Ajoutez des exemples si possible
 
 
 |💡 Idée de fonctionnalité|🎯 Problème résolu|🔧 Solution proposée| 📸 Mockup (optionnel)|
-Une description claire de la fonctionnalité|Quel est le problème que cette fonctionnalité corrige ?|Comment la fonctionnalité devrait-elle fonctionner ?|Ajoutez un croquis ou une maquette.|
+|Une description claire de la fonctionnalité|Quel est le problème que cette fonctionnalité corrige ?|Comment la fonctionnalité devrait-elle fonctionner ?|Ajoutez un croquis ou une maquette.|
 
 ---
 
