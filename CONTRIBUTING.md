@@ -72,7 +72,7 @@ Si possible, ajoutez des captures d'écran.
 ```
 
 
-💡 Suggestion de fonctionnalités
+###💡 Suggestion de fonctionnalités
 Pour proposer une nouvelle fonctionnalité :
 
 Vérifiez d'abord qu'elle n'existe pas déjà dans les issues
