@@ -71,8 +71,9 @@ Si possible, ajoutez des captures d'écran.
 - Version du projet : [ex: v1.0.0]
 ```
 
-markdown
-##💡Suggestion de fonctionnalités
+
+### 💡 Suggestion de fonctionnalités
+
 Pour proposer une nouvelle fonctionnalité :
 
 Vérifiez d'abord qu'elle n'existe pas déjà dans les issues
@@ -83,7 +84,7 @@ Décrivez la solution : comment voyez-vous la fonctionnalité ?
 
 Ajoutez des exemples si possible
 
-markdown
+
 ### 💡 Idée de fonctionnalité
 Une description claire de la fonctionnalité.
 
