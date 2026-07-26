@@ -85,18 +85,8 @@ Décrivez la solution : comment voyez-vous la fonctionnalité ?
 Ajoutez des exemples si possible
 
 
-### 1-💡 Idée de fonctionnalité
-Une description claire de la fonctionnalité.
-
-
-### 2- 🎯 Problème résolu
-Quel est le problème que cette fonctionnalité corrige ?
-
-### 3- 🔧 Solution proposée
-Comment la fonctionnalité devrait-elle fonctionner ?
-
-### 4- 📸 Mockup (optionnel)
-Ajoutez un croquis ou une maquette.
+|### 1-💡 Idée de fonctionnalité|### 2- 🎯 Problème résolu|### 3- 🔧 Solution proposée|### 4- 📸 Mockup (optionnel)|
+Une description claire de la fonctionnalité|Quel est le problème que cette fonctionnalité corrige ?|Comment la fonctionnalité devrait-elle fonctionner ?|Ajoutez un croquis ou une maquette.|
 
 ---
 
