@@ -140,6 +140,8 @@ python manage.py seed_data
 ### 7. Lancer le serveur
 python manage.py runserver
 
+---
+
 ## 🔄 Worlflow de développement
 
 ### 1. Créer une branche
@@ -192,9 +194,8 @@ Votre PR doit respecter ces critères :
 |chore|	Maintenance (dépendances, config, etc.)	chore: update requirements.txt|
 |perf|	Optimisation des performances	perf: optimize database queries|
 
-### Exemple de PR
 
-📝 
+## 📝 Exemple de PR 
 
 ## 🎯 Objectif
 Ajout d'un filtre de recherche par quartier.
