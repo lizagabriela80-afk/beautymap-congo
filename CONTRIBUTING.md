@@ -109,48 +109,71 @@ Avant de commencer à coder, assurez-vous d'avoir :
 ## 🔧 Installation pour le développement
 
 ### 1. Cloner le projet
+bash
+```markdown
 git clone https://github.com/lizagabriela80-afk/beautymap-congo.git
 cd beautymap_full
+```
 
 ### 2. Créer un environnement virtuel
+```
 python -m venv venv
 source venv/bin/activate  # Sur Windows: venv\Scripts\activate
+```
 
 ### 3. Installer les dépendances
+```
 pip install -r requirements.txt
+```
 
 ### 4. Configurer .env
+```
 cp .env.example .env
 #### Éditez .env avec vos valeurs
+```
 
 ### 5. Migrer la base de données
+```
 python manage.py migrate
+```
 
 ### 6. Charger les données de test
+```
 python manage.py seed_data
+```
 
 ### 7. Lancer le serveur
+```
 python manage.py runserver
+```
 
 
 ## 🔄 Worlflow de développement
 
 ### 1. Créer une branche
+```
 git checkout -b feature/nom-de-la-fonctionnalite
 ### ou
 git checkout -b fix/nom-du-bug
+```
 
 ### 2. Faire vos modifications
 
 ### 3. Tester vos modifications
+```
 python manage.py test
+```
 
 ### 4. Commiter
+```
 git add .
 git commit -m "feat: description claire du changement"
+```
 
 ### 5. Pusher
+```
 git push origin feature/nom-de-la-fonctionnalite
+```
 
 ### 6. Ouvrir une Pull Request
 
@@ -216,6 +239,7 @@ Fixes #123
 |python|
 
 ### ✅ Bon
+```
 
 def get_shop_by_id(shop_id: int) -> Shop | None:
     """Récupère une boutique par son ID."""
@@ -223,17 +247,21 @@ def get_shop_by_id(shop_id: int) -> Shop | None:
         return Shop.objects.get(id=shop_id)
     except Shop.DoesNotExist:
         return None
+```
 
 ### ❌ Mauvais
+```
 
 def getShopById(id):
     try:
         return Shop.objects.get(id=id)
     except:
         pass
-HTML/CSS
+```
+# HTML/CSS
 
 html
+```
 <!-- ✅ Bon -->
 <div class="shop-card">
     <h2 class="shop-title">{{ shop.name }}</h2>
@@ -245,11 +273,13 @@ html
     <h2>{{ shop.name }}</h2>
     <p>{{ shop.address }}</p>
 </div>
+```
 
 
-javascript
+# javascript
 
 ### ✅ Bon
+```
 
 function toggleFavorite(shopId) {
     const url = `/api/v1/shops/${shopId}/toggle_favorite/`;
@@ -265,6 +295,7 @@ function tf(id) {
         .then(r => r.json())
         .then(d => { /* ... */ });
 }
+```
 
 ## 🧪 Bonnes pratiques
 
@@ -309,10 +340,8 @@ Avant de soumettre:
 - Discussions GitHub: Questions et échanges
 - Avant de demander de l'aide
 - Lisez la documentation existante
-
-Recherchez dans les issues déjà posées
-
-Essayez de résoudre par vous-même
+- Recherchez dans les issues déjà posées
+- Essayez de résoudre par vous-même
 
 🎉 Merci !
 Votre contribution, aussi petite soit-elle, aide à faire grandir BeautyMap Congo.
