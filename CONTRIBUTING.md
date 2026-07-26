@@ -84,19 +84,18 @@ Décrivez la solution : comment voyez-vous la fonctionnalité ?
 
 Ajoutez des exemples si possible
 
----
 
-### 💡 Idée de fonctionnalité
+### 1-💡 Idée de fonctionnalité
 Une description claire de la fonctionnalité.
 
 
-### 🎯 Problème résolu
+### 2- 🎯 Problème résolu
 Quel est le problème que cette fonctionnalité corrige ?
 
-### 🔧 Solution proposée
+### 3- 🔧 Solution proposée
 Comment la fonctionnalité devrait-elle fonctionner ?
 
-### 📸 Mockup (optionnel)
+### 4- 📸 Mockup (optionnel)
 Ajoutez un croquis ou une maquette.
 
 ---
@@ -140,7 +139,6 @@ python manage.py seed_data
 ### 7. Lancer le serveur
 python manage.py runserver
 
----
 
 ## 🔄 Worlflow de développement
 
@@ -215,9 +213,14 @@ Ajout d'un filtre de recherche par quartier.
 
 ## 🔗 Issue associée
 Fixes #123
-🎨 Style de code
-Python (PEP8)
-python
+
+---
+
+## 🎨 Style de code
+
+|Python (PEP8)|
+|python|
+
 # ✅ Bon
 def get_shop_by_id(shop_id: int) -> Shop | None:
     """Récupère une boutique par son ID."""
@@ -233,6 +236,7 @@ def getShopById(id):
     except:
         pass
 HTML/CSS
+
 html
 <!-- ✅ Bon -->
 <div class="shop-card">
@@ -261,37 +265,43 @@ function tf(id) {
         .then(r => r.json())
         .then(d => { /* ... */ });
 }
-🧪 Bonnes pratiques
-Avant de commencer à coder
-Lisez la documentation du projet
 
-Vérifiez les issues existantes
+## 🧪 Bonnes pratiques
 
-Discutez des changements majeurs avant de coder
+Avant de commencer à coder:
 
-Testez votre code localement
+- Lisez la documentation du projet
 
-Pendant le développement
-Écrivez des tests pour chaque nouvelle fonctionnalité
+- Vérifiez les issues existantes
 
-Documentez votre code (docstrings, commentaires)
+- Discutez des changements majeurs avant de coder
 
-Utilisez des variables claires et explicites
+- Testez votre code localement
 
-Optimisez les requêtes (évitez N+1)
+Pendant le développement:
 
-Validez les entrées utilisateur
+- Écrivez des tests pour chaque nouvelle fonctionnalité
 
-Avant de soumettre
-Relisez votre code une dernière fois
+- Documentez votre code (docstrings, commentaires)
 
-Exécutez les tests : python manage.py test
+- Utilisez des variables claires et explicites
 
-Vérifiez le style : flake8 ou black
+- Optimisez les requêtes (évitez N+1)
 
-Mettez à jour la documentation si besoin
+- Validez les entrées utilisateur
 
-❓ Questions ?
+Avant de soumettre: 
+
+- Relisez votre code une dernière fois
+
+- Exécutez les tests : python manage.py test
+
+- Vérifiez le style : flake8 ou black
+
+- Mettez à jour la documentation si besoin
+
+## ❓ Questions ?
+
 Canaux de communication
 Canal	Utilisation
 Issues GitHub	Bugs et suggestions
