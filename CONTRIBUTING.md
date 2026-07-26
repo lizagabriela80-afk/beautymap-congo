@@ -76,16 +76,16 @@ Si possible, ajoutez des captures d'écran.
 
 Pour proposer une nouvelle fonctionnalité :
 
-Vérifiez d'abord qu'elle n'existe pas déjà dans les issues
+- Vérifiez d'abord qu'elle n'existe pas déjà dans les issues
 
-Expliquez le besoin : quel problème cela résout-il ?
+- Expliquez le besoin : quel problème cela résout-il ?
 
-Décrivez la solution : comment voyez-vous la fonctionnalité ?
+- Décrivez la solution : comment voyez-vous la fonctionnalité ?
 
-Ajoutez des exemples si possible
+- Ajoutez des exemples si possible
 
-💡 Idée de fonctionnalité
-|Une description claire de la fonctionnalité
+## 💡 Idée de fonctionnalité
+Une description claire de la fonctionnalité
 
 |Problème résolu|Solution proposée| Mockup (optionnel)|
 |---------------|-----------------|-------------------|
