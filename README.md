@@ -182,3 +182,17 @@ Les contributions sont les bienvenues ! Voici comment faire :
 - Ouvrez une Pull Request
 
 - Consultez notre CODE_OF_CONDUCT.md avant de contribuer.
+
+
+
+🙏 Remerciements
+Django & Django REST Framework
+
+Leaflet & OpenStreetMap
+
+Africa's Talking pour les SMS
+
+Toutes les personnes qui ont contribué, testé ou soutenu ce projet 🇨🇬
+
+🇨🇬 Made in Brazzaville, Congo
+BeautyMap Congo — © 2026 · Sous licence MIT
