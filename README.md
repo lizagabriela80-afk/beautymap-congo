@@ -22,7 +22,7 @@ Ce projet est publié sous la **licence MIT**, ce qui signifie que vous êtes li
 
 ---
 
-```markdown
+
 
 ---
 
