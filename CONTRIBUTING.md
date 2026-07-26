@@ -215,7 +215,7 @@ Fixes #123
 |Python (PEP8)|
 |python|
 
-# ✅ Bon
+### ✅ Bon
 
 def get_shop_by_id(shop_id: int) -> Shop | None:
     """Récupère une boutique par son ID."""
@@ -224,7 +224,7 @@ def get_shop_by_id(shop_id: int) -> Shop | None:
     except Shop.DoesNotExist:
         return None
 
-# ❌ Mauvais
+### ❌ Mauvais
 
 def getShopById(id):
     try:
@@ -249,7 +249,7 @@ html
 
 javascript
 
-# ✅ Bon
+### ✅ Bon
 
 function toggleFavorite(shopId) {
     const url = `/api/v1/shops/${shopId}/toggle_favorite/`;
@@ -258,7 +258,7 @@ function toggleFavorite(shopId) {
         .then(data => updateUI(data));
 }
 
-# ❌ Mauvais
+### ❌ Mauvais
 
 function tf(id) {
     fetch('/api/' + id + '/fav/')
@@ -302,13 +302,13 @@ Avant de soumettre:
 
 ## ❓ Questions ?
 
-Canaux de communication
-Canal	Utilisation
-Issues GitHub	Bugs et suggestions
-Pull Requests	Propositions de code
-Discussions GitHub	Questions et échanges
-Avant de demander de l'aide
-Lisez la documentation existante
+- Canaux de communication
+- Canal	Utilisation
+- Issues GitHub	Bugs et suggestions
+- Pull Requests	Propositions de code
+- Discussions GitHub: Questions et échanges
+- Avant de demander de l'aide
+- Lisez la documentation existante
 
 Recherchez dans les issues déjà posées
 
