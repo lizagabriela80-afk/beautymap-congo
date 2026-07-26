@@ -101,9 +101,9 @@ Ajoutez un croquis ou une maquette.
 
 ---
 
-💻 Guide de développement
+## 💻 Guide de développement
 
-🛠️ Prérequis
+## 🛠️ Prérequis
 Avant de commencer à coder, assurez-vous d'avoir :
 
 |Outil|	Version	|Lien|
@@ -111,9 +111,11 @@ Avant de commencer à coder, assurez-vous d'avoir :
 |Python|	3.11+|	python.org|
 |Git   |2.0+     |	git-scm.com|
 |Docker (optionnel)|	24+|	docker.com|
-|PostgreSQL	|15+	[postgresql.org[
-🔧 Installation pour le développement
-bash
+|PostgreSQL	|15+	[postgresql.org[|
+
+
+## 🔧 Installation pour le développement
+
 ### 1. Cloner le projet
 git clone https://github.com/lizagabriela80-afk/beautymap-congo.git
 cd beautymap_full
@@ -137,8 +139,8 @@ python manage.py seed_data
 
 ### 7. Lancer le serveur
 python manage.py runserver
-### 💡 Workflow de développement
-🔄
+
+## 🔄 Worlflow de développement
 
 ### 1. Créer une branche
 git checkout -b feature/nom-de-la-fonctionnalite
@@ -158,31 +160,37 @@ git commit -m "feat: description claire du changement"
 git push origin feature/nom-de-la-fonctionnalite
 
 ### 6. Ouvrir une Pull Request
-📤 Processus de Pull Request
+
+---
+
+## 📤 Processus de Pull Request
 ✅ Critères d'acceptation
+
 Votre PR doit respecter ces critères :
 
 ### Critère Exigence
 
-✅ Tests	Tous les tests doivent passer
-✅ Style	Code conforme au PEP8 et au style du projet
-✅ Documentation	Documentation mise à jour si nécessaire
-✅ Commits	Messages de commit clairs et en anglais
-✅ Branche	À jour avec master
-✅ Code review	Au moins 1 approbation d'un mainteneur
+| Tests|	Tous les tests doivent passer|
+|Style|	Code conforme au PEP8 et au style du projet|
+| Documentation|	Documentation mise à jour si nécessaire|
+|Commits|	Messages de commit clairs et en anglais|
+| Branche|	À jour avec master|
+|Code review|	Au moins 1 approbation d'un mainteneur|
 
 
-### Convention de nommage des commits
-✨ 
-Type	Description	Exemple
-feat	Nouvelle fonctionnalité	feat: add shop search filters
-fix	Correction de bug	fix: resolve booking date issue
-docs	Documentation	docs: update README with Windows guide
-style	Formatage du code (sans impact fonctionnel)	style: format code with black
-refactor	Refactorisation (ni correction, ni nouvelle fonction)	refactor: simplify booking logic
-test	Ajout ou correction de tests	test: add tests for review model
-chore	Maintenance (dépendances, config, etc.)	chore: update requirements.txt
-perf	Optimisation des performances	perf: optimize database queries
+
+### ✨ Convention de nommage des commits
+
+|Type|	Description	Exemple|
+|-----|--------------------|
+|feat|	Nouvelle fonctionnalité	feat: add shop search filters|
+|fix|	Correction de bug	fix: resolve booking date issue|
+|docs|	Documentation	docs: update README with Windows guide|
+|style|	Formatage du code (sans impact fonctionnel)	style: format code with black|
+|refactor|	Refactorisation (ni correction, ni nouvelle fonction)	refactor: simplify booking logic|
+|test|	Ajout ou correction de tests	test: add tests for review model|
+|chore|	Maintenance (dépendances, config, etc.)	chore: update requirements.txt|
+|perf|	Optimisation des performances	perf: optimize database queries|
 
 ### Exemple de PR
 
