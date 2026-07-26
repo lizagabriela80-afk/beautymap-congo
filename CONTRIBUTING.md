@@ -216,6 +216,7 @@ Fixes #123
 |python|
 
 # ✅ Bon
+
 def get_shop_by_id(shop_id: int) -> Shop | None:
     """Récupère une boutique par son ID."""
     try:
@@ -224,6 +225,7 @@ def get_shop_by_id(shop_id: int) -> Shop | None:
         return None
 
 # ❌ Mauvais
+
 def getShopById(id):
     try:
         return Shop.objects.get(id=id)
@@ -243,9 +245,12 @@ html
     <h2>{{ shop.name }}</h2>
     <p>{{ shop.address }}</p>
 </div>
-JavaScript
+
+
 javascript
-// ✅ Bon
+
+# ✅ Bon
+
 function toggleFavorite(shopId) {
     const url = `/api/v1/shops/${shopId}/toggle_favorite/`;
     fetch(url, { method: 'POST' })
@@ -253,7 +258,8 @@ function toggleFavorite(shopId) {
         .then(data => updateUI(data));
 }
 
-// ❌ Mauvais
+# ❌ Mauvais
+
 function tf(id) {
     fetch('/api/' + id + '/fav/')
         .then(r => r.json())
